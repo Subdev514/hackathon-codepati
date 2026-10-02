@@ -78,7 +78,52 @@ return <div className="page inner-page settings-page"><div className="page-intro
 
 function PolicyPage({type,back}:{type:"privacy"|"terms";back:()=>void}){
 const privacy=type==="privacy";
-return <div className="page inner-page policy-page"><button className="back-link" onClick={back}>← SETTINGS</button><div className="policy-header"><span className="signal-line">{privacy?"PRIVACY":"LEGAL"}</span><h1>{privacy?<><em>Privacy</em> Policy.</>:<>Terms & <em>Conditions.</>}</h1><p>{privacy?"How Campus OS currently handles information in this local-first prototype.":"The baseline terms governing use of the Campus OS prototype."}</p></div><article className="policy-document"><div className="policy-meta">LAST UPDATED · 03 OCTOBER 2026</div>{privacy?<><h2>1. What Campus OS stores</h2><p>In the current local-first implementation, campus state and the editable user profile are stored in your browser's local storage. The application uses these records to render campus signals, relationships, deadlines, tasks and personalization.</p><h2>2. What is not currently represented</h2><p>This prototype does not currently provide an account system, server-side user profile, or external analytics service in the application code. If those capabilities are added later, this policy should be revised before production use.</p><h2>3. Personal information</h2><p>Do not enter sensitive personal information into announcements, profile fields or other free-form inputs unless the deployment has an appropriate lawful basis, security controls and documented data-handling process.</p><h2>4. Your controls</h2><p>You can edit your saved profile context, change the interface theme, and use the browser's site-data controls to clear locally stored Campus OS data.</p><h2>5. Compliance context</h2><p>For India-facing deployments, the relevant legal framework includes the Digital Personal Data Protection Act, 2023 and the notified Digital Personal Data Protection Rules, 2025. HIPAA may apply only in covered healthcare contexts; it is not a universal privacy law for every application.</p><h2>6. Changes</h2><p>This document should be updated whenever Campus OS gains accounts, remote synchronization, analytics, third-party integrations, or new categories of personal data.</p></>:<><h2>1. Acceptance</h2><p>Campus OS is a software prototype for organizing campus information, relationships, deadlines and workflows. By using it, you agree to use the system lawfully and responsibly.</p><h2>2. User responsibilities</h2><p>You are responsible for the accuracy and appropriateness of information you enter, and for avoiding unauthorized disclosure of another person's private or confidential information.</p><h2>3. No legal or professional advice</h2><p>Campus OS does not provide legal, medical, compliance or security advice. Compliance pages describe product design intent and should not be treated as certification, legal advice or a substitute for professional review.</p><h2>4. Prototype availability</h2><p>The prototype may change, become unavailable, or contain defects. Production deployments should add appropriate authentication, authorization, backups, audit logging, security controls and operational policies before handling sensitive information.</p><h2>5. Third-party services</h2><p>If a future deployment integrates external identity, hosting, analytics, AI, messaging or other services, those services may have separate terms and privacy practices that must be reviewed.</p><h2>6. Updates</h2><p>These terms may be revised as Campus OS moves from a prototype into a production service. The effective date at the top of this page identifies the current version.</p></>}</article></div>
+return <div className="page inner-page policy-page">
+<button className="back-link" onClick={back}>← SETTINGS</button>
+<div className="policy-header">
+<span className="signal-line">{privacy?"PRIVACY":"LEGAL"}</span>
+<h1>{privacy?<><em>Privacy</em> Policy.</>:<>Terms &amp; <em>Conditions.</>}</h1>
+<p>{privacy?"How Campus OS currently handles information in this local-first prototype.":"The baseline terms governing use of the Campus OS prototype."}</p>
+</div>
+<article className="policy-document">
+<div className="policy-meta">LAST UPDATED · 03 OCTOBER 2026</div>
+{privacy ? <PrivacyDocument/> : <TermsDocument/>}
+</article>
+</div>
+}
+
+function PrivacyDocument(){
+return <>
+<h2>1. What Campus OS stores</h2>
+<p>In the current local-first implementation, campus state and the editable user profile are stored in your browser's local storage. The application uses these records to render campus signals, relationships, deadlines, tasks and personalization.</p>
+<h2>2. What is not currently represented</h2>
+<p>This prototype does not currently provide an account system, server-side user profile, or external analytics service in the application code. If those capabilities are added later, this policy should be revised before production use.</p>
+<h2>3. Personal information</h2>
+<p>Do not enter sensitive personal information into announcements, profile fields or other free-form inputs unless the deployment has an appropriate lawful basis, security controls and documented data-handling process.</p>
+<h2>4. Your controls</h2>
+<p>You can edit your saved profile context, change the interface theme, and use the browser's site-data controls to clear locally stored Campus OS data.</p>
+<h2>5. Compliance context</h2>
+<p>For India-facing deployments, the relevant legal framework includes the Digital Personal Data Protection Act, 2023 and the notified Digital Personal Data Protection Rules, 2025. HIPAA may apply only in covered healthcare contexts; it is not a universal privacy law for every application.</p>
+<h2>6. Changes</h2>
+<p>This document should be updated whenever Campus OS gains accounts, remote synchronization, analytics, third-party integrations, or new categories of personal data.</p>
+</>
+}
+
+function TermsDocument(){
+return <>
+<h2>1. Acceptance</h2>
+<p>Campus OS is a software prototype for organizing campus information, relationships, deadlines and workflows. By using it, you agree to use the system lawfully and responsibly.</p>
+<h2>2. User responsibilities</h2>
+<p>You are responsible for the accuracy and appropriateness of information you enter, and for avoiding unauthorized disclosure of another person's private or confidential information.</p>
+<h2>3. No legal or professional advice</h2>
+<p>Campus OS does not provide legal, medical, compliance or security advice. Compliance pages describe product design intent and should not be treated as certification, legal advice or a substitute for professional review.</p>
+<h2>4. Prototype availability</h2>
+<p>The prototype may change, become unavailable, or contain defects. Production deployments should add appropriate authentication, authorization, backups, audit logging, security controls and operational policies before handling sensitive information.</p>
+<h2>5. Third-party services</h2>
+<p>If a future deployment integrates external identity, hosting, analytics, AI, messaging or other services, those services may have separate terms and privacy practices that must be reviewed.</p>
+<h2>6. Updates</h2>
+<p>These terms may be revised as Campus OS moves from a prototype into a production service. The effective date at the top of this page identifies the current version.</p>
+</>
 }
 
 function Metric({value,label}:{value:string;label:string}){return <div className="metric"><b>{value}</b><span>{label}</span></div>}
