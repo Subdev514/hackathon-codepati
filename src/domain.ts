@@ -57,9 +57,9 @@ export const initialTasks:Task[]=[
 
 export const initialState:CampusState={entities,relationships,posts,tasks:initialTasks};
 
-let nextId=100;
 export function createCampusStore(seed:CampusState=initialState){
 let state:CampusState={entities:[...seed.entities],relationships:[...seed.relationships],posts:[...seed.posts],tasks:[...seed.tasks]};
+let nextId=Math.max(99,...state.posts.map(p=>p.id),...state.tasks.map(t=>t.id))+1;
 return {
 getState:()=>state,
 addPost:(post:Post)=>{state={...state,posts:[post,...state.posts]}},
@@ -115,7 +115,7 @@ if(organizationName)extractedEntities.push({id:orgId,type:"club",name:organizati
 if(organizationName)extractedRelationships.push({from:orgId,relation:"organizes",to:eventId,reason:"Announcement states the source organization"});
 }
 const tasks:Task[]=[];
-let taskId=nextId;
+let taskId=Date.now();
 if(isEventLike&&teamMatch)tasks.push({id:taskId++,title:"Find "+Math.max(1,Number(teamMatch[1])-1)+"–"+Math.max(1,Number(teamMatch[2])-1)+" teammates",meta:"Derived from "+requirements[0],done:false,source:eventId});
 for(const deadline of deadlines){
 const label=deadline.label.toLowerCase();
@@ -152,7 +152,7 @@ store.addRelationships(result.relationships.filter(r=>!store.getState().relation
 const mainName=result.event?.name||result.opportunity?.name||result.input.title;
 const post:Post={id:store.nextId(),type:result.input.type||"NOTICE",title:result.input.title,body:result.input.body,author:result.input.author,club:result.input.club,time:"now",votes:0,comments:0,tags:["Campus OS","Understood"],deadline:result.deadlines[0]?.date,linked:mainName,sourceText:result.input.body};
 store.addPost(post);
-store.addTasks(result.tasks);
+const existingTasks=store.getState().tasks;\nstore.addTasks(result.tasks.filter(t=>!existingTasks.some(x=>x.title===t.title&&x.source===t.source)));
 return post;
 }
 
