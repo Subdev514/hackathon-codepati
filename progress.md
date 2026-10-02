@@ -241,7 +241,7 @@ Acceptance:
 - Added a Home Campus Copilot panel that clearly states answers are limited to stored campus state.
 
 ### CP11C — Demo-grade interaction polish
-Status: PLANNED
+Status: COMPLETE
 Goal: make the two-minute judge journey unmistakable and remove remaining hardcoded demo assumptions.
 Acceptance:
 - home greeting uses the editable profile
@@ -249,15 +249,20 @@ Acceptance:
 - announcement → understanding → connection → action has explicit visual state
 - reset/demo behavior is predictable
 - no known UI/runtime consistency defects
+- Home greeting now follows the editable profile.
+- My Tasks context panel now derives task/source relationships from canonical state instead of hardcoded hackathon examples.
+- Reset demo now resets both campus data and the local profile.
 
 ### CP11D — Public deployment and verification
-Status: PLANNED
+Status: IN PROGRESS
 Goal: make the current build demonstrable outside the development machine.
 Acceptance:
 - deployment configuration is documented and compatible with Vite
 - production build remains green after CP11 changes
 - final README demo path matches actual product behavior
 - deployed environment does not claim multi-user synchronization without a backend
+- Added vercel.json with explicit Vite build/output configuration.
+- README now documents Campus Copilot and the local-first deployment boundary.
 
 Execution order: CP11A → CP11B → CP11C → CP11D. After each checkpoint, update this file, reread it, then continue.
 
@@ -505,3 +510,15 @@ Remaining work:
 - Added tests proving answers remain connected to stored entities and tasks.
 - No external AI key or fabricated campus facts are used.
 - Next checkpoint: CP11C demo-grade interaction polish.
+
+### 2026-10-02 — CP11C complete
+- Removed remaining hardcoded profile/demo assumptions from the primary workspace flow.
+- Task-context presentation now follows canonical graph relationships.
+- Reset demo restores both campus state and the demo profile.
+- Next checkpoint: CP11D public deployment and verification.
+
+### 2026-10-02 — CP11D deployment configuration
+- Added explicit Vercel configuration for Vite production builds.
+- Updated README with deployment behavior and the local-first multi-user boundary.
+- Vercel account access was inspected, but no Campus OS Vercel project exists in the connected team and the available deployment action is unavailable in this session. Actual public deployment is therefore blocked on project provisioning/connection.
+- Final source changes still require the developer checkout to run npm test and npm run build.
