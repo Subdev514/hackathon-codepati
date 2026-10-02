@@ -619,3 +619,11 @@ Requested overhaul:
 13. Add accessibility affordances in the UI itself: keyboard-visible focus, semantic landmarks, reduced-motion support and readable policy typography.
 14. Keep claims precise: distinguish implemented prototype behavior from production controls that must be configured by an institution/deployment owner.
 15. Add regression coverage for policy sections and run tests/build/production verification.
+
+
+### CP14A — Policy content architecture
+Status: COMPLETE
+- Expanded Settings into a discoverable Policy Center.
+- Added nine documents: Privacy, DPDP, HIPAA, Accessibility, Security, Cookies/Local Storage, Acceptable Use, AI & Automation, and Terms.
+- Distinguished current prototype behavior from institution/deployment-owner responsibilities.
+- Added regression coverage for policy discoverability, compliance terminology, accessibility target and prototype/deployment boundaries.
