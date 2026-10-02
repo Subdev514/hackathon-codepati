@@ -97,6 +97,12 @@ describe("campus copilot",()=>{
   expect(result.deadlines.length).toBeGreaterThan(0);
   expect(result.entities.some(e=>e.id==="hack-deadline")).toBe(true);
  });
+ it("uses profile context for relevance questions",()=>{
+  const profile={id:"u",name:"A",branch:"CSE",year:2,interests:["Career"],clubs:["Tech Society"],activeProjects:[]};
+  const result=answerCampusQuery(initialState,profile,"What is relevant to me?");
+  expect(result.answer).toContain("Microsoft");
+  expect(result.reason).toContain("career opportunity");
+ });
 });
 
 describe("graph workflow integrity",()=>{
