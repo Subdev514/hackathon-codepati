@@ -9,6 +9,8 @@ const store=createCampusStore(repository.load());
 const navItems=[["01","Home","⌂"],["02","For You","✦"],["03","Explore","◌"],["04","My Tasks","✓"],["05","Network","◎"],["06","Settings","⚙"]];
 
 function App(){
+const pathname=window.location.pathname.replace(/\\/+$/, "")||"/";
+if(pathname!=="/")return <NotFoundPage/>;
 const[tab,setTab]=React.useState("Home");
 const[settingsView,setSettingsView]=React.useState<"settings"|"privacy"|"terms">("settings");
 const[theme,setTheme]=React.useState<"dark"|"light">(()=>window.localStorage.getItem("campus-os-theme")==="light"?"light":"dark");
@@ -54,6 +56,12 @@ return <div className="app-shell">
 {showProfile&&<ProfileEditor profile={profile} save={next=>{setProfile(next);saveUserProfile(next);setShowProfile(false)}} close={()=>setShowProfile(false)}/>}
 {showCreate&&<CreateAnnouncement form={form} setForm={setForm} preview={preview} submit={submitAnnouncement} confirm={confirmAnnouncement} close={()=>{setShowCreate(false);setPreview(null)}}/>}
 </div>
+}
+
+function NotFoundPage(){
+const[theme,setTheme]=React.useState<"dark"|"light">(()=>window.localStorage.getItem("campus-os-theme")==="light"?"light":"dark");
+React.useEffect(()=>{document.documentElement.dataset.theme=theme;document.querySelector('meta[name="theme-color"]')?.setAttribute("content",theme==="light"?"#f4f6f1":"#080908")},[theme]);
+return <div className="not-found-page"><div className="not-found-grid"/><div className="not-found-orbit orbit-a"/><div className="not-found-orbit orbit-b"/><div className="not-found-core"><span>ERROR / 404</span><b>Signal not found.</b><i>THE CAMPUS GRAPH HAS NO ROUTE FOR THIS LOCATION.</i></div><div className="not-found-copy"><div className="brand-mark compact"><div className="brand-symbol">C</div><div><strong>Campus OS</strong><span>CONNECTED CAMPUS</span></div></div><span className="signal-line">404 · LOST IN THE CAMPUS GRAPH</span><h1>This page<br/><em>doesn't exist.</em></h1><p>The route you requested is outside the current Campus OS workspace. Return to the command center and continue from there.</p><div className="not-found-actions"><a className="create-button large" href="/">RETURN TO CAMPUS <span>↗</span></a><button className="text-button" onClick={()=>setTheme(theme==="dark"?"light":"dark")}>{theme==="dark"?"Switch to light mode":"Switch to dark mode"}</button></div></div><div className="not-found-code">ERR_404 / NO_CONNECTED_OBJECT / {window.location.pathname}</div></div>
 }
 
 function Home({state,profile,filtered,tasks,toggle,liked,setLiked,copilotQuery,setCopilotQuery,openCreate,openTasks,openNetwork}:{state:ReturnType<typeof store.getState>;profile:UserProfile;filtered:Post[];tasks:Task[];toggle:(id:number)=>void;liked:number[];setLiked:React.Dispatch<React.SetStateAction<number[]>>;copilotQuery:string;setCopilotQuery:(v:string)=>void;openCreate:()=>void;openTasks:()=>void;openNetwork:(id:string)=>void}){
