@@ -78,12 +78,14 @@ return <div className="page inner-page settings-page"><div className="page-intro
 
 function PolicyPage({type,back}:{type:"privacy"|"terms";back:()=>void}){
 const privacy=type==="privacy";
+const title=privacy?"Privacy Policy.":"Terms & Conditions.";
+const subtitle=privacy?"How Campus OS currently handles information in this local-first prototype.":"The baseline terms governing use of the Campus OS prototype.";
 return <div className="page inner-page policy-page">
 <button className="back-link" onClick={back}>← SETTINGS</button>
 <div className="policy-header">
 <span className="signal-line">{privacy?"PRIVACY":"LEGAL"}</span>
-<h1>{privacy&&<><em>Privacy</em> Policy.</>}{!privacy&&<>Terms &amp; <em>Conditions.</>}</h1>
-<p>{privacy?"How Campus OS currently handles information in this local-first prototype.":"The baseline terms governing use of the Campus OS prototype."}</p>
+<h1>{title}</h1>
+<p>{subtitle}</p>
 </div>
 <article className="policy-document">
 <div className="policy-meta">LAST UPDATED · 03 OCTOBER 2026</div>
