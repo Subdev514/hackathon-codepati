@@ -816,3 +816,19 @@ Expected behavior:
 - `/does-not-exist` → Campus OS custom 404.
 - `/anything/random` → Campus OS custom 404.
 - `/api/*` → existing Vercel serverless functions remain unaffected.
+
+## CP20 — Mobile custom 404 optimization
+Status: COMPLETE
+
+Issue:
+- The custom Campus OS 404 graphic was positioned toward the lower-right on phones, causing the orbit/core artwork to extend beyond the viewport and appear clipped.
+
+Fix:
+- Reworked the mobile 404 layout to reserve dedicated vertical space for the graphic instead of positioning it against the page edge.
+- Centered the 404 core and orbital artwork on narrow screens and constrained orbit dimensions relative to the viewport.
+- Reduced the core size and typography for phone-scale readability.
+- Made the return action full-width and kept the diagnostic path readable at the bottom without overlapping the graphic.
+- Used 100svh for more stable mobile viewport sizing.
+
+Verification coverage:
+- Added regression assertions for the mobile 404 layout, centered graphic positioning, viewport-safe orbit sizing and reserved copy spacing.
