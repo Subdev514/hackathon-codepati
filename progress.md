@@ -605,3 +605,21 @@ Reference research:
 - Answers now surface connected entities, relevant actions and deadline attention items alongside the grounded answer.
 - The Copilot still uses answerCampusQuery() only; no external model, secret or fabricated campus data was introduced.
 - Next: CP12H profile/personalization polish, then CP12I responsive/mobile audit.
+### 2026-10-03 — CP12H profile/personalization checkpoint
+- Profile editing remains fully wired into the redesigned shell: sidebar profile, For You context editing, local persistence and Reset demo all operate on the existing UserProfile contract.
+- Home greeting, relevance ordering and Copilot answers continue to consume the current editable profile rather than hardcoded demo assumptions.
+- README was updated to describe the redesigned animated interface accurately and to remove an outdated CI claim that could not be independently verified from the current repository surface.
+
+### 2026-10-03 — CP12I responsive/mobile checkpoint
+- Reviewed the responsive CSS paths for desktop, tablet and mobile navigation, including the fixed five-item mobile nav, stacked content grids, full-width primary action, modal sizing and graph scaling.
+- Preserved prefers-reduced-motion handling across terrain, graph, cards and modal transitions.
+- No new responsive architecture or dependency was required; the existing CSS breakpoints remain the single responsive boundary.
+
+### 2026-10-03 — CP12J source-level visual QA checkpoint
+- Completed the redesign source audit across main.tsx, styles.css, domain.ts, package.json, README.md and progress.md.
+- Confirmed domain logic remains isolated from the visual redesign and all primary redesigned controls route through existing store/domain behavior or explicit UI navigation.
+- Confirmed the animated terrain and Network graph are CSS/DOM presentation layers; relationship and workflow truth remains domain-backed.
+- Confirmed no new runtime dependency was introduced for animation.
+- Actual npm test/build and browser visual verification could not be executed from this session because the available environment does not expose the developer checkout/runtime; no unverified green build claim is being made.
+- CP12 frontend redesign is complete at source level.
+- Next: return to CP11D deployment verification. The remaining external blocker is Vercel project provisioning/connection, not application code.
