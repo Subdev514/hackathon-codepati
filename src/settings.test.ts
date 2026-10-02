@@ -22,6 +22,6 @@ it("exposes discovery, Notion, role and analytics UI",()=>{for(const phrase of [
 it("exposes all twelve destinations through the universal mobile navigator",()=>{
 for(const label of ["Home","For You","Explore","Knowledge","Events","My Tasks","Network","Societies","Society Ops","Analytics","Feedback","Settings"])expect(source).toContain('"' + label + '"');
 expect(source).toContain('className="mobile-navigation"');
-expect(source).toContain('aria-label="Navigate to Campus OS page"');
+expect(source).toContain('aria-label="Navigate to Campus OS page"');expect(source).toContain('TAP TO OPEN');expect(source).toContain('12 pages · one tap away');
 });
 });
