@@ -515,3 +515,10 @@ All requested Notion-style workflows are implemented, persisted through the exis
 - Categorical feedback/suggestions
 - README and progress documentation
 - CI and Vercel verification
+
+
+### 2026-10-03 — Feedback form layout bug
+Status: FIXED
+- Reproduced from the supplied screenshot: the feedback labels were relying on browser-inline label behavior, causing the textarea and field captions to collapse into the same horizontal line.
+- Added scoped Feedback form CSS: block labels, full-width controls, box sizing, explicit textarea sizing, desktop two-column fields and mobile single-column fields.
+- Awaiting/using repository CI and Vercel production rebuild for final deployment verification.
