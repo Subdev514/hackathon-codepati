@@ -762,6 +762,12 @@ Status: COMPLETE
 ## CP17 — Mobile navigation and responsive optimization
 Status: IN PROGRESS
 
+### CP17A-D execution update
+- CP17A COMPLETE — Added an always-visible mobile `NAVIGATE` select to the sticky header. It exposes all 12 application destinations and uses the existing application state for instant page switching.
+- CP17B COMPLETE — Reworked the phone header into a two-row responsive layout, hid desktop-only search controls on narrow screens, preserved Create access, and removed horizontal/bottom-nav layout pressure.
+- CP17C COMPLETE — Desktop and tablet navigation remain unchanged; the six-item mobile bottom bar is disabled and the fixed sidebar no longer consumes mobile viewport space.
+- CP17D COMPLETE — Added regression coverage for the universal mobile navigator, its accessibility label, and all 12 destination names.
+
 ### Plan
 - CP17A — Replace the six-item mobile bottom navigation with an always-available 12-destination navigation control in the sticky topbar.
 - CP17B — Make the mobile header, search/actions and page spacing work cleanly across phone widths without horizontal overflow.
