@@ -1,5 +1,5 @@
 import{describe,expect,it}from"vitest";
-import{commitExtraction,createCampusStore,extractAnnouncement,initialState,normalizeExtraction,validateExtraction,deterministicExtractionProvider,relevanceForUser,deadlineStatus,createCampusRepository}from"./domain";
+import{commitExtraction,createCampusStore,extractAnnouncement,initialState,normalizeExtraction,validateExtraction,deterministicExtractionProvider,relevanceForUser,deadlineStatus,campusDeadlines,createCampusRepository}from"./domain";
 
 describe("announcement extraction",()=>{
 it("extracts the hackathon demo into connected facts and actions",()=>{
@@ -64,6 +64,9 @@ describe("deadline intelligence",()=>{
   expect(deadlineStatus("October 2",now)).toBe("today");
   expect(deadlineStatus("October 5",now)).toBe("due_soon");
   expect(deadlineStatus("September 30",now)).toBe("overdue");
+  const deadlines=campusDeadlines(initialState,now);
+  expect(deadlines[0]?.date).toBe("October 10");
+  expect(deadlines[0]?.source?.name).toBe("AI Hackathon");
  });
 });
 
