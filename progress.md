@@ -665,3 +665,9 @@ Reference research:
 - Found the exact syntax defect: a literal escaped newline sequence (\`\\n\`) had been inserted between the Network and Settings conditional render blocks, leaving invalid JavaScript/JSX outside a string.
 - Replaced the escaped sequence with a real source newline.
 - Required next verification: rerun `npm test` and `npm run build` locally, then browser-check Settings, light/dark switching, Privacy, Terms and mobile navigation.
+
+### 2026-10-03 — Second Settings JSX parser repair
+- Local build reported a missing closing brace at the Settings render line.
+- Inspection showed the preceding Network conditional render was missing its closing JSX expression brace.
+- Added the missing brace and verified the source now uses a real newline between Network and Settings rather than a literal escaped newline.
+- Required next verification: rerun npm test and npm run build locally.
