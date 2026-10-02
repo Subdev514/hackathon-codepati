@@ -144,10 +144,14 @@ Status: IN PROGRESS
 Execution order is fixed and each sub-checkpoint must be completed, verified, recorded here, then reread before moving on.
 
 #### CP10A — AI-ready understanding boundary
-Status: NOT STARTED
+Status: COMPLETE
 - Define provider interface around ExtractedAnnouncement.
 - Add strict validation/normalization and deterministic fallback.
 - Keep secrets out of the browser; no client-side API key.
+- Added ExtractionProvider, deterministicExtractionProvider, normalizeExtraction and validateExtraction in src/domain.ts.
+- commitExtraction now rejects malformed extraction results before mutating campus state.
+- Added provider-boundary tests for normalization, validation and async provider execution.
+- Verification: source-level contract/test review completed; local npm execution remains blocked by unavailable outbound network.
 
 #### CP10B — Interactive relationship graph
 Status: NOT STARTED
@@ -375,6 +379,10 @@ Remaining work:
 - Converted optional CP10 into explicit ordered sub-checkpoints CP10A–CP10G.
 - Locked execution order: AI-ready extraction boundary → interactive graph → broader information types → personal workspace → deadline intelligence → backend-ready boundary → polish/deployment readiness.
 - The same reread/update/continue loop applies after every sub-checkpoint.
+
+### 2026-10-02 — CP10A extraction boundary complete
+- Completed CP10A without introducing a client-side AI secret or destabilizing the existing deterministic path.
+- The UI can keep using the same ExtractedAnnouncement contract when a server-backed AI provider is added later.
 
 ### 2026-10-02 — Final CP9 audit
 - Re-read progress.md before final audit as required by the execution contract.
