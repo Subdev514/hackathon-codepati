@@ -703,3 +703,27 @@ Status: COMPLETE
 - Added bootstrap support for Campus OS Knowledge, Tasks and Opportunities databases under a configured Notion parent page.
 - Added page creation/sync endpoints and a browser-side src/notion.ts client that stores only database IDs, never the Notion token.
 - Added explicit disconnected behavior when NOTION_TOKEN or NOTION_PARENT_PAGE_ID is absent; the application does not fabricate a connected state.
+
+### CP16C — Context-aware discovery
+Status: COMPLETE
+- Added the Knowledge workspace with natural-language query examples and graph-grounded result ranking.
+- Discovery searches authorized knowledge records, follows entity relationships and incorporates role/profile context.
+- Added explicit Notion integration status and disconnected-mode messaging.
+
+### CP16D — Personalized workflow
+Status: COMPLETE
+- Added saved opportunities, deadline reminders and personalized task/project-action suggestions.
+- For You and Knowledge now expose direct workflow handoffs instead of stopping at information discovery.
+- My Tasks now surfaces reminder records alongside source/context chains.
+
+### CP16E — Role-based experience
+Status: COMPLETE
+- Added Student and Club Coordinator roles to the user profile.
+- Added role-aware Knowledge, Analytics and Notion controls; Notion synchronization is coordinator-only in the MVP.
+- Preserved existing society membership checks for private Society Ops access.
+
+### CP16F — Analytics + dependency mapping
+Status: COMPLETE
+- Added explicit registration_for, volunteers_for, milestone_of and assigned_to dependency relationships.
+- Network now surfaces dependency chains alongside the selected graph object.
+- Added Analytics workspace for pending registrations, upcoming deadlines, participation, open workload, workload by source and project/milestone progress.
