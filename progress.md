@@ -663,3 +663,28 @@ Fix:
 Verification:
 - Commit: c0c92c1f62ff5c38d83d996877d263e0d89a5ac0
 - CI/build verification follows the repository's existing GitHub Actions pipeline.
+
+## CP16 — Knowledge graph, Notion sync, discovery, personalization, roles & analytics
+Status: IN PROGRESS
+
+Requested product expansion:
+1. Notion knowledge layer — create/sync campus knowledge pages and databases and make the synced knowledge usable by Campus OS workflows.
+2. Context-aware discovery — natural-language discovery across authorized campus knowledge, not only literal text matching.
+3. Personalized workflow — turn relevant knowledge into actionable tasks, reminders/deadline actions, saved opportunities and project actions.
+4. Relationship/dependency mapping — explicitly model chains such as event → registration → task, club → event → volunteer and project → milestone → member.
+5. Role-based experience — support at least Student and Club Coordinator experiences with role-aware navigation, permissions and workflow context.
+6. Analytics — expose pending registrations, deadlines, participation, workload and project-progress metrics.
+
+Execution plan:
+- CP16A: Extend the domain model with knowledge records, saved opportunities, reminders, role metadata and explicit dependency relationship types; add seeded examples and migration-safe defaults.
+- CP16B: Build the Notion integration boundary and Vercel server endpoint. Keep credentials server-side, support bootstrap of Campus Knowledge/Tasks/Opportunities databases, page sync, connection status and graceful disconnected mode.
+- CP16C: Add a Knowledge workspace that displays synced/authorized knowledge and provides natural-language discovery using structured graph matching, relationship expansion and profile context.
+- CP16D: Add personalized workflow actions: save opportunity, create task/reminder, project action generation and source/dependency traceability.
+- CP16E: Add role-aware Student and Club Coordinator experiences, including coordinator-focused event/workload controls while preserving existing society access boundaries.
+- CP16F: Add Analytics workspace with deadline, registration, participation, workload, task completion and project-progress metrics derived from the same domain state.
+- CP16G: Add responsive styling, regression tests, README documentation and CI/build verification. Validate the production deployment path and record the final state here.
+
+Implementation boundary:
+- Notion tokens remain server-side and are never placed in browser code.
+- If Notion credentials are not configured, Campus OS remains fully usable in local-first mode and clearly reports the integration as disconnected rather than fabricating a sync.
+- Natural-language discovery is deterministic and graph-grounded in this MVP; it does not invent knowledge or imply an external LLM is connected.
