@@ -698,3 +698,14 @@ Reference research:
 - Added a direct return-to-Campus action and a dark/light toggle that respects the existing campus-os-theme preference.
 - Added mobile-specific layout rules and preserved the existing app theme variables.
 - Required next verification: rerun npm test and npm run build, then open an unknown route such as /does-not-exist in the browser and verify the 404 page in both themes.
+
+
+### 2026-10-03 — SEO, social metadata, favicon, loading and accessibility hardening
+- Added per-view document titles and meta descriptions for Home, For You, Explore, My Tasks, Network and Settings.
+- Added truthful canonical handling for the current single-route SPA: the canonical URL remains the root route rather than inventing non-existent deep URLs for client-side tabs.
+- Added Open Graph type/site/title/description/URL metadata and Twitter summary-card metadata. No og:image was added, matching the requested no-Open-Graph-image setup.
+- Added a default SVG favicon at public/favicon.svg and linked it from index.html.
+- Added a custom Campus OS boot/loading state with a live status role, animated graph grid and initialization indicator; it runs during the React startup frame.
+- Added 404 metadata handling with noindex/nofollow and removal of the canonical link.
+- Audited the frontend for image accessibility: there are currently no img elements or image assets requiring alt text; the visual terrain, graph and branding are CSS/DOM primitives.
+- Required next verification: rerun npm test and npm run build, then inspect document head metadata, favicon, social-card metadata, loading state, 404 noindex behavior and Lighthouse/accessibility output in the browser.
