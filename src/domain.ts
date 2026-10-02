@@ -19,7 +19,7 @@ export type FeedbackRecord={id:string;eventId?:string;societyId?:string;category
 export type SocietyMembership={societyId:string;userId:string;role:"member"|"lead"|"admin";};
 export type SocietyWorkspace={societyId:string;private:boolean;};
 export type UserRole="student"|"club_coordinator";
-export type KnowledgeRecord={id:string;title:string;content:string;source:"campus"|"notion";notionPageId?:string;notionDatabaseId?:string;tags:string[];linkedEntityIds:string[];authorizedRoles:UserRole[];updatedAt:string;};
+export type KnowledgeRecord={id:string;title:string;content:string;source:"campus"|"notion";notionPageId?:string;notionDatabaseId?:string;tags:string[];linkedEntityIds:string[];authorizedRoles:UserRole[];updatedAt:string;sourcePostId?:number;};
 export type SavedOpportunity={id:string;entityId:string;title:string;sourcePostId?:number;savedAt:string;};
 export type Reminder={id:string;taskId?:number;title:string;dueAt:string;done:boolean;};
 export type NotionSyncState={status:"disconnected"|"connected"|"syncing"|"error";lastSyncedAt?:string;knowledgePages:number;databases:number;message?:string;};
@@ -125,7 +125,7 @@ export const initialWorkspaces:SocietyWorkspace[]=[
 {societyId:"ai-club-society",private:true},
 {societyId:"design-club-society",private:true}
 ];
-export const initialKnowledge:KnowledgeRecord[]=posts.map((post,index)=>({id:"knowledge-"+post.id,title:post.title,content:post.body,source:"campus",tags:post.tags,linkedEntityIds:post.linked?[entities.find(e=>e.name===post.linked)?.id||""]:[],authorizedRoles:["student","club_coordinator"],updatedAt:"2026-10-03T00:00:00.000Z"}));
+export const initialKnowledge:KnowledgeRecord[]=posts.map((post,index)=>({id:"knowledge-"+post.id,title:post.title,content:post.body,source:"campus",tags:post.tags,linkedEntityIds:post.linked?[entities.find(e=>e.name===post.linked)?.id||""]:[],sourcePostId:post.id,authorizedRoles:["student","club_coordinator"],updatedAt:"2026-10-03T00:00:00.000Z"}));
 export const initialSavedOpportunities:SavedOpportunity[]=[];
 export const initialReminders:Reminder[]=[{id:"reminder-hackathon-registration",taskId:1,title:"AI Hackathon registration closes",dueAt:"2026-10-10T18:00:00+05:30",done:false}];
 export const initialNotionSync:NotionSyncState={status:"disconnected",knowledgePages:0,databases:0,message:"Notion is optional until a deployment owner configures the server-side integration."};
