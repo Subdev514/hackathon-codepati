@@ -6,3 +6,5 @@
 .profile-button{width:100%;border:0;background:transparent;text-align:left;color:inherit;display:flex;align-items:center;gap:10px;padding:10px;cursor:pointer}.profile-button .dots{margin-left:auto}.profile-modal{max-width:680px}
 
 .deadline-panel{margin:0 0 24px}.deadline-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}.deadline-card{padding:12px;border:1px solid #dfe5dc;border-radius:12px;background:#fafbf9;display:flex;flex-direction:column;gap:8px}.deadline-card b{display:block}.deadline-card small,.deadline-card>span{color:#687268;font-size:12px}.deadline-card.overdue{border-color:#d7a5a0}.deadline-card.today{border-color:#d3b45e}.deadline-card.due_soon{border-color:#a9c58a}
+
+.error-toast{position:fixed;right:22px;bottom:22px;z-index:50;max-width:420px;padding:12px 14px;border:1px solid #d7a5a0;border-radius:12px;background:#fff8f7;box-shadow:0 12px 30px rgba(20,30,20,.12);color:#6f302c}.error-toast button{margin-left:12px;border:0;background:transparent;cursor:pointer;font-size:16px}
