@@ -14,6 +14,8 @@ Campus information → structured entities → relationships → personalization
 - “Campus OS understood this” preview with confidence and extraction reasons
 - Relationship graph backed by domain state
 - Generated tasks linked to their source entity
+- Graph-grounded Campus Copilot for tasks, deadlines, events and personalized signals
+- Explicit Vercel configuration for the Vite production build
 - Task completion and workflow progress
 - LocalStorage persistence across reloads
 - Explainable “For You” relevance based on student profile
@@ -35,7 +37,8 @@ Then show:
 4. Confirm & connect
 5. Workflow progress
 6. Campus graph
-7. For You relevance reasons
+7. Campus Copilot answers a workflow/deadline question from the graph
+8. For You relevance reasons
 
 The key story is:
 
@@ -71,3 +74,18 @@ This repository is optimized for the hackathon demonstration rather than product
 Campus OS is a Vite static web application and is deployment-ready on any static host that runs npm install and npm run build and serves dist/. Vercel can deploy the repository directly with the default Vite detection; no backend is required for the current offline-first MVP. The application keeps campus state in browser localStorage, so a future shared deployment should add a backend implementation of the CampusRepository contract before claiming multi-user synchronization.
 
 For a hackathon demo, use the main branch, open the deployed site, click + Create, run the announcement understanding flow, and use Network, For You, and My Tasks to demonstrate the connected loop. The profile menu also contains Reset demo for a clean presentation state.
+
+## Campus Copilot
+
+Campus Copilot is currently graph-grounded and deterministic. It answers questions from the stored campus entities, relationships, deadlines, tasks and editable profile. It deliberately does not invent facts or call an external model. This keeps the product useful offline while preserving a clean path for a future server-side AI provider.
+
+Example questions:
+
+- What do I need to do for the hackathon?
+- What is the hackathon registration deadline?
+- What events are happening?
+- What is relevant to me?
+
+## Deployment
+
+The repository includes `vercel.json` with the Vite build command and `dist/` output directory. Vercel can deploy the main branch directly. The current application is still local-first: each browser has its own campus state and profile. A shared multi-user deployment must not be represented as synchronized until a backend repository implementation is added.
