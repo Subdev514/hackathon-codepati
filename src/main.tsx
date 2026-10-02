@@ -63,7 +63,7 @@ return <div className="app-shell">
 {tab==="For You"&&<ForYou state={state} profile={profile} filtered={filtered} tasks={tasks} toggle={toggle} editProfile={()=>setShowProfile(true)}/>}
 {tab==="Explore"&&<Explore filtered={filtered} liked={liked} setLiked={setLiked}/>}
 {tab==="My Tasks"&&<TasksPage state={state} tasks={tasks} toggle={toggle}/>}
-{tab==="Network"&&<Relationship state={state} selectedId={networkEntityId}/>}\n{tab==="Events"&&<EventsPage state={state} sync={sync}/>}\n{tab==="Society Ops"&&<SocietyOpsPage state={state} profile={profile} sync={sync}/>}
+{tab==="Network"&&<Relationship state={state} selectedId={networkEntityId}/>}\n{tab==="Events"&&<EventsPage state={state} mutate={fn=>{fn(store);sync()}}/>}\n{tab==="Society Ops"&&<SocietyOpsPage state={state} profile={profile} mutate={fn=>{fn(store);sync()}}/>}
 {tab==="Settings"&&<SettingsPage view={settingsView} setView={setSettingsView} theme={theme} setTheme={setTheme} profile={profile} editProfile={()=>setShowProfile(true)}/>}
 </main>
 {error&&<div className="error-toast" role="alert">{error}<button onClick={()=>setError("")}>×</button></div>}
