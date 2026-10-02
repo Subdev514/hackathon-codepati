@@ -659,3 +659,9 @@ Reference research:
 - Added dedicated Privacy Policy and Terms & Conditions views inside Settings, with content matching the current local-first prototype architecture and clearly separating product documentation from legal advice/certification.
 - Added responsive Settings navigation and light-theme overrides across the shell, cards, workflow, terrain, network graph, modals and policy surfaces.
 - Required next verification: rerun `npm test` and `npm run build`, then browser-check Settings, light/dark switching, Privacy, Terms and mobile navigation.
+
+### 2026-10-03 — Build parser repair after local verification
+- Investigated the reported Vite/Rolldown unexpected-token failure in `src/main.tsx`.
+- Found the exact syntax defect: a literal escaped newline sequence (\`\\n\`) had been inserted between the Network and Settings conditional render blocks, leaving invalid JavaScript/JSX outside a string.
+- Replaced the escaped sequence with a real source newline.
+- Required next verification: rerun `npm test` and `npm run build` locally, then browser-check Settings, light/dark switching, Privacy, Terms and mobile navigation.
