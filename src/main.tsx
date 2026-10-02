@@ -12,6 +12,7 @@ function App(){
 const pathname=window.location.pathname.replace(/\/+$/, "")||"/";
 if(pathname!=="/")return <NotFoundPage/>;
 const[tab,setTab]=React.useState("Home");
+const[loading,setLoading]=React.useState(true);
 const[settingsView,setSettingsView]=React.useState<"settings"|"privacy"|"terms">("settings");
 const[theme,setTheme]=React.useState<"dark"|"light">(()=>window.localStorage.getItem("campus-os-theme")==="light"?"light":"dark");
 React.useEffect(()=>{document.documentElement.dataset.theme=theme;window.localStorage.setItem("campus-os-theme",theme);document.querySelector('meta[name="theme-color"]')?.setAttribute("content",theme==="light"?"#f4f6f1":"#080908")},[theme]);
@@ -28,6 +29,16 @@ const[error,setError]=React.useState("");
 const[copilotQuery,setCopilotQuery]=React.useState("");
 const[preview,setPreview]=React.useState<ExtractedAnnouncement|null>(null);
 const[form,setForm]=React.useState<AnnouncementInput>({title:"",body:"",type:"EVENT",author:"AI Club",club:"AI Club"});
+const pageMeta:{title:string;description:string}={
+Home:{title:"Campus OS — Connected Campus",description:"Campus OS turns scattered campus information into connected context, deadlines and actionable workflows."},
+"For You":{title:"For You — Campus OS",description:"Personalized campus signals ranked around your interests, clubs, projects and context."},
+Explore:{title:"Explore — Campus OS",description:"Explore campus events, opportunities, resources, notices, competitions and projects in one connected index."},
+"My Tasks":{title:"My Tasks — Campus OS",description:"Manage actionable campus workflows and trace every task back to the campus information that created it."},
+Network:{title:"Network — Campus OS",description:"Explore relationships between campus people, events, opportunities, resources, projects, deadlines and tasks."},
+Settings:{title:"Settings — Campus OS",description:"Manage Campus OS appearance, privacy documentation, terms and product data-protection context."}
+}[tab as "Home"|"For You"|"Explore"|"My Tasks"|"Network"|"Settings"];
+React.useEffect(()=>{const id=requestAnimationFrame(()=>setLoading(false));return()=>cancelAnimationFrame(id)},[]);
+React.useEffect(()=>{document.title=pageMeta.title;document.querySelector('meta[name="description"]')?.setAttribute("content",pageMeta.description);document.querySelector('meta[property="og:title"]')?.setAttribute("content",pageMeta.title);document.querySelector('meta[property="og:description"]')?.setAttribute("content",pageMeta.description);document.querySelector('meta[name="twitter:title"]')?.setAttribute("content",pageMeta.title);document.querySelector('meta[name="twitter:description"]')?.setAttribute("content",pageMeta.description);document.querySelector('link[rel="canonical"]')?.setAttribute("href",window.location.origin+"/");document.querySelector('meta[name="robots"]')?.setAttribute("content","index,follow")},[pageMeta.title,pageMeta.description]);
 const state=store.getState();
 const filtered=state.posts.filter(p=>(p.title+" "+p.body+" "+p.tags.join(" ")).toLowerCase().includes(query.toLowerCase()));
 const sync=()=>{repository.save(store.getState());setTasks([...store.getState().tasks]);refresh(x=>x+1)};
@@ -36,6 +47,7 @@ const submitAnnouncement=()=>{if(!form.title.trim()||!form.body.trim())return;tr
 const confirmAnnouncement=()=>{if(!preview)return;try{setError("");commitExtraction(store,preview)}catch(e){setError(e instanceof Error?e.message:"Could not connect announcement");return}setPreview(null);setShowCreate(false);setForm({title:"",body:"",type:"EVENT",author:"AI Club",club:"AI Club"});setTab("Home");sync()};
 const hour=new Date().getHours();
 const greeting=hour<12?"Good morning":hour<18?"Good afternoon":"Good evening";
+if(loading)return <LoadingScreen/>;
 return <div className="app-shell">
 <aside className="sidebar">
 <div className="brand-mark"><div className="brand-symbol">C</div><div><strong>Campus OS</strong><span>CONNECTED CAMPUS</span></div></div>
@@ -58,7 +70,12 @@ return <div className="app-shell">
 </div>
 }
 
+
+function LoadingScreen(){
+return <div className="loading-screen" role="status" aria-live="polite"><div className="loading-grid"/><div className="loading-core"><div className="loading-mark">C</div><span>INITIALIZING CAMPUS OS</span><b>CONNECTING CONTEXT</b><i><em/><em/><em/></i></div><small>LOCAL GRAPH · READYING WORKSPACE</small></div>
+}
 function NotFoundPage(){
+React.useEffect(()=>{document.title="404 — Campus OS";document.querySelector('meta[name="description"]')?.setAttribute("content","The requested Campus OS route does not exist.");document.querySelector('meta[name="robots"]')?.setAttribute("content","noindex,nofollow");document.querySelector('link[rel="canonical"]')?.remove()},[]);
 const[theme,setTheme]=React.useState<"dark"|"light">(()=>window.localStorage.getItem("campus-os-theme")==="light"?"light":"dark");
 React.useEffect(()=>{document.documentElement.dataset.theme=theme;document.querySelector('meta[name="theme-color"]')?.setAttribute("content",theme==="light"?"#f4f6f1":"#080908")},[theme]);
 return <div className="not-found-page"><div className="not-found-grid"/><div className="not-found-orbit orbit-a"/><div className="not-found-orbit orbit-b"/><div className="not-found-core"><span>ERROR / 404</span><b>Signal not found.</b><i>THE CAMPUS GRAPH HAS NO ROUTE FOR THIS LOCATION.</i></div><div className="not-found-copy"><div className="brand-mark compact"><div className="brand-symbol">C</div><div><strong>Campus OS</strong><span>CONNECTED CAMPUS</span></div></div><span className="signal-line">404 · LOST IN THE CAMPUS GRAPH</span><h1>This page<br/><em>doesn't exist.</em></h1><p>The route you requested is outside the current Campus OS workspace. Return to the command center and continue from there.</p><div className="not-found-actions"><a className="create-button large" href="/">RETURN TO CAMPUS <span>↗</span></a><button className="text-button" onClick={()=>setTheme(theme==="dark"?"light":"dark")}>{theme==="dark"?"Switch to light mode":"Switch to dark mode"}</button></div></div><div className="not-found-code">ERR_404 / NO_CONNECTED_OBJECT / {window.location.pathname}</div></div>
