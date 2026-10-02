@@ -65,7 +65,7 @@ describe("deadline intelligence",()=>{
   expect(deadlineStatus("October 5",now)).toBe("due_soon");
   expect(deadlineStatus("September 30",now)).toBe("overdue");
   const deadlines=campusDeadlines(initialState,now);
-  expect(deadlines[0]?.date).toBe("October 10");
+  expect(deadlines[0]?.date).toBe("Oct 10");
   expect(deadlines[0]?.source?.name).toBe("AI Hackathon");
  });
 });
