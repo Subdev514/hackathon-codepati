@@ -688,3 +688,11 @@ Implementation boundary:
 - Notion tokens remain server-side and are never placed in browser code.
 - If Notion credentials are not configured, Campus OS remains fully usable in local-first mode and clearly reports the integration as disconnected rather than fabricating a sync.
 - Natural-language discovery is deterministic and graph-grounded in this MVP; it does not invent knowledge or imply an external LLM is connected.
+
+### CP16A — Knowledge/workflow domain foundation
+Status: COMPLETE
+- Extended the graph with registration, volunteer-slot and milestone entity types plus explicit registration_for, volunteers_for and milestone_of dependency relations.
+- Added role metadata for Student and Club Coordinator.
+- Added knowledge records, saved opportunities, reminders and Notion sync state to the persistent CampusState with migration-safe defaults.
+- Added due dates/kinds to workflow tasks and seeded event → registration → task, club → event → volunteer and project → milestone → member examples.
+- Added deterministic personalized workflow generation, role permissions, graph-aware discovery scoring and analytics aggregation services.
