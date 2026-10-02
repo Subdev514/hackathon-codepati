@@ -70,6 +70,18 @@ npm run build
 This repository is optimized for the hackathon demonstration rather than production infrastructure. Authentication, campus isolation, backend synchronization and external AI can be added after the core product loop is stable.
 
 
+## Society operations workspace
+
+Campus OS now includes Notion-style structured workspaces for campus societies:
+
+- **Events** — public event database with society, date, nature/highlight, special guests, progress, venue, deadline and eligibility.
+- **Society Ops** — private society workspace with event task assignments, member/lead status, contribution tracking, budgets, sponsorships, promotion and resource/requirement tracking.
+- **Post-event analysis** — registrations, attendance, winners, participant/guest feedback, what went well, problems, suggestions, final expenditure, photos, sponsors and an event report.
+- **Feedback** — categorical feedback by event and category, with priority/sentiment and organizer summaries.
+
+The current implementation is local-first. Private society access is enforced by the application domain model in the browser for the MVP; it is **not** a server-side security boundary. A production deployment must add authenticated identity, server-side authorization, campus/society isolation and synchronized persistence before treating private pages as secure multi-user data.
+
+
 ## Deployment readiness
 
 Campus OS is a Vite static web application and is deployment-ready on any static host that runs npm install and npm run build and serves dist/. Vercel can deploy the repository directly with the default Vite detection; no backend is required for the current offline-first MVP. The application keeps campus state in browser localStorage, so a future shared deployment should add a backend implementation of the CampusRepository contract before claiming multi-user synchronization.
