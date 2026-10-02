@@ -727,3 +727,9 @@ Reference research:
 - Reduced mobile terrain scale and orbit size to preserve the visual concept without covering text.
 - Committed as 3d11e399c0d6a20d65e8b1fd90253470f4cf3f47.
 - Required next verification: test at 320px, 375px and 430px, especially Home and Network, then run npm test and npm run build.
+### 2026-10-03 — Mobile personal context access
+- Identified that the editable ProfileEditor was only reachable through the desktop sidebar profile chip, which is absent from the mobile navigation.
+- Added a Personal Context card to Settings with the current name, branch, year, clubs, interests and active projects.
+- Added an EDIT CONTEXT action that opens the existing ProfileEditor, preserving one canonical profile-editing flow.
+- Added responsive context-summary styling so the profile fields remain readable on narrow screens.
+- Verification pending: npm test, npm run build, and mobile inspection of Settings/ProfileEditor at 320/375/430px.
