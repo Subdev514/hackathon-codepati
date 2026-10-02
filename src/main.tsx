@@ -1,12 +1,12 @@
 import React from "react";
 import{createRoot}from"react-dom/client";
 import"./styles.css";
-import{AnnouncementInput,ExtractedAnnouncement,Post,Task,createCampusStore,extractAnnouncement,commitExtraction,createCampusRepository,initialState,loadUserProfile,saveUserProfile,relevanceForUser,UserProfile,campusDeadlines,answerCampusQuery,demoProfile}from"./domain";\nimport{EventsPage,SocietyOpsPage}from"./society";
+import{AnnouncementInput,ExtractedAnnouncement,Post,Task,createCampusStore,extractAnnouncement,commitExtraction,createCampusRepository,initialState,loadUserProfile,saveUserProfile,relevanceForUser,UserProfile,campusDeadlines,answerCampusQuery,demoProfile}from"./domain";\nimport{EventsPage,SocietyOpsPage,FeedbackPage}from"./society";
 
 const repository=createCampusRepository();
 const store=createCampusStore(repository.load());
 
-const navItems=[["01","Home","⌂"],["02","For You","✦"],["03","Explore","◌"],["04","Events","▦"],["05","My Tasks","✓"],["06","Network","◎"],["07","Society Ops","▤"],["08","Settings","⚙"]];
+const navItems=[["01","Home","⌂"],["02","For You","✦"],["03","Explore","◌"],["04","Events","▦"],["05","My Tasks","✓"],["06","Network","◎"],["07","Society Ops","▤"],["08","Feedback","◍"],["09","Settings","⚙"]];
 
 function App(){
 const pathname=window.location.pathname.replace(/\/+$/, "")||"/";
@@ -37,6 +37,7 @@ Explore:{title:"Explore — Campus OS",description:"Explore campus events, oppor
 Network:{title:"Network — Campus OS",description:"Explore relationships between campus people, events, opportunities, resources, projects, deadlines and tasks."},
 Events:{title:"Events — Campus OS",description:"Structured campus events with society, dates, eligibility, venues, deadlines and progress."},
 "Society Ops":{title:"Society Operations — Campus OS",description:"Private society event operations, tasks, budgets, promotion and resources."},
+Feedback:{title:"Feedback — Campus OS",description:"Categorical feedback and suggestions for campus events and societies."},
 Settings:{title:"Settings — Campus OS",description:"Manage Campus OS appearance, privacy documentation, terms and product data-protection context."}
 }[tab as "Home"|"For You"|"Explore"|"My Tasks"|"Network"|"Settings"];
 React.useEffect(()=>{const id=requestAnimationFrame(()=>setLoading(false));return()=>cancelAnimationFrame(id)},[]);
@@ -63,7 +64,7 @@ return <div className="app-shell">
 {tab==="For You"&&<ForYou state={state} profile={profile} filtered={filtered} tasks={tasks} toggle={toggle} editProfile={()=>setShowProfile(true)}/>}
 {tab==="Explore"&&<Explore filtered={filtered} liked={liked} setLiked={setLiked}/>}
 {tab==="My Tasks"&&<TasksPage state={state} tasks={tasks} toggle={toggle}/>}
-{tab==="Network"&&<Relationship state={state} selectedId={networkEntityId}/>}\n{tab==="Events"&&<EventsPage state={state} mutate={fn=>{fn(store);sync()}}/>}\n{tab==="Society Ops"&&<SocietyOpsPage state={state} profile={profile} mutate={fn=>{fn(store);sync()}}/>}
+{tab==="Network"&&<Relationship state={state} selectedId={networkEntityId}/>}\n{tab==="Events"&&<EventsPage state={state} mutate={fn=>{fn(store);sync()}}/>}\n{tab==="Society Ops"&&<SocietyOpsPage state={state} profile={profile} mutate={fn=>{fn(store);sync()}}/>}\n{tab==="Feedback"&&<FeedbackPage state={state} profile={profile} mutate={fn=>{fn(store);sync()}}/>}
 {tab==="Settings"&&<SettingsPage view={settingsView} setView={setSettingsView} theme={theme} setTheme={setTheme} profile={profile} editProfile={()=>setShowProfile(true)}/>}
 </main>
 {error&&<div className="error-toast" role="alert">{error}<button onClick={()=>setError("")}>×</button></div>}
