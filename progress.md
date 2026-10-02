@@ -225,10 +225,11 @@ Acceptance:
 - generated tasks use canonical entity IDs
 - graph actions resolve for both seeded and generated data
 - deadline cards resolve their originating entity/task
-- regression tests cover the source-link contract\n- Seed workflow tasks now use canonical entity IDs. Graph action lookup now resolves tasks by entity ID. Added regression coverage for seeded and generated task source integrity.
+- regression tests cover the source-link contract
+- Seed workflow tasks now use canonical entity IDs. Graph action lookup now resolves tasks by entity ID. Added regression coverage for seeded and generated task source integrity.
 
 ### CP11B — Campus Copilot
-Status: PLANNED
+Status: COMPLETE
 Goal: let a student ask natural-language questions about their campus workflow using the existing graph and profile context.
 Acceptance:
 - deterministic local query engine works without an API key
@@ -236,6 +237,8 @@ Acceptance:
 - profile context can change the answer
 - no fabricated campus facts
 - AI can later replace the query engine behind a clean provider boundary
+- Added answerCampusQuery() with graph-grounded task, deadline, event and profile-relevance queries.
+- Added a Home Campus Copilot panel that clearly states answers are limited to stored campus state.
 
 ### CP11C — Demo-grade interaction polish
 Status: PLANNED
@@ -494,4 +497,11 @@ Remaining work:
 - Fixed team-size extraction to accept hyphen, en dash, em dash, or "to" separators.
 - Strengthened the test assertion to verify the requirement is present rather than depending on array position.
 - Verification from this environment is limited to source inspection and direct regex exercise; the developer checkout must run npm test and npm run build to confirm the full toolchain.
-\n### 2026-10-02 — CP11A complete\n- Normalized seeded task sources to canonical entity IDs.\n- Updated the relationship graph to resolve generated actions by entity ID.\n- Added regression coverage proving seeded and generated task sources resolve to real entities.\n- Next checkpoint: CP11B Campus Copilot.\n
+
+### 2026-10-02 — CP11A complete\n- Normalized seeded task sources to canonical entity IDs.\n- Updated the relationship graph to resolve generated actions by entity ID.\n- Added regression coverage proving seeded and generated task sources resolve to real entities.\n- Next checkpoint: CP11B Campus Copilot.\n
+### 2026-10-02 — CP11B complete
+- Added a deterministic Campus Copilot query engine over the existing campus graph, deadlines, tasks and user profile.
+- Added Home UI for natural-language workflow/deadline/event questions.
+- Added tests proving answers remain connected to stored entities and tasks.
+- No external AI key or fabricated campus facts are used.
+- Next checkpoint: CP11C demo-grade interaction polish.
