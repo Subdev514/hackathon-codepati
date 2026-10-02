@@ -434,3 +434,14 @@ Remaining work:
 - Audited domain, UI, styles, package scripts, tests, CI and README for consistency.
 - Fixed mobile primary-action visibility after audit.
 - Final state: the planned hackathon MVP is complete; CP10 remains optional and intentionally deferred.
+### 2026-10-02 — Local compilation audit repair
+- Performed a file-by-file source/config audit after local npm execution exposed parser and extraction defects.
+- Fixed the malformed JSX literal newline in src/main.tsx.
+- Fixed double-escaped organizer and deadline regexes in src/domain.ts.
+- Fixed requirement extraction for the phrase “submit their idea”.
+- Added deadline timeline regression coverage in src/domain.test.ts.
+- Scanned all tracked project files for accidental literal \\n sequences and unintended double backslashes; none remain.
+- Independently exercised the organizer/deadline/requirement matching logic against the documented hackathon announcement; expected matches are produced.
+- Cross-file contract audit found one known non-compilation consistency issue: seeded task sources use entity names while extracted task sources use entity IDs. This is intentionally deferred from the compilation repair to avoid mixing a behavior refactor into the audit.
+- Actual local Vite/TypeScript execution still must be confirmed from the developer machine; this environment cannot reach GitHub to clone/install the repository.
+- Next action: developer pulls this audited version and runs npm test, then npm run build. No further source changes should be made before those results unless a new failure is observed.
