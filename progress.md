@@ -164,10 +164,14 @@ Status: COMPLETE
 - Verification: source-level UI/state review completed.
 
 #### CP10C — Broader campus information types
-Status: NOT STARTED
+Status: COMPLETE
 - Support event, opportunity, resource, notice, competition, project and deadline-oriented announcements.
 - Preserve first-class entities/relationships for each type.
 - Add representative demo/test cases.
+- Added first-class notice and competition entity types; resource/project types were already present and are now produced by extraction.
+- Create Announcement now exposes EVENT, OPPORTUNITY, RESOURCE, NOTICE, COMPETITION and PROJECT.
+- Added extraction tests for resource, notice and competition inputs plus deadline relationships.
+- Verification: source-level type/extraction/test review completed.
 
 #### CP10D — Personal campus workspace
 Status: NOT STARTED
@@ -390,6 +394,9 @@ Remaining work:
 
 ### 2026-10-02 — CP10B interactive graph complete
 - Completed CP10B. The graph is now an exploration surface over real domain entities rather than a static illustration.
+
+### 2026-10-02 — CP10C broader information types complete
+- Completed CP10C. Campus OS can preserve more than event/opportunity records without flattening them into posts.
 
 ### 2026-10-02 — Final CP9 audit
 - Re-read progress.md before final audit as required by the execution contract.
