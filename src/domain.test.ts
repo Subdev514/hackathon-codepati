@@ -53,7 +53,7 @@ describe("campus information types",()=>{
 describe("personal workspace",()=>{
  it("loads the demo profile safely and uses active projects for relevance",()=>{
   const post={id:99,type:"PROJECT",title:"Campus OS planning",body:"Work on the Campus OS dashboard",author:"Team",club:"Tech Society",time:"now",votes:0,comments:0,tags:["Campus OS"],linked:"Campus OS"};
-  const profile={...({id:"u",name:"A",branch:"CSE",year:2,interests:[],clubs:[],activeProjects:["Campus OS"]})};
+  const profile={...({id:"u",name:"A",branch:"CSE",year:2,interests:[],clubs:[],activeProjects:["Campus OS"],role:"student" as const})};
   expect(profile.activeProjects).toContain("Campus OS");
   expect(relevanceForUser(post,profile).reasons.join(" ")).toContain("active project");
  });
@@ -86,7 +86,7 @@ describe("persistence boundary",()=>{
 
 describe("campus copilot",()=>{
  it("answers workflow questions only from connected campus state",()=>{
-  const profile={id:"u",name:"A",branch:"CSE",year:2,interests:["Hackathon"],clubs:["AI Club"],activeProjects:["Campus OS"]};
+  const profile={id:"u",name:"A",branch:"CSE",year:2,interests:["Hackathon"],clubs:["AI Club"],activeProjects:["Campus OS"],role:"student" as const};
   const result=answerCampusQuery(initialState,profile,"What do I need to do for the hackathon?");
   expect(result.answer).toContain("Register for AI Hackathon");
   expect(result.tasks.every(t=>initialState.entities.some(e=>e.id===t.source))).toBe(true);
@@ -100,7 +100,7 @@ describe("campus copilot",()=>{
   expect(result.entities.some(e=>e.id==="hack-deadline")).toBe(true);
  });
  it("uses profile context for relevance questions",()=>{
-  const profile={id:"u",name:"A",branch:"CSE",year:2,interests:["Career"],clubs:["Tech Society"],activeProjects:[]};
+  const profile={id:"u",name:"A",branch:"CSE",year:2,interests:["Career"],clubs:["Tech Society"],activeProjects:[],role:"student" as const};
   const result=answerCampusQuery(initialState,profile,"What is relevant to me?");
   expect(result.answer).toContain("Microsoft");
   expect(result.reason).toContain("career opportunity");
@@ -185,5 +185,37 @@ describe("public society pages",()=>{
   expect(upcoming.joinReason).toBeTruthy();
   expect(past.winners.length).toBeGreaterThan(0);
   expect(past.media.length).toBeGreaterThan(0);
+ });
+});
+
+
+describe("knowledge, roles and analytics",()=>{
+ it("discovers connected knowledge from natural-language intent and profile context",()=>{
+  const profile={...demoProfile,role:"student" as const};
+  const results=discoverCampus(initialState,profile,"Which opportunities match my career interests?");
+  expect(results.length).toBeGreaterThan(0);
+  expect(results.some(x=>/Microsoft/i.test(x.title))).toBe(true);
+ });
+ it("keeps role permissions explicit",()=>{
+  expect(roleCan("student","create_workflow")).toBe(true);
+  expect(roleCan("student","sync_notion")).toBe(false);
+  expect(roleCan("club_coordinator","sync_notion")).toBe(true);
+ });
+ it("exposes explicit registration, volunteer and project dependency chains",()=>{
+  expect(initialState.relationships.some(r=>r.relation==="registration_for"&&r.to==="ai-hackathon")).toBe(true);
+  expect(initialState.relationships.some(r=>r.relation==="volunteers_for")).toBe(true);
+  expect(initialState.relationships.some(r=>r.relation==="milestone_of")).toBe(true);
+ });
+ it("aggregates workflow analytics from the graph",()=>{
+  const metrics=analyticsSnapshot(initialState);
+  expect(metrics.pendingRegistrations).toBeGreaterThan(0);
+  expect(metrics.upcomingDeadlines).toBeGreaterThan(0);
+  expect(metrics.workload).toBeGreaterThan(0);
+  expect(metrics.projects.some(x=>x.project.id==="campus-os-project")).toBe(true);
+ });
+ it("generates personalized workflow actions from relevant opportunities",()=>{
+  const profile={...demoProfile,interests:["Career"],role:"student" as const};
+  const actions=personalizedWorkflow(initialState,profile);
+  expect(actions.some(x=>/Microsoft/i.test(x.title))).toBe(true);
  });
 });
