@@ -522,3 +522,11 @@ Status: FIXED
 - Reproduced from the supplied screenshot: the feedback labels were relying on browser-inline label behavior, causing the textarea and field captions to collapse into the same horizontal line.
 - Added scoped Feedback form CSS: block labels, full-width controls, box sizing, explicit textarea sizing, desktop two-column fields and mobile single-column fields.
 - Awaiting/using repository CI and Vercel production rebuild for final deployment verification.
+
+
+### 2026-10-03 — Settings Personal Context layout bug
+Status: FIXED
+- Reproduced from the supplied screenshot: the Personal Context header was allowing the EDIT CONTEXT control to consume the header width, leaving the profile heading in an unnaturally narrow column.
+- Scoped the fix to the Personal Context card: the copy column now flexes, while EDIT CONTEXT keeps intrinsic button width on desktop.
+- Preserved the full-width edit control behavior for mobile layouts.
+- Production verification will follow the normal CI/Vercel rebuild.
