@@ -39,7 +39,7 @@ Events:{title:"Events — Campus OS",description:"Structured campus events with 
 "Society Ops":{title:"Society Operations — Campus OS",description:"Private society event operations, tasks, budgets, promotion and resources."},
 Feedback:{title:"Feedback — Campus OS",description:"Categorical feedback and suggestions for campus events and societies."},
 Settings:{title:"Settings — Campus OS",description:"Manage Campus OS appearance, privacy documentation, terms and product data-protection context."}
-}[tab as "Home"|"For You"|"Explore"|"My Tasks"|"Network"|"Settings"];
+}[tab as "Home"|"For You"|"Explore"|"Events"|"My Tasks"|"Network"|"Society Ops"|"Feedback"|"Settings"];
 React.useEffect(()=>{const id=requestAnimationFrame(()=>setLoading(false));return()=>cancelAnimationFrame(id)},[]);
 React.useEffect(()=>{document.title=pageMeta.title;document.querySelector('meta[name="description"]')?.setAttribute("content",pageMeta.description);document.querySelector('meta[property="og:title"]')?.setAttribute("content",pageMeta.title);document.querySelector('meta[property="og:description"]')?.setAttribute("content",pageMeta.description);document.querySelector('meta[name="twitter:title"]')?.setAttribute("content",pageMeta.title);document.querySelector('meta[name="twitter:description"]')?.setAttribute("content",pageMeta.description);document.querySelector('link[rel="canonical"]')?.setAttribute("href",window.location.origin+"/");document.querySelector('meta[name="robots"]')?.setAttribute("content","index,follow")},[pageMeta.title,pageMeta.description]);
 const state=store.getState();
