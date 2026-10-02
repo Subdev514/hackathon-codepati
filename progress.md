@@ -539,3 +539,31 @@ Remaining work:
 - Developer verification has now completed the required `npm test` and `npm run build` checks successfully.
 - Vercel account access was inspected; the connected team currently has no Campus OS project, and the available deployment connector cannot provision one from this session.
 - CP11D is therefore blocked only on creating/connecting the Vercel project; no application-code blocker remains.
+
+### 2026-10-03 — CP12 frontend redesign plan
+Status: IN PROGRESS
+Goal: replace the functional prototype presentation with a cohesive, dynamic Campus OS interface inspired by the supplied monochrome 3D-grid reference while preserving the existing domain/store/workflow contracts.
+
+Execution order:
+- CP12A Design system + motion language
+- CP12B App shell/navigation
+- CP12C Home command center + animated campus terrain
+- CP12D Feed and announcement experience
+- CP12E Tasks + deadline intelligence
+- CP12F Network relationship visualization
+- CP12G Campus Copilot
+- CP12H Profile/personalization
+- CP12I Responsive/mobile pass
+- CP12J visual QA + regression verification
+
+Design direction:
+- Near-black canvas with graphite surfaces and white/lime signal accents.
+- Perspective/isometric grid motion as the visual metaphor for the connected campus graph.
+- Depth, parallax, hover response and staggered entrance animations used to communicate state, not decoration.
+- Preserve the core POST → UNDERSTOOD → CONNECTED → ACTIONABLE journey.
+- Keep domain logic in src/domain.ts; frontend redesign must not move business rules into React presentation code.
+- Avoid adding heavy animation dependencies unless necessary; prefer CSS/DOM motion for the current Vite MVP.
+
+Reference research:
+- Reviewed current React animation/component ecosystem, including React Bits and Three.js dashboard patterns.
+- Applied relevant React performance and shadcn design-system guidance without forcing a framework migration.
