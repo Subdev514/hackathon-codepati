@@ -665,7 +665,7 @@ Verification:
 - CI/build verification follows the repository's existing GitHub Actions pipeline.
 
 ## CP16 — Knowledge graph, Notion sync, discovery, personalization, roles & analytics
-Status: IN PROGRESS
+Status: COMPLETE
 
 Requested product expansion:
 1. Notion knowledge layer — create/sync campus knowledge pages and databases and make the synced knowledge usable by Campus OS workflows.
@@ -727,3 +727,23 @@ Status: COMPLETE
 - Added explicit registration_for, volunteers_for, milestone_of and assigned_to dependency relationships.
 - Network now surfaces dependency chains alongside the selected graph object.
 - Added Analytics workspace for pending registrations, upcoming deadlines, participation, open workload, workload by source and project/milestone progress.
+
+
+### CP16G — Verification and release
+Status: COMPLETE
+- Added regression coverage for knowledge discovery, role permissions, dependency chains, personalized workflow generation and analytics, plus UI presence checks.
+- Pull-request validation run 206 completed successfully after one parse fix and one test-import fix; the successful run covered 26 domain tests and 4 settings/UI tests.
+- The validation branch was closed without merging because the product implementation was already on main.
+- Latest main production deployment: `for-friends-docrv9fun-sarkarshivaditya-lab.vercel.app` — READY on commit `a678112bce1583ef3469b7e5b1bde85435b685bc`.
+- README documents the knowledge layer, Notion boundary, discovery model, personalized workflow, roles and analytics.
+- Notion remains explicitly credential-gated: the code is production-wired, but an actual workspace sync requires deployment secrets `NOTION_TOKEN` and `NOTION_PARENT_PAGE_ID`.
+
+## CP16 completion
+Status: COMPLETE
+All requested product capabilities are represented in the application architecture and UI:
+- Notion knowledge layer with server-side database/page sync boundary
+- Natural-language, graph-grounded discovery across authorized knowledge
+- Personalized tasks, reminders, saved opportunities and project actions
+- Explicit event/registration/task, club/event/volunteer and project/milestone/member dependency chains
+- Student and Club Coordinator role experiences with role-aware permissions
+- Analytics for registrations, deadlines, participation, workload and project progress
