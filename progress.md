@@ -292,3 +292,24 @@ Next action: harden UX states, extraction edge cases and dynamic graph presentat
 - Added src/domain.test.ts covering hackathon extraction and commit deduplication.
 - Local runtime could not be used because outbound GitHub access is unavailable in the execution container; repository-side CI will be used for build/test verification.
 - Next action: add CI workflow, then inspect its result before declaring verification complete.
+
+### 2026-10-02 — CP8 product polish / CP9 verification infrastructure
+- Added responsive modal, extraction chips, relationship rows, confidence indicator, workflow preview and transparent relevance presentation.
+- Updated README with the real architecture, demo sequence and current scope.
+- Added GitHub Actions workflow to run npm test and npm run build on main/PR changes.
+- The GitHub connector exposes no push-triggered workflow-run listing for this repository, so CI execution cannot yet be independently observed through the available connector.
+- Local container verification is blocked by unavailable outbound GitHub DNS/network access.
+- No deployment or external AI integration has been added; those remain optional after the core MVP.
+
+## 13. Current execution state
+
+Active checkpoint: CP9 — Verification and demo hardening.
+
+Completed functional checkpoints: CP0, CP1, CP2, CP3, CP4, CP5, CP6, CP7, CP8.
+
+Remaining actions:
+1. Perform a final source-level consistency audit of domain.ts, main.tsx, styles.css, package.json and README.
+2. Fix any issues found.
+3. Update this file with final verification status and demo instructions.
+4. Mark CP9 complete only when the codebase is internally consistent and repository-side verification is configured; explicitly note any environment limitation preventing direct execution.
+5. Re-read progress.md and confirm no planned MVP checkpoint remains incomplete.
