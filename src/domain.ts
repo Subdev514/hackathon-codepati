@@ -4,9 +4,20 @@ export type Entity={id:string;type:EntityType;name:string;meta?:string};
 export type Relationship={from:string;relation:RelationType;to:string;reason?:string};
 export type Post={id:number;type:string;title:string;body:string;author:string;club:string;time:string;votes:number;comments:number;tags:string[];deadline?:string;linked?:string;sourceText?:string};
 export type Task={id:number;title:string;meta:string;done:boolean;source:string};
+export type CampusEvent={id:string;name:string;societyId:string;societyName:string;date:string;nature:string;highlight:string;specialGuests:string[];progress:number;venue:string;deadline:string;eligibility:string;status:"upcoming"|"in_progress"|"completed"|"cancelled";};
+export type Society={id:string;name:string;description:string;members:string[];leads:string[];};
+export type SocietyTask={id:number;eventId:string;societyId:string;title:string;assignee:string;role:"member"|"lead";done:boolean;dueDate:string;priority:"low"|"medium"|"high";};
+export type SocietyBudget={eventId:string;societyId:string;estimated:number;actual:number;sponsorship:number;currency:string;};
+export type PromotionItem={id:string;eventId:string;societyId:string;channel:string;owner:string;plannedDate:string;status:"planned"|"in_progress"|"done";};
+export type ResourceRequirement={id:string;eventId:string;societyId:string;category:"equipment"|"room"|"volunteer"|"certificate"|"prize"|"technical"|"other";item:string;quantity:string;owner:string;status:"needed"|"requested"|"confirmed"|"done";};
+export type SocietyAnalysis={eventId:string;registrations:number;attendees:number;winners:string[];participantFeedback:string[];guestFeedback:string[];whatWentWell:string[];problems:string[];suggestions:string[];finalExpenditure:number;photos:string[];sponsors:string[];eventReport:string;};
+export type FeedbackCategory="event"|"venue"|"organization"|"promotion"|"content"|"volunteers"|"technical"|"budget"|"other";
+export type FeedbackRecord={id:string;eventId?:string;societyId?:string;category:FeedbackCategory;priority:"low"|"medium"|"high";sentiment:"positive"|"neutral"|"negative";text:string;submitter:string;createdAt:string;};
+export type SocietyMembership={societyId:string;userId:string;role:"member"|"lead"|"admin";};
+export type SocietyWorkspace={societyId:string;private:boolean;};
 export type AnnouncementInput={title:string;body:string;type:string;author:string;club:string};
 export type ExtractedAnnouncement={input:AnnouncementInput;event?:{name:string;date?:string};organization?:{name:string};opportunity?:{name:string};deadlines:Array<{label:string;date:string}>;requirements:string[];entities:Entity[];relationships:Relationship[];tasks:Task[];confidence:number;reasons:string[]};
-export type CampusState={entities:Entity[];relationships:Relationship[];posts:Post[];tasks:Task[]};
+export type CampusState={entities:Entity[];relationships:Relationship[];posts:Post[];tasks:Task[];events:CampusEvent[];societies:Society[];societyTasks:SocietyTask[];budgets:SocietyBudget[];promotions:PromotionItem[];requirements:ResourceRequirement[];analyses:SocietyAnalysis[];feedback:FeedbackRecord[];memberships:SocietyMembership[];workspaces:SocietyWorkspace[]};
 export interface ExtractionProvider{understand(input:AnnouncementInput):Promise<ExtractedAnnouncement>}
 export type ExtractionValidation={valid:boolean;errors:string[]};
 export function validateExtraction(result:ExtractedAnnouncement):ExtractionValidation{
@@ -55,10 +66,46 @@ export const initialTasks:Task[]=[
 {id:3,title:"Prepare hackathon idea submission",meta:"AI Club · due Oct 13",done:false,source:"ai-hackathon"},
 {id:4,title:"Apply for Microsoft Ambassador",meta:"Tech Society · due Oct 18",done:false,source:"ms-ambassador"}];
 
-export const initialState:CampusState={entities,relationships,posts,tasks:initialTasks};
+export const initialEvents:CampusEvent[]=[
+{id:"ai-hackathon-2026",name:"24-Hour AI Hackathon",societyId:"ai-club-society",societyName:"AI Club",date:"October 15, 2026",nature:"Competition / Hackathon",highlight:"Build an AI project in 24 hours with teams of 2–4.",specialGuests:["Industry mentor panel"],progress:65,venue:"Innovation Lab",deadline:"October 10, 2026",eligibility:"KIIT students; teams of 2–4",status:"in_progress"},
+{id:"figma-workshop-2026",name:"Figma Crash Course",societyId:"design-club-society",societyName:"Design Club",date:"October 10, 2026",nature:"Workshop",highlight:"Hands-on components, auto-layout and prototyping.",specialGuests:[],progress:30,venue:"Design Studio",deadline:"October 8, 2026",eligibility:"Open to all students",status:"upcoming"}
+];
+export const initialSocieties:Society[]=[
+{id:"ai-club-society",name:"AI Club",description:"AI, ML and builder community.",members:["Shiv","Aarav","Riya","Kabir"],leads:["Shiv","Aarav"]},
+{id:"design-club-society",name:"Design Club",description:"Product and visual design community.",members:["Ananya","Rohit","Maya"],leads:["Ananya"]}
+];
+export const initialSocietyTasks:SocietyTask[]=[
+{id:1,eventId:"ai-hackathon-2026",societyId:"ai-club-society",title:"Confirm Innovation Lab booking",assignee:"Aarav",role:"lead",done:true,dueDate:"October 5, 2026",priority:"high"},
+{id:2,eventId:"ai-hackathon-2026",societyId:"ai-club-society",title:"Publish registration poster",assignee:"Riya",role:"member",done:true,dueDate:"October 4, 2026",priority:"high"},
+{id:3,eventId:"ai-hackathon-2026",societyId:"ai-club-society",title:"Confirm mentors and special guests",assignee:"Shiv",role:"lead",done:false,dueDate:"October 8, 2026",priority:"high"},
+{id:4,eventId:"ai-hackathon-2026",societyId:"ai-club-society",title:"Arrange certificates and prizes",assignee:"Kabir",role:"member",done:false,dueDate:"October 12, 2026",priority:"medium"}
+];
+export const initialBudgets:SocietyBudget[]=[{eventId:"ai-hackathon-2026",societyId:"ai-club-society",estimated:50000,actual:18500,sponsorship:25000,currency:"INR"}];
+export const initialPromotions:PromotionItem[]=[
+{id:"promo-ai-instagram",eventId:"ai-hackathon-2026",societyId:"ai-club-society",channel:"Instagram",owner:"Riya",plannedDate:"October 3, 2026",status:"done"},
+{id:"promo-ai-whatsapp",eventId:"ai-hackathon-2026",societyId:"ai-club-society",channel:"WhatsApp / Campus groups",owner:"Kabir",plannedDate:"October 6, 2026",status:"in_progress"},
+{id:"promo-ai-classroom",eventId:"ai-hackathon-2026",societyId:"ai-club-society",channel:"Classroom outreach",owner:"Aarav",plannedDate:"October 7, 2026",status:"planned"}
+];
+export const initialRequirements:ResourceRequirement[]=[
+{id:"req-lab",eventId:"ai-hackathon-2026",societyId:"ai-club-society",category:"room",item:"Innovation Lab",quantity:"1 room",owner:"Aarav",status:"confirmed"},
+{id:"req-cert",eventId:"ai-hackathon-2026",societyId:"ai-club-society",category:"certificate",item:"Participant certificates",quantity:"120",owner:"Kabir",status:"requested"},
+{id:"req-prize",eventId:"ai-hackathon-2026",societyId:"ai-club-society",category:"prize",item:"Winner prize pool",quantity:"₹25,000",owner:"Shiv",status:"confirmed"},
+{id:"req-tech",eventId:"ai-hackathon-2026",societyId:"ai-club-society",category:"technical",item:"Wi-Fi, power and AV",quantity:"Event-wide",owner:"Aarav",status:"needed"}
+];
+export const initialAnalyses:SocietyAnalysis[]=[];
+export const initialFeedback:FeedbackRecord[]=[];
+export const initialMemberships:SocietyMembership[]=[
+{societyId:"ai-club-society",userId:"user-shiv",role:"lead"},
+{societyId:"design-club-society",userId:"user-shiv",role:"member"}
+];
+export const initialWorkspaces:SocietyWorkspace[]=[
+{societyId:"ai-club-society",private:true},
+{societyId:"design-club-society",private:true}
+];
+export const initialState:CampusState={entities,relationships,posts,tasks:initialTasks,events:initialEvents,societies:initialSocieties,societyTasks:initialSocietyTasks,budgets:initialBudgets,promotions:initialPromotions,requirements:initialRequirements,analyses:initialAnalyses,feedback:initialFeedback,memberships:initialMemberships,workspaces:initialWorkspaces};
 
 export function createCampusStore(seed:CampusState=initialState){
-let state:CampusState={entities:[...seed.entities],relationships:[...seed.relationships],posts:[...seed.posts],tasks:[...seed.tasks]};
+let state:CampusState={entities:[...seed.entities],relationships:[...seed.relationships],posts:[...seed.posts],tasks:[...seed.tasks],events:[...(seed.events||[])],societies:[...(seed.societies||[])],societyTasks:[...(seed.societyTasks||[])],budgets:[...(seed.budgets||[])],promotions:[...(seed.promotions||[])],requirements:[...(seed.requirements||[])],analyses:[...(seed.analyses||[])],feedback:[...(seed.feedback||[])],memberships:[...(seed.memberships||[])],workspaces:[...(seed.workspaces||[])]};
 let nextId=Math.max(99,...state.posts.map(p=>p.id),...state.tasks.map(t=>t.id))+1;
 return {
 getState:()=>state,
@@ -66,6 +113,14 @@ addPost:(post:Post)=>{state={...state,posts:[post,...state.posts]}},
 addEntities:(items:Entity[])=>{state={...state,entities:[...state.entities,...items]}},
 addRelationships:(items:Relationship[])=>{state={...state,relationships:[...state.relationships,...items]}},
 addTasks:(items:Task[])=>{state={...state,tasks:[...state.tasks,...items]}},
+addEvent:(event:CampusEvent)=>{state={...state,events:[...state.events.filter(e=>e.id!==event.id),event]}},
+removeEvent:(id:string)=>{state={...state,events:state.events.filter(e=>e.id!==id)}},
+addSocietyTask:(task:SocietyTask)=>{state={...state,societyTasks:[...state.societyTasks.filter(t=>t.id!==task.id),task]}},
+addBudget:(budget:SocietyBudget)=>{state={...state,budgets:[...state.budgets.filter(b=>b.eventId!==budget.eventId),budget]}},
+addPromotion:(item:PromotionItem)=>{state={...state,promotions:[...state.promotions.filter(p=>p.id!==item.id),item]}},
+addRequirement:(item:ResourceRequirement)=>{state={...state,requirements:[...state.requirements.filter(r=>r.id!==item.id),item]}},
+addAnalysis:(analysis:SocietyAnalysis)=>{state={...state,analyses:[...state.analyses.filter(a=>a.eventId!==analysis.eventId),analysis]}},
+addFeedback:(item:FeedbackRecord)=>{state={...state,feedback:[...state.feedback,item]}},
 toggleTask:(id:number)=>{state={...state,tasks:state.tasks.map(t=>t.id===id?{...t,done:!t.done}:t)}},
 nextId:()=>nextId++
 };
@@ -171,7 +226,7 @@ const raw=window.localStorage.getItem(STORAGE_KEY);
 if(!raw)return initialState;
 const parsed=JSON.parse(raw) as CampusState;
 if(!parsed||!Array.isArray(parsed.entities)||!Array.isArray(parsed.relationships)||!Array.isArray(parsed.posts)||!Array.isArray(parsed.tasks))return initialState;
-return parsed;
+return {...initialState,...parsed,events:Array.isArray(parsed.events)?parsed.events:initialState.events,societies:Array.isArray(parsed.societies)?parsed.societies:initialState.societies,societyTasks:Array.isArray(parsed.societyTasks)?parsed.societyTasks:initialState.societyTasks,budgets:Array.isArray(parsed.budgets)?parsed.budgets:initialState.budgets,promotions:Array.isArray(parsed.promotions)?parsed.promotions:initialState.promotions,requirements:Array.isArray(parsed.requirements)?parsed.requirements:initialState.requirements,analyses:Array.isArray(parsed.analyses)?parsed.analyses:initialState.analyses,feedback:Array.isArray(parsed.feedback)?parsed.feedback:initialState.feedback,memberships:Array.isArray(parsed.memberships)?parsed.memberships:initialState.memberships,workspaces:Array.isArray(parsed.workspaces)?parsed.workspaces:initialState.workspaces};
 }catch{return initialState}
 },
 save:(state)=>{if(typeof window==="undefined")return;try{window.localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch{}}
