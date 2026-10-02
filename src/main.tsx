@@ -9,7 +9,7 @@ const store=createCampusStore(repository.load());
 const navItems=[["01","Home","⌂"],["02","For You","✦"],["03","Explore","◌"],["04","My Tasks","✓"],["05","Network","◎"],["06","Settings","⚙"]];
 
 function App(){
-const pathname=window.location.pathname.replace(/\\/+$/, "")||"/";
+const pathname=window.location.pathname.replace(/\/+$/, "")||"/";
 if(pathname!=="/")return <NotFoundPage/>;
 const[tab,setTab]=React.useState("Home");
 const[settingsView,setSettingsView]=React.useState<"settings"|"privacy"|"terms">("settings");
