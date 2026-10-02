@@ -554,3 +554,11 @@ Execution order:
 - CP13C: society event post model/UI and upcoming/past event presentation
 - CP13D: responsive styling + tests
 - CP13E: CI/build/deployment verification and final documentation
+
+
+### CP13A — Public society domain schema
+Status: COMPLETE
+- Added public society metadata: FIC, genre, X-Factor, timeline and public member positions.
+- Added separate Society Event Post records so public society content is distinct from private Society Ops.
+- Event posts support authoring society, collaborating societies, optional description, registration link, prizes, special guests, join reason, X-Factor, media, upcoming/past status and winners.
+- Added seeded public examples and local persistence migration support.
