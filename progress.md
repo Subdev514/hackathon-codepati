@@ -454,3 +454,14 @@ Design decisions:
 - “Notion-style” means structured editable pages/databases inside Campus OS, not a dependency on Notion itself.
 - Public event records are separate from private society operational records.
 - Private access is a domain/UI boundary in this MVP, not a server-side security guarantee; true multi-user isolation requires authentication/authorization and server-side persistence.
+
+
+### 2026-10-03 — CP12A Events database
+Status: COMPLETE
+- Added first-class CampusEvent records with society, date, nature/highlight, special guests, progress, venue, deadline and eligibility.
+- Added public Events workspace with a database/table presentation.
+- Added local create/edit/delete operations through the domain store boundary.
+- Added event status and progress visibility.
+- Added persistence migration defaults so older localStorage state remains loadable.
+- Added navigation and page metadata for the Events workspace.
+- Next checkpoint: CP12B private Society Operations workspace.
