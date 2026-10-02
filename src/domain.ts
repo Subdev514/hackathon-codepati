@@ -7,6 +7,30 @@ export type Task={id:number;title:string;meta:string;done:boolean;source:string}
 export type AnnouncementInput={title:string;body:string;type:string;author:string;club:string};
 export type ExtractedAnnouncement={input:AnnouncementInput;event?:{name:string;date?:string};organization?:{name:string};opportunity?:{name:string};deadlines:Array<{label:string;date:string}>;requirements:string[];entities:Entity[];relationships:Relationship[];tasks:Task[];confidence:number;reasons:string[]};
 export type CampusState={entities:Entity[];relationships:Relationship[];posts:Post[];tasks:Task[]};
+export interface ExtractionProvider{understand(input:AnnouncementInput):Promise<ExtractedAnnouncement>}
+export type ExtractionValidation={valid:boolean;errors:string[]};
+export function validateExtraction(result:ExtractedAnnouncement):ExtractionValidation{
+const errors:string[]=[];
+if(!result.input.title.trim()||!result.input.body.trim())errors.push("Announcement title and body are required");
+if(result.confidence<0||result.confidence>1)errors.push("Confidence must be between 0 and 1");
+const entityIds=new Set<string>();
+for(const entity of result.entities){if(!entity.id||!entity.name)errors.push("Every entity needs an id and name");if(entityIds.has(entity.id))errors.push("Duplicate entity id: "+entity.id);entityIds.add(entity.id)}
+for(const relation of result.relationships){
+if(!entityIds.has(relation.from)&&!result.entities.some(e=>e.id===relation.from))errors.push("Relationship source is missing: "+relation.from);
+if(!entityIds.has(relation.to)&&!result.entities.some(e=>e.id===relation.to))errors.push("Relationship target is missing: "+relation.to);
+}
+for(const task of result.tasks)if(!task.title.trim()||!task.source)errors.push("Every generated task needs a title and source");
+return {valid:errors.length===0,errors};
+}
+export function normalizeExtraction(result:ExtractedAnnouncement):ExtractedAnnouncement{
+const entities=[...new Map(result.entities.map(e=>[e.id,e])).values()];
+const relationships=[...new Map(result.relationships.map(r=>[r.from+"|"+r.relation+"|"+r.to,r])).values()].filter(r=>entities.some(e=>e.id===r.from)&&entities.some(e=>e.id===r.to));
+const deadlines=[...new Map(result.deadlines.map(d=>[d.label+"|"+d.date,d])).values()];
+const requirements=[...new Set(result.requirements)];
+const tasks=[...new Map(result.tasks.map(t=>[t.title+"|"+t.source,t])).values()];
+return {...result,entities,relationships,deadlines,requirements,tasks,reasons:[...new Set(result.reasons)]};
+}
+export const deterministicExtractionProvider:ExtractionProvider={understand:async(input)=>normalizeExtraction(extractAnnouncement(input))};
 export const entities:Entity[]=[
 {id:"ai-club",type:"club",name:"AI Club",meta:"Student organization"},
 {id:"ai-hackathon",type:"event",name:"AI Hackathon",meta:"24-hour · Oct 15"},
@@ -112,7 +136,10 @@ const confidence=Math.min(0.98,0.45+reasons.length*0.09);
 return {input,event:isOpportunity?undefined:{name:eventName,date:dateMatch?dateText(dateMatch[1]):undefined},organization:organizationName?{name:organizationName}:undefined,opportunity:isOpportunity?{name:eventName}:undefined,deadlines,requirements,entities:extractedEntities,relationships:extractedRelationships,tasks,confidence,reasons};
 }
 
-export function commitExtraction(store:ReturnType<typeof createCampusStore>,result:ExtractedAnnouncement){
+export function commitExtraction(store:ReturnType<typeof createCampusStore>,rawResult:ExtractedAnnouncement){
+const result=normalizeExtraction(rawResult);
+const validation=validateExtraction(result);
+if(!validation.valid)throw new Error("Invalid extraction: "+validation.errors.join("; "));
 const ids=new Set(store.getState().entities.map(e=>e.id));
 store.addEntities(result.entities.filter(e=>!ids.has(e.id)));
 store.addRelationships(result.relationships.filter(r=>!store.getState().relationships.some(x=>x.from===r.from&&x.relation===r.relation&&x.to===r.to)));
