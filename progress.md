@@ -251,9 +251,9 @@ Personalization affects relevance and surfaced actions, but reasons remain visib
 
 ## 12. Current execution state
 
-Active checkpoint: CP6 — Persistence.
+Active checkpoint: CP8 — Product loop polish.
 
-Next action: wire local persistence into startup/mutations. Then finish CP7 transparent personalization.
+Next action: harden UX states, extraction edge cases and dynamic graph presentation. Then run verification/build and document final demo path.
 
 
 ### 2026-10-02 — CP2/CP4/CP5 announcement vertical slice
@@ -278,3 +278,11 @@ Next action: wire local persistence into startup/mutations. Then finish CP7 tran
 - Relevance is intentionally explainable: interest matches, followed-club matches and year-aware opportunity relevance each expose a reason.
 - No opaque recommendation score is presented to the user.
 - Verification: static review completed; build/browser verification still pending.
+
+
+### 2026-10-02 — CP6/CP7 application integration
+- Application startup now hydrates the domain store from localStorage.
+- Store mutations save the current state, making accepted announcements and task completion reload-safe.
+- Added transparent “For You” relevance view using branch/year/interests/clubs context and human-readable reasons.
+- Added responsive styles for the full announcement understanding flow.
+- Verification: static review completed; automated build/browser verification still pending.
