@@ -598,3 +598,24 @@ Status: COMPLETE
 - Live JavaScript bundle was checked for the public society surface and contains the society directory, X-Factor, member positions, upcoming events, past events and collaboration sections.
 - README updated with the public society system.
 - Public Society page is separate from private Society Ops data.
+
+
+## CP14 — Production-grade Settings, Privacy & Policy Center
+Status: IN PROGRESS
+
+Requested overhaul:
+1. Expand the Settings experience from a short legal summary into a professional policy center.
+2. Expand Privacy Policy with data categories, purposes, local-first architecture, rights, retention/deletion, security, sharing, children/minors, international transfers, changes and contact/grievance handling.
+3. Expand Terms & Conditions with acceptance, eligibility, campus content, acceptable use, accounts, intellectual property, third-party services, AI/automation, availability, security, disclaimers, limitation concepts, suspension, changes and governing-law placeholders.
+4. Replace the brief DPDP card with a detailed India-focused DPDP compliance reference: Data Principal/Data Fiduciary concepts, notice/consent, purpose limitation, rights, grievance, retention, security, breach handling and deployment responsibilities.
+5. Replace the brief HIPAA card with a detailed healthcare compliance reference covering covered entities, business associates, PHI/ePHI, Privacy/Security/Breach Notification Rules, administrative/physical/technical safeguards, BAAs and deployment boundaries. Do not claim certification.
+6. Add an Accessibility Policy/Statement with WCAG 2.2 AA target, POUR principles, keyboard/screen-reader considerations, focus, motion, contrast, forms, media, testing and feedback.
+7. Add production-oriented Security & Responsible Disclosure policy.
+8. Add Cookies & Local Storage policy reflecting the current local-first browser architecture.
+9. Add Acceptable Use policy.
+10. Add AI & Automation policy describing the Campus Copilot/product automation boundary and user verification responsibilities.
+11. Add a Policy Center index so every document is discoverable from Settings without making the user hunt through the UI.
+12. Improve visual hierarchy, metadata, section navigation, callouts, policy cards and responsive/mobile behavior.
+13. Add accessibility affordances in the UI itself: keyboard-visible focus, semantic landmarks, reduced-motion support and readable policy typography.
+14. Keep claims precise: distinguish implemented prototype behavior from production controls that must be configured by an institution/deployment owner.
+15. Add regression coverage for policy sections and run tests/build/production verification.
