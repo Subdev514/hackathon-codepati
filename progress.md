@@ -491,8 +491,27 @@ Status: COMPLETE
 - Feedback remains local-first and is not represented as anonymous/server-secured until a backend is added.
 
 ### 2026-10-03 — CP12E Verification / hardening
-Status: IN PROGRESS
+Status: COMPLETE
 - Added regression tests for private access, society CRUD, budgets, requirements, analysis, contribution and categorical feedback.
 - Added mobile CSS for event database, private workspace and feedback.
-- Current Vercel deployment is being rebuilt from the latest commits; earlier builds exposed syntax issues during incremental edits, which were corrected before the latest rebuild.
-- Next: confirm the latest deployment reaches READY, inspect the live UI if available, update README and mark CP12 complete.
+- Fixed the repository CI workflow: npm caching was requested without a lockfile, causing setup-node to fail before tests. The cache option was removed.
+- GitHub Actions run 157 passed all checks: npm install, 15 Vitest tests, and npm run build.
+- Latest Vercel production deployment is READY on commit f5b302806b1a95d990c40d313f38d29c47e56585.
+- Live deployment returned HTTP 200 and the bundled production JavaScript contains the Events, private Society Ops and Feedback surfaces.
+- README documents the complete workflow and the limitation that browser-local private access is not a server-side security boundary.
+
+
+## CP12 completion
+Status: COMPLETE
+All requested Notion-style workflows are implemented, persisted through the existing local-first repository boundary, mobile-hardened, regression-tested and production-built:
+- Public Events database
+- Private Society Operations workspace
+- Event task/member/lead tracking
+- Contribution chart
+- Budget and sponsorship tracker
+- Promotion tracker
+- Resource/requirement tracker
+- Post-event analysis
+- Categorical feedback/suggestions
+- README and progress documentation
+- CI and Vercel verification
