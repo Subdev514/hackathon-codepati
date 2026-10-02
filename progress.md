@@ -253,7 +253,7 @@ Personalization affects relevance and surfaced actions, but reasons remain visib
 
 Active checkpoint: CP6 — Persistence.
 
-CP2, CP4 and CP5 are implemented in the UI/domain vertical slice. Next action: make the campus store reload-safe with versioned localStorage hydration, then continue to personalization and polish.
+Next action: connect the new local persistence helpers to application startup and every store mutation, then continue to personalization.
 
 
 ### 2026-10-02 — CP2/CP4/CP5 announcement vertical slice
@@ -264,3 +264,10 @@ CP2, CP4 and CP5 are implemented in the UI/domain vertical slice. Next action: m
 - Relationship view now reads from the domain state instead of fixed graph labels.
 - Workflow task completion now mutates the shared domain store and refreshes the UI.
 - Verification: static review completed; CSS/build/browser verification still pending.
+
+
+### 2026-10-02 — CP6 persistence foundation
+- Added versioned localStorage key and safe load/save helpers to the domain layer.
+- Invalid or unavailable stored state falls back to the seeded demo state.
+- Persistence is browser-only and does not leak storage concerns into React components beyond startup/mutation wiring.
+- Verification: static review completed; build/browser verification still pending.
