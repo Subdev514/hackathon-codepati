@@ -684,3 +684,9 @@ Reference research:
 - Refactored `PolicyPage` into `PrivacyDocument` and `TermsDocument` components and removed the nested policy-heading ternary in favor of explicit conditional fragments.
 - Replaced raw `&` in the Terms heading with `&amp;` for unambiguous JSX text parsing.
 - Required next verification: pull the latest commits, then rerun `npm test` and `npm run build`.
+
+### 2026-10-03 — Policy header parser correction
+- Corrected the previous refactor: the policy heading still used conditional JSX fragments and was itself rejected by Vite/Rolldown.
+- Replaced the heading fragments with plain computed `title` and `subtitle` strings, eliminating JSX branching from the header entirely.
+- Re-audited `main.tsx`: no literal escaped newline sequences remain; JSX fragment and brace counts are balanced (4/4 fragments, 383/383 braces).
+- Required next verification: pull commit `0563dac519a81f751361f9a34c7c490371e3c022` and run `npm test` and `npm run build`.
