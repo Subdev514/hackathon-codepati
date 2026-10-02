@@ -31,6 +31,8 @@ describe("extraction boundary",()=>{
   const duplicated={...result,entities:[...result.entities,...result.entities],relationships:[...result.relationships,...result.relationships],tasks:[...result.tasks,...result.tasks]};
   const normalized=normalizeExtraction(duplicated);
   expect(validateExtraction(normalized).valid).toBe(true);
+  const invalid={...result,tasks:[{...result.tasks[0],source:"missing-entity"}]};
+  expect(validateExtraction(invalid).valid).toBe(false);
   const providerResult=await deterministicExtractionProvider.understand(result.input);
   expect(providerResult.entities.length).toBeGreaterThan(0);
  });
