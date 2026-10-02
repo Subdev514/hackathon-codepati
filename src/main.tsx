@@ -1,12 +1,12 @@
 import React from "react";
 import{createRoot}from"react-dom/client";
 import"./styles.css";
-import{AnnouncementInput,ExtractedAnnouncement,Post,Task,createCampusStore,extractAnnouncement,commitExtraction,createCampusRepository,initialState,loadUserProfile,saveUserProfile,relevanceForUser,UserProfile,campusDeadlines,answerCampusQuery,demoProfile}from"./domain";
+import{AnnouncementInput,ExtractedAnnouncement,Post,Task,createCampusStore,extractAnnouncement,commitExtraction,createCampusRepository,initialState,loadUserProfile,saveUserProfile,relevanceForUser,UserProfile,campusDeadlines,answerCampusQuery,demoProfile}from"./domain";\nimport{EventsPage,SocietyOpsPage}from"./society";
 
 const repository=createCampusRepository();
 const store=createCampusStore(repository.load());
 
-const navItems=[["01","Home","⌂"],["02","For You","✦"],["03","Explore","◌"],["04","My Tasks","✓"],["05","Network","◎"],["06","Settings","⚙"]];
+const navItems=[["01","Home","⌂"],["02","For You","✦"],["03","Explore","◌"],["04","Events","▦"],["05","My Tasks","✓"],["06","Network","◎"],["07","Society Ops","▤"],["08","Settings","⚙"]];
 
 function App(){
 const pathname=window.location.pathname.replace(/\/+$/, "")||"/";
@@ -35,6 +35,8 @@ Home:{title:"Campus OS — Connected Campus",description:"Campus OS turns scatte
 Explore:{title:"Explore — Campus OS",description:"Explore campus events, opportunities, resources, notices, competitions and projects in one connected index."},
 "My Tasks":{title:"My Tasks — Campus OS",description:"Manage actionable campus workflows and trace every task back to the campus information that created it."},
 Network:{title:"Network — Campus OS",description:"Explore relationships between campus people, events, opportunities, resources, projects, deadlines and tasks."},
+Events:{title:"Events — Campus OS",description:"Structured campus events with society, dates, eligibility, venues, deadlines and progress."},
+"Society Ops":{title:"Society Operations — Campus OS",description:"Private society event operations, tasks, budgets, promotion and resources."},
 Settings:{title:"Settings — Campus OS",description:"Manage Campus OS appearance, privacy documentation, terms and product data-protection context."}
 }[tab as "Home"|"For You"|"Explore"|"My Tasks"|"Network"|"Settings"];
 React.useEffect(()=>{const id=requestAnimationFrame(()=>setLoading(false));return()=>cancelAnimationFrame(id)},[]);
@@ -61,7 +63,7 @@ return <div className="app-shell">
 {tab==="For You"&&<ForYou state={state} profile={profile} filtered={filtered} tasks={tasks} toggle={toggle} editProfile={()=>setShowProfile(true)}/>}
 {tab==="Explore"&&<Explore filtered={filtered} liked={liked} setLiked={setLiked}/>}
 {tab==="My Tasks"&&<TasksPage state={state} tasks={tasks} toggle={toggle}/>}
-{tab==="Network"&&<Relationship state={state} selectedId={networkEntityId}/>}
+{tab==="Network"&&<Relationship state={state} selectedId={networkEntityId}/>}\n{tab==="Events"&&<EventsPage state={state} sync={sync}/>}\n{tab==="Society Ops"&&<SocietyOpsPage state={state} profile={profile} sync={sync}/>}
 {tab==="Settings"&&<SettingsPage view={settingsView} setView={setSettingsView} theme={theme} setTheme={setTheme} profile={profile} editProfile={()=>setShowProfile(true)}/>}
 </main>
 {error&&<div className="error-toast" role="alert">{error}<button onClick={()=>setError("")}>×</button></div>}
