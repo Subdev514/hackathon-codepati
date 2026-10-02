@@ -690,3 +690,11 @@ Reference research:
 - Replaced the heading fragments with plain computed `title` and `subtitle` strings, eliminating JSX branching from the header entirely.
 - Re-audited `main.tsx`: no literal escaped newline sequences remain; JSX fragment and brace counts are balanced (4/4 fragments, 383/383 braces).
 - Required next verification: pull commit `0563dac519a81f751361f9a34c7c490371e3c022` and run `npm test` and `npm run build`.
+
+
+### 2026-10-03 — Custom 404 experience
+- Added a route-level custom 404 page for any non-root pathname so unknown routes no longer render the Campus OS shell as if they were valid pages.
+- Matched the existing visual language: monochrome perspective grid, animated orbital rings, floating error core, lime signal accents and responsive typography.
+- Added a direct return-to-Campus action and a dark/light toggle that respects the existing campus-os-theme preference.
+- Added mobile-specific layout rules and preserved the existing app theme variables.
+- Required next verification: rerun npm test and npm run build, then open an unknown route such as /does-not-exist in the browser and verify the 404 page in both themes.
