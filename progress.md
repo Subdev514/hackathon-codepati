@@ -1,6 +1,6 @@
 # Campus OS — Project Brain
 
-Last updated: 2026-10-02
+Last updated: 2026-10-02 — CP11 roadmap added
 Repository: sarkarshivaditya-lab/for-friends
 Status: Active autonomous hackathon build
 
@@ -215,6 +215,48 @@ Status: COMPLETE
 - GitHub workflow-run lookup for the latest commit returned no runs; production build could not be executed locally because outbound package/network access is unavailable. Source-level verification completed.
 
 Completion rule: do not mark CP10 complete until CP10A–CP10G are complete or a concrete external blocker is documented.
+
+## 14. Next-phase roadmap — CP11
+
+### CP11A — Graph/workflow integrity
+Status: IN PROGRESS
+Goal: make every generated task and deadline resolve to a real source entity consistently.
+Acceptance:
+- generated tasks use canonical entity IDs
+- graph actions resolve for both seeded and generated data
+- deadline cards resolve their originating entity/task
+- regression tests cover the source-link contract
+
+### CP11B — Campus Copilot
+Status: PLANNED
+Goal: let a student ask natural-language questions about their campus workflow using the existing graph and profile context.
+Acceptance:
+- deterministic local query engine works without an API key
+- answers cite connected campus entities, deadlines and tasks
+- profile context can change the answer
+- no fabricated campus facts
+- AI can later replace the query engine behind a clean provider boundary
+
+### CP11C — Demo-grade interaction polish
+Status: PLANNED
+Goal: make the two-minute judge journey unmistakable and remove remaining hardcoded demo assumptions.
+Acceptance:
+- home greeting uses the editable profile
+- generated tasks open their source context
+- announcement → understanding → connection → action has explicit visual state
+- reset/demo behavior is predictable
+- no known UI/runtime consistency defects
+
+### CP11D — Public deployment and verification
+Status: PLANNED
+Goal: make the current build demonstrable outside the development machine.
+Acceptance:
+- deployment configuration is documented and compatible with Vite
+- production build remains green after CP11 changes
+- final README demo path matches actual product behavior
+- deployed environment does not claim multi-user synchronization without a backend
+
+Execution order: CP11A → CP11B → CP11C → CP11D. After each checkpoint, update this file, reread it, then continue.
 
 ## 5. Current architecture
 
