@@ -78,3 +78,16 @@ describe("persistence boundary",()=>{
   expect(repository.load().posts).toHaveLength(0);
  });
 });
+
+describe("state hardening",()=>{
+ it("allocates ids above persisted state and avoids duplicate generated tasks",()=>{
+  const seed={...initialState,posts:[{...initialState.posts[0],id:900}],tasks:[{...initialState.tasks[0],id:901}]};
+  const store=createCampusStore(seed);
+  expect(store.nextId()).toBe(902);
+  const result=extractAnnouncement({title:"AI Hackathon",body:"AI Club is conducting a hackathon. Registration closes October 10.",type:"EVENT",author:"AI Club",club:"AI Club"});
+  commitExtraction(store,result);
+  const count=store.getState().tasks.length;
+  commitExtraction(store,result);
+  expect(store.getState().tasks.length).toBe(count);
+ });
+});
