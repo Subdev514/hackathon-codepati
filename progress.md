@@ -286,3 +286,9 @@ Next action: harden UX states, extraction edge cases and dynamic graph presentat
 - Added transparent “For You” relevance view using branch/year/interests/clubs context and human-readable reasons.
 - Added responsive styles for the full announcement understanding flow.
 - Verification: static review completed; automated build/browser verification still pending.
+
+### 2026-10-02 — CP9 verification setup
+- Added Vitest and npm test script.
+- Added src/domain.test.ts covering hackathon extraction and commit deduplication.
+- Local runtime could not be used because outbound GitHub access is unavailable in the execution container; repository-side CI will be used for build/test verification.
+- Next action: add CI workflow, then inspect its result before declaring verification complete.
