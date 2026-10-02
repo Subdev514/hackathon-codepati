@@ -251,6 +251,16 @@ Personalization affects relevance and surfaced actions, but reasons remain visib
 
 ## 12. Current execution state
 
-Active checkpoint: CP2 — Announcement ingestion.
+Active checkpoint: CP6 — Persistence.
 
-Next action: add the Create Announcement UI and connect it to extraction preview/commit.
+CP2, CP4 and CP5 are implemented in the UI/domain vertical slice. Next action: make the campus store reload-safe with versioned localStorage hydration, then continue to personalization and polish.
+
+
+### 2026-10-02 — CP2/CP4/CP5 announcement vertical slice
+- Added Create Announcement modal with title, type, source and raw announcement body.
+- Added “Understand this announcement” preview before committing data.
+- Preview exposes extracted entities, relationships, deadlines, requirements, confidence/reasons and generated tasks.
+- Confirming an announcement commits a new post, entities, relationships and tasks into the domain store.
+- Relationship view now reads from the domain state instead of fixed graph labels.
+- Workflow task completion now mutates the shared domain store and refreshes the UI.
+- Verification: static review completed; CSS/build/browser verification still pending.
