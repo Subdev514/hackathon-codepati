@@ -647,3 +647,19 @@ Status: COMPLETE
 - DPDP content references the notified 2025 Rules and the Act's rights/notice concepts; HIPAA content distinguishes covered entities/business associates and Privacy/Security/Breach Notification Rules.
 - Accessibility documentation uses WCAG 2.2 AA as a target rather than making an unsupported conformance claim.
 - The implementation explicitly distinguishes current local-first behavior from controls that a production deployment owner must configure.
+
+## CP15 — Remove literal newline text from global page shell
+Status: COMPLETE
+
+Root cause:
+- The shared React app shell in src/main.tsx contained literal \\n escape sequences between the conditional page render expressions for Network, Societies, Events, Society Ops and Feedback.
+- In JSX, those were ordinary text nodes, not formatting/newline instructions, so the browser rendered the characters \\n at the top of pages that used the shared shell.
+
+Fix:
+- Replaced the literal escape sequences with actual source line breaks between the JSX expressions.
+- Kept the navigation/rendering logic unchanged; this is a presentation-only correction.
+- Verified src/main.tsx no longer contains a literal \\n in the app-shell render block.
+
+Verification:
+- Commit: c0c92c1f62ff5c38d83d996877d263e0d89a5ac0
+- CI/build verification follows the repository's existing GitHub Actions pipeline.
