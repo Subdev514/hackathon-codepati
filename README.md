@@ -102,3 +102,22 @@ Example questions:
 ## Deployment
 
 The repository includes `vercel.json` with the Vite build command and `dist/` output directory. Vercel can deploy the main branch directly. The current redesign is dependency-light and uses CSS/DOM motion rather than requiring a WebGL runtime. The current application is still local-first: each browser has its own campus state and profile. A shared multi-user deployment must not be represented as synchronized until a backend repository implementation is added.
+
+
+## Public society pages
+
+Campus OS includes a public-facing society system separate from private Society Ops.
+
+Each society profile contains:
+- Society name, FIC and genre
+- X-Factor profile statement
+- Significant contribution/change timeline
+- Public member roster with positions
+- Upcoming society-authored event posts
+- Collaborating societies
+- Optional event description and registration link
+- Prizes, special guests, join reason and event X-Factor
+- Past event archive with winners and media
+
+Private operational data such as internal tasks, budgets, promotion work and requirements remains in the Society Ops workspace rather than the public profile.
+
