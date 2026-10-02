@@ -639,3 +639,12 @@ Reference research:
 - Fixed src/main.tsx by closing SectionHeading correctly.
 - This was a source-level regression, not a domain/test failure; the test suite remained green because the affected application entry was not transformed by that test path.
 - Required next verification: rerun the test suite and production build from the developer checkout after this repair.
+
+
+### 2026-10-03 — CP12 workflow layout repair
+- Developer screenshots exposed a shared formatting regression in the redesigned “Next actions” panel on Home, For You and My Tasks.
+- Root cause was the workflow action grid using a zero-width first column with a fragile `1fr` content column, causing task titles/metadata to collapse into narrow word-by-word columns and overlap the checkbox/arrow.
+- Reworked `.action-row` to use explicit checkbox/content/arrow columns with `minmax(0,1fr)`, full width and minimum-width constraints.
+- Added explicit width/min-width and normal word wrapping to `.action-copy` and its title/metadata so long actions remain readable without changing workflow data or component logic.
+- No domain behavior changed; the fix applies to every page using the shared Workflow component.
+- Required next verification: rerun `npm test` and `npm run build`, then visually confirm Home, For You and My Tasks workflow panels from the developer checkout.
