@@ -627,3 +627,11 @@ Status: COMPLETE
 - Added nine documents: Privacy, DPDP, HIPAA, Accessibility, Security, Cookies/Local Storage, Acceptable Use, AI & Automation, and Terms.
 - Distinguished current prototype behavior from institution/deployment-owner responsibilities.
 - Added regression coverage for policy discoverability, compliance terminology, accessibility target and prototype/deployment boundaries.
+
+
+### CP14B — Visual/accessibility system
+Status: COMPLETE
+- Added policy-center navigation, document metadata, policy contents navigation, compliance cards, implementation-posture cards and responsive layouts.
+- Added visible keyboard focus styling and reduced-motion handling.
+- Added mobile/tablet layouts for the expanded settings and long-form policy documents.
+- Added semantic status labels and clearer document hierarchy without relying solely on color.
