@@ -465,3 +465,34 @@ Status: COMPLETE
 - Added persistence migration defaults so older localStorage state remains loadable.
 - Added navigation and page metadata for the Events workspace.
 - Next checkpoint: CP12B private Society Operations workspace.
+
+### 2026-10-03 — CP12B Private Society Operations
+Status: COMPLETE
+- Added society records, memberships and private workspace metadata.
+- Added local access-control checks that separate public event data from society-private operational data.
+- Added event task tracker with member/lead assignment and pending/done state.
+- Added contribution chart derived from task completion by member.
+- Added estimated budget, actual expenditure and sponsorship tracking.
+- Added promotion tracker and resource/requirement tracker.
+- Added mobile layouts for the private workspace.
+- Explicitly documented that this is an application boundary only; production isolation requires server-side auth/authz.
+
+### 2026-10-03 — CP12C Post-event analysis
+Status: COMPLETE
+- Added structured analysis linked to an event.
+- Captures registrations, attendees, winners, participant feedback, guest feedback, successes, problems, suggestions, final expenditure, photos/links, sponsors and event report.
+- Added editable analysis flow inside the private society workspace.
+
+### 2026-10-03 — CP12D Categorical feedback
+Status: COMPLETE
+- Added public Feedback workspace with event context, category, priority and sentiment.
+- Added feedback persistence and organizer-facing category aggregation.
+- Categories cover event, venue, organization, promotion, content, volunteers, technical, budget and other.
+- Feedback remains local-first and is not represented as anonymous/server-secured until a backend is added.
+
+### 2026-10-03 — CP12E Verification / hardening
+Status: IN PROGRESS
+- Added regression tests for private access, society CRUD, budgets, requirements, analysis, contribution and categorical feedback.
+- Added mobile CSS for event database, private workspace and feedback.
+- Current Vercel deployment is being rebuilt from the latest commits; earlier builds exposed syntax issues during incremental edits, which were corrected before the latest rebuild.
+- Next: confirm the latest deployment reaches READY, inspect the live UI if available, update README and mark CP12 complete.
