@@ -567,3 +567,17 @@ Design direction:
 Reference research:
 - Reviewed current React animation/component ecosystem, including React Bits and Three.js dashboard patterns.
 - Applied relevant React performance and shadcn design-system guidance without forcing a framework migration.
+
+### 2026-10-03 — CP12A/CP12B/CP12C first redesign pass
+- Replaced the previous light dashboard presentation with a dark spatial Campus OS visual system.
+- Added a fixed responsive navigation shell, command/search header, live graph status, profile context and stronger typography hierarchy.
+- Added an animated perspective campus terrain inspired by the supplied monochrome 3D-grid reference, using CSS/DOM rather than a heavy WebGL dependency.
+- Added motion for terrain blocks, graph scans, node drift, signal-card entrances, progress changes and modal transitions, with prefers-reduced-motion support.
+- Redesigned Home around live graph metrics, deadlines, Campus Copilot, campus signals and workflow actions.
+- Redesigned For You, Explore, My Tasks and Network surfaces to share the same visual language.
+- Redesigned announcement understanding and profile editing flows.
+- Updated document metadata/theme color for the new product identity.
+- Preserved src/domain.ts and the existing extraction, persistence, personalization, deadline and Copilot contracts.
+- Wired the redesigned profile-context action back to the existing profile editor so the visual redesign does not introduce a dead primary control.
+- Research reviewed React Bits animation patterns, Three.js dashboard inspiration and current shadcn/Vercel interface guidance; implementation deliberately stays dependency-light for the Vite MVP.
+- Next: CP12D–CP12J, beginning with a functional interaction audit and visual verification before deployment.
