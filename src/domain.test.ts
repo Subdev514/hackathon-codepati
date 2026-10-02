@@ -82,7 +82,7 @@ describe("persistence boundary",()=>{
  });
 });
 
-describe("state hardening",()=>{
+describe("graph workflow integrity",()=>{\n it("keeps seeded and generated task sources resolvable as entity ids",()=>{\n  const seeded=initialState.tasks.find(t=>t.title.startsWith("Register"));\n  expect(seeded?.source).toBe("ai-hackathon");\n  expect(initialState.entities.some(e=>e.id===seeded?.source)).toBe(true);\n  const result=extractAnnouncement({title:"AI Hackathon",body:"AI Club is conducting a hackathon on October 15. Registration closes October 10.",type:"EVENT",author:"AI Club",club:"AI Club"});\n  expect(result.tasks.every(task=>result.entities.some(entity=>entity.id===task.source))).toBe(true);\n });\n});\n\ndescribe("state hardening",()=>{
  it("allocates ids above persisted state and avoids duplicate generated tasks",()=>{
   const seed={...initialState,posts:[{...initialState.posts[0],id:900}],tasks:[{...initialState.tasks[0],id:901}]};
   const store=createCampusStore(seed);
