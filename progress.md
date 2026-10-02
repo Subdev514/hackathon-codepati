@@ -194,10 +194,14 @@ Status: COMPLETE
 - Verification: source-level domain/UI/test review completed.
 
 #### CP10F — Backend-ready multi-user boundary
-Status: NOT STARTED
+Status: COMPLETE
 - Separate local domain contract from persistence implementation.
 - Define a backend synchronization seam without breaking offline-first behavior.
 - Keep authentication/campus isolation as an integration boundary rather than a rewrite.
+- Added CampusPersistence and CampusRepository contracts plus a local persistence adapter.
+- Application startup and mutations now use the repository boundary instead of coupling UI code directly to localStorage.
+- Added a swappable persistence test proving domain consumers do not depend on the storage implementation.
+- Verification: source-level architecture/test review completed.
 
 #### CP10G — Hackathon polish and deployment readiness
 Status: NOT STARTED
@@ -411,6 +415,9 @@ Remaining work:
 
 ### 2026-10-02 — CP10E deadline intelligence complete
 - Completed CP10E. Deadlines are now an attention layer over the graph rather than passive strings.
+
+### 2026-10-02 — CP10F backend-ready boundary complete
+- Completed CP10F. A future backend adapter can implement the repository contract without changing the domain model or core UI flow.
 
 ### 2026-10-02 — Final CP9 audit
 - Re-read progress.md before final audit as required by the execution contract.
