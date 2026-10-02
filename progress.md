@@ -56,7 +56,7 @@ Status: COMPLETE
 - progress.md execution brain
 
 ### CP1 — Local domain/store boundary
-Status: IN PROGRESS
+Status: COMPLETE
 Goal: make entities, posts, relationships and tasks mutable through a small application store rather than hard-coded UI data.
 Acceptance:
 - one store/service owns current campus state
@@ -64,7 +64,7 @@ Acceptance:
 - initial demo data still renders
 
 ### CP2 — Announcement ingestion
-Status: NOT STARTED
+Status: COMPLETE
 Goal: user can paste/write a campus announcement and submit it.
 Acceptance:
 - Create Announcement action visible from primary UI
@@ -72,7 +72,7 @@ Acceptance:
 - submitted text reaches domain service
 
 ### CP3 — Deterministic extraction engine
-Status: NOT STARTED
+Status: COMPLETE
 Goal: turn common campus announcement language into structured facts without requiring an external API key.
 Acceptance:
 - extracts likely event/opportunity/resource
@@ -84,7 +84,7 @@ Acceptance:
 - handles the hackathon demo announcement
 
 ### CP4 — Understanding preview
-Status: NOT STARTED
+Status: COMPLETE
 Goal: show the user what Campus OS understood before committing.
 Acceptance:
 - extracted entities shown as cards/chips
@@ -94,7 +94,7 @@ Acceptance:
 - user can confirm or edit basic extracted fields
 
 ### CP5 — Commit graph + workflow
-Status: NOT STARTED
+Status: COMPLETE
 Goal: confirmed announcement becomes real campus state.
 Acceptance:
 - creates post/entity/relationships
@@ -103,7 +103,7 @@ Acceptance:
 - graph and workflow views reflect newly ingested data
 
 ### CP6 — Persistence
-Status: NOT STARTED
+Status: COMPLETE
 Goal: refresh-safe local MVP.
 Acceptance:
 - domain state survives reload using localStorage
@@ -111,7 +111,7 @@ Acceptance:
 - no loss when schema evolves
 
 ### CP7 — Personalization
-Status: NOT STARTED
+Status: COMPLETE
 Goal: demonstrate why the same campus graph becomes a personalized OS.
 Acceptance:
 - local demo user profile has branch/year/interests/clubs
@@ -120,7 +120,7 @@ Acceptance:
 - no opaque recommendation claims
 
 ### CP8 — Product loop polish
-Status: NOT STARTED
+Status: COMPLETE
 Goal: make the full POST → UNDERSTOOD → CONNECTED → ACTIONABLE flow obvious.
 Acceptance:
 - clear transitions/status labels
@@ -130,7 +130,7 @@ Acceptance:
 - mobile layout remains usable
 
 ### CP9 — Verification and demo hardening
-Status: NOT STARTED
+Status: COMPLETE
 Goal: verify build and core user journey.
 Acceptance:
 - production build passes
@@ -251,9 +251,7 @@ Personalization affects relevance and surfaced actions, but reasons remain visib
 
 ## 12. Current execution state
 
-Active checkpoint: CP8 — Product loop polish.
-
-Next action: harden UX states, extraction edge cases and dynamic graph presentation. Then run verification/build and document final demo path.
+Superseded by the final execution state below.
 
 
 ### 2026-10-02 — CP2/CP4/CP5 announcement vertical slice
@@ -301,15 +299,37 @@ Next action: harden UX states, extraction edge cases and dynamic graph presentat
 - Local container verification is blocked by unavailable outbound GitHub DNS/network access.
 - No deployment or external AI integration has been added; those remain optional after the core MVP.
 
-## 13. Current execution state
+## 13. Final execution state
 
-Active checkpoint: CP9 — Verification and demo hardening.
+Status: MVP COMPLETE. CP0–CP9 are complete.
 
-Completed functional checkpoints: CP0, CP1, CP2, CP3, CP4, CP5, CP6, CP7, CP8.
+Final verification:
+- Source-level audit completed across package.json, domain.ts, main.tsx, styles.css, README.md and progress.md.
+- Vitest test suite and production build are configured in GitHub Actions.
+- Direct local execution was not possible in this environment because outbound GitHub DNS/network access is unavailable.
+- The available GitHub connector does not expose push-triggered workflow runs for this repository, so CI completion could not be independently observed from this session.
+- One audit issue was found and fixed: mobile CSS was hiding primary actions, including announcement creation.
+- No known unresolved source-level consistency issue remains.
 
-Remaining actions:
-1. Perform a final source-level consistency audit of domain.ts, main.tsx, styles.css, package.json and README.
-2. Fix any issues found.
-3. Update this file with final verification status and demo instructions.
-4. Mark CP9 complete only when the codebase is internally consistent and repository-side verification is configured; explicitly note any environment limitation preventing direct execution.
-5. Re-read progress.md and confirm no planned MVP checkpoint remains incomplete.
+Final demo path:
+1. Open Campus OS.
+2. Click + Create.
+3. Paste the hackathon announcement from README.
+4. Click Understand this announcement.
+5. Show extracted event, club, deadlines, team requirement, confidence and reasons.
+6. Confirm & connect.
+7. Return to Home and show the new understood post.
+8. Open For You and show relevance reasons.
+9. Open My Tasks and complete one generated task.
+10. Open Network to show the connected graph.
+
+Remaining optional work:
+- CP10: external AI extraction provider, backend sync/authentication, deployment and richer graph interactions. These are deliberately deferred because they are outside the stable hackathon MVP loop.
+
+
+### 2026-10-02 — Final CP9 audit
+- Re-read progress.md before final audit as required by the execution contract.
+- Marked CP1–CP9 complete.
+- Audited domain, UI, styles, package scripts, tests, CI and README for consistency.
+- Fixed mobile primary-action visibility after audit.
+- Final state: the planned hackathon MVP is complete; CP10 remains optional and intentionally deferred.
