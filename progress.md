@@ -523,6 +523,16 @@ Remaining work:
 - Reset demo restores both campus state and the demo profile.
 - Next checkpoint: CP11D public deployment and verification.
 
+### 2026-10-02 — CP11 audit and repair
+- Developer verification exposed a Vitest parser failure caused by literal `\\n` sequences inserted into `src/domain.test.ts` during automated test insertion.
+- Removed the escaped-newline artifacts from `src/domain.test.ts`, `src/main.tsx`, and `progress.md`.
+- Audited all CP11-touched source/config files for repeated escaped-newline artifacts and found none remaining in executable/config files.
+- Fixed the remaining seeded task source references that still used the human-readable `AI Hackathon` name instead of the canonical `ai-hackathon` entity ID.
+- Removed an unused task-source helper introduced during CP11A.
+- Strengthened extraction validation so generated task sources must resolve to an entity ID.
+- Added Campus Copilot regression coverage for profile-driven relevance and invalid task-source rejection.
+- No source-level escaped-newline or seeded task-name source defect remains in the audited files.
+
 ### 2026-10-02 — CP11D deployment configuration
 - Added explicit Vercel configuration for Vite production builds.
 - Updated README with deployment behavior and the local-first multi-user boundary.
