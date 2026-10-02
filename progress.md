@@ -239,9 +239,18 @@ Personalization affects relevance and surfaced actions, but reasons remain visib
 - Defined acceptance criteria for the complete hackathon MVP.
 - Marked CP1 as the active checkpoint.
 
+### 2026-10-02 — CP1/CP3 domain engine
+- Added a mutable application store boundary in src/domain.ts for posts, entities, relationships and tasks.
+- Expanded relationship/entity types so assigned_to and participates_in can be represented.
+- Added AnnouncementInput and ExtractedAnnouncement contracts.
+- Added a deterministic announcement extraction engine covering event/opportunity detection, organizers, dates, deadlines, team constraints and requirements.
+- Added commitExtraction() to convert an accepted extraction into campus state.
+- Kept extraction provider-independent so an external AI provider can be added later without changing the UI contract.
+- Verification: static review completed; browser/build verification still pending.
+- Active checkpoint remains CP2 because the UI ingestion flow is the next incomplete vertical slice.
+
 ## 12. Current execution state
 
-Active checkpoint: CP1 — Local domain/store boundary.
+Active checkpoint: CP2 — Announcement ingestion.
 
-Next action:
-Create a small domain store/service that owns mutable campus state while retaining the current demo data and keeping React-specific code in the UI layer.
+Next action: add the Create Announcement UI and connect it to extraction preview/commit.
