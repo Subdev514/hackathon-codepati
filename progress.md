@@ -677,3 +677,10 @@ Reference research:
 - The Network conditional still lacked its final `}` in the actual repository state; the earlier attempted repair had not produced the required source line.
 - Replaced the exact malformed line with a complete JSX conditional and committed it as `badeba1e616b07aabc381f2af2de0a278ab15fb6`.
 - Required next verification: pull the latest commit, then rerun npm test and npm run build.
+
+### 2026-10-03 — main.tsx JSX audit and PolicyPage stabilization
+- Audited the full committed `src/main.tsx`: no literal `\\n` sequences remain; fragment open/close counts match (6/6); JSX expression brace counts match (383/383).
+- Root cause of the recurring parser failures was identified as brittle, oversized JSX expressions in the Settings policy surface, especially the nested ternary/fragment construction in `PolicyPage`; parser locations were downstream from the actual malformed boundary.
+- Refactored `PolicyPage` into `PrivacyDocument` and `TermsDocument` components and removed the nested policy-heading ternary in favor of explicit conditional fragments.
+- Replaced raw `&` in the Terms heading with `&amp;` for unambiguous JSX text parsing.
+- Required next verification: pull the latest commits, then rerun `npm test` and `npm run build`.
