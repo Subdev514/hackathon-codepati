@@ -799,3 +799,20 @@ Implementation:
 Verification:
 - Source-level navigation regression coverage updated for the explicit affordance.
 - Production deployment is handled by the repository's Vercel pipeline from the committed changes.
+
+
+## CP19 — Production custom 404 routing
+Status: COMPLETE
+
+Issue identified:
+- Direct navigation to an unknown production URL was being intercepted by Vercel before the Vite SPA loaded, so the browser displayed Vercel's generic 404 page instead of Campus OS's existing React `NotFoundPage`.
+
+Fix:
+- Added a Vercel SPA rewrite for non-API paths to `/`.
+- Explicitly excluded `/api/*` so serverless API routes remain reachable.
+- The existing React pathname guard now receives unknown URLs and renders the designed Campus OS 404 experience.
+
+Expected behavior:
+- `/does-not-exist` → Campus OS custom 404.
+- `/anything/random` → Campus OS custom 404.
+- `/api/*` → existing Vercel serverless functions remain unaffected.
