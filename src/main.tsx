@@ -47,7 +47,7 @@ return <div className="app-shell">
 {tab==="For You"&&<ForYou state={state} profile={profile} filtered={filtered} tasks={tasks} toggle={toggle} editProfile={()=>setShowProfile(true)}/>}
 {tab==="Explore"&&<Explore filtered={filtered} liked={liked} setLiked={setLiked}/>}
 {tab==="My Tasks"&&<TasksPage state={state} tasks={tasks} toggle={toggle}/>}
-{tab==="Network"&&<Relationship state={state} selectedId={networkEntityId}/>
+{tab==="Network"&&<Relationship state={state} selectedId={networkEntityId}/>}
 {tab==="Settings"&&<SettingsPage view={settingsView} setView={setSettingsView} theme={theme} setTheme={setTheme}/>}
 </main>
 {error&&<div className="error-toast" role="alert">{error}<button onClick={()=>setError("")}>×</button></div>}
