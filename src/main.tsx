@@ -1,9 +1,10 @@
 import React from "react";
 import{createRoot}from"react-dom/client";
 import"./styles.css";
-import{AnnouncementInput,ExtractedAnnouncement,Post,Task,createCampusStore,extractAnnouncement,commitExtraction,loadCampusState,saveCampusState,demoProfile,loadUserProfile,saveUserProfile,relevanceForUser,UserProfile,campusDeadlines}from"./domain";
+import{AnnouncementInput,ExtractedAnnouncement,Post,Task,createCampusStore,extractAnnouncement,commitExtraction,createCampusRepository,demoProfile,loadUserProfile,saveUserProfile,relevanceForUser,UserProfile,campusDeadlines}from"./domain";
 
-const store=createCampusStore(loadCampusState());
+const repository=createCampusRepository();
+const store=createCampusStore(repository.load());
 
 function App(){
 const[tab,setTab]=React.useState("Home");
@@ -18,7 +19,7 @@ const[preview,setPreview]=React.useState<ExtractedAnnouncement|null>(null);
 const[form,setForm]=React.useState<AnnouncementInput>({title:"",body:"",type:"EVENT",author:"AI Club",club:"AI Club"});
 const state=store.getState();
 const filtered=state.posts.filter(p=>(p.title+" "+p.body+" "+p.tags.join(" ")).toLowerCase().includes(query.toLowerCase()));
-const sync=()=>{saveCampusState(store.getState());setTasks([...store.getState().tasks]);refresh(x=>x+1)};
+const sync=()=>{repository.save(store.getState());setTasks([...store.getState().tasks]);refresh(x=>x+1)};
 const toggle=(id:number)=>{store.toggleTask(id);sync()};
 const submitAnnouncement=()=>{if(!form.title.trim()||!form.body.trim())return;setPreview(extractAnnouncement(form))};
 const confirmAnnouncement=()=>{if(!preview)return;commitExtraction(store,preview);setPreview(null);setShowCreate(false);setForm({title:"",body:"",type:"EVENT",author:"AI Club",club:"AI Club"});setTab("Home");sync()};
