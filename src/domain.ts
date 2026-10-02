@@ -1,9 +1,12 @@
-export type EntityType="user"|"club"|"event"|"opportunity"|"resource"|"task"|"deadline"|"project";
-export type RelationType="member_of"|"organizes"|"has_deadline"|"requires"|"derived_from"|"references"|"interested_in"|"uses";
+export type EntityType="user"|"club"|"event"|"opportunity"|"resource"|"task"|"deadline"|"project"|"person";
+export type RelationType="member_of"|"organizes"|"has_deadline"|"requires"|"derived_from"|"references"|"interested_in"|"uses"|"assigned_to"|"participates_in";
 export type Entity={id:string;type:EntityType;name:string;meta?:string};
-export type Relationship={from:string;relation:RelationType;to:string};
-export type Post={id:number;type:string;title:string;body:string;author:string;club:string;time:string;votes:number;comments:number;tags:string[];deadline?:string;linked?:string};
+export type Relationship={from:string;relation:RelationType;to:string;reason?:string};
+export type Post={id:number;type:string;title:string;body:string;author:string;club:string;time:string;votes:number;comments:number;tags:string[];deadline?:string;linked?:string;sourceText?:string};
 export type Task={id:number;title:string;meta:string;done:boolean;source:string};
+export type AnnouncementInput={title:string;body:string;type:string;author:string;club:string};
+export type ExtractedAnnouncement={input:AnnouncementInput;event?:{name:string;date?:string};organization?:{name:string};opportunity?:{name:string};deadlines:Array<{label:string;date:string}>;requirements:string[];entities:Entity[];relationships:Relationship[];tasks:Task[];confidence:number;reasons:string[]};
+export type CampusState={entities:Entity[];relationships:Relationship[];posts:Post[];tasks:Task[]};
 export const entities:Entity[]=[
 {id:"ai-club",type:"club",name:"AI Club",meta:"Student organization"},
 {id:"ai-hackathon",type:"event",name:"AI Hackathon",meta:"24-hour · Oct 15"},
@@ -16,7 +19,6 @@ export const relationships:Relationship[]=[
 {from:"ai-club",relation:"organizes",to:"ai-hackathon"},
 {from:"ai-hackathon",relation:"has_deadline",to:"hack-deadline"},
 {from:"ai-hackathon",relation:"requires",to:"hack-team"},
-{from:"ai-hackathon",relation:"derived_from",to:"hack-deadline"},
 {from:"ms-ambassador",relation:"references",to:"ai-hackathon"}];
 export const posts:Post[]=[
 {id:1,type:"EVENT",title:"24-Hour AI Hackathon — registrations are open",body:"Build anything with AI. Teams of 2–4. Registration closes October 10 and idea submissions close October 13.",author:"AI Club",club:"AI Club",time:"2h",votes:128,comments:24,tags:["AI/ML","Hackathon","Teams"],deadline:"Oct 10",linked:"AI Hackathon"},
@@ -28,4 +30,97 @@ export const initialTasks:Task[]=[
 {id:2,title:"Find 1–3 hackathon teammates",meta:"Derived from team size 2–4",done:false,source:"AI Hackathon"},
 {id:3,title:"Prepare hackathon idea submission",meta:"AI Club · due Oct 13",done:false,source:"AI Hackathon"},
 {id:4,title:"Apply for Microsoft Ambassador",meta:"Tech Society · due Oct 18",done:false,source:"Microsoft Ambassador"}];
-export function generateWorkflow(source:string):Task[]{if(source==="AI Hackathon")return initialTasks.filter(t=>t.source===source);if(source==="Microsoft Ambassador")return initialTasks.filter(t=>t.source===source);return []}
+
+export const initialState:CampusState={entities,relationships,posts,tasks:initialTasks};
+
+let nextId=100;
+export function createCampusStore(seed:CampusState=initialState){
+let state:CampusState={entities:[...seed.entities],relationships:[...seed.relationships],posts:[...seed.posts],tasks:[...seed.tasks]};
+return {
+getState:()=>state,
+addPost:(post:Post)=>{state={...state,posts:[post,...state.posts]}},
+addEntities:(items:Entity[])=>{state={...state,entities:[...state.entities,...items]}},
+addRelationships:(items:Relationship[])=>{state={...state,relationships:[...state.relationships,...items]}},
+addTasks:(items:Task[])=>{state={...state,tasks:[...state.tasks,...items]}},
+toggleTask:(id:number)=>{state={...state,tasks:state.tasks.map(t=>t.id===id?{...t,done:!t.done}:t)}},
+nextId:()=>nextId++
+};
+}
+
+function slug(value:string){return value.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"")}
+function firstMatch(text:string,patterns:RegExp[]){for(const pattern of patterns){const match=text.match(pattern);if(match)return match}return undefined}
+function cleanName(value:string){return value.replace(/[“”"']/g,"").replace(/[.!?]+$/,"").trim()}
+function dateText(value:string){return value.replace(/\bthe\b/gi,"").replace(/\s+/g," ").trim()}
+
+export function extractAnnouncement(input:AnnouncementInput):ExtractedAnnouncement{
+const text=(input.title+" "+input.body).replace(/\s+/g," ").trim();
+const lower=text.toLowerCase();
+const isOpportunity=input.type==="OPPORTUNITY"||/\b(opportunity|applications?|ambassador|internship|scholarship)\b/i.test(text);
+const eventMatch=firstMatch(text,[/\b(?:conducting|hosting|organizing|running)\s+(?:a\s+)?(?:\d+[- ]hour\s+)?([^.!?]+?\s+(?:hackathon|workshop|event|meetup|session))\b/i,/\b([A-Z][A-Za-z0-9 -]+(?:hackathon|workshop|event|meetup|session))\b/i]);
+const organizerMatch=firstMatch(text,[/\b([A-Z][A-Za-z0-9& ]+?)\s+(?:is\s+)?(?:conducting|hosting|organizing|running)\b/i,/^([A-Z][A-Za-z0-9& ]+?)\s+(?:is\s+)?(?:opening|announcing|inviting)\b/i]);
+const dateMatch=firstMatch(text,[/\bon\s+([A-Z][a-z]+\s+\d{1,2})\b/i,/\b(?:on|this)\s+(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\b/i]);
+const deadlineMatches=[...text.matchAll(/\b(?:registration|register|applications?|application|idea submission|submit(?:ting)? (?:the )?idea|submission)\b[^.!?]{0,45}?\b(?:closes?|close|ends?|end|due|before)\s+([A-Z][a-z]+\s+\d{1,2}|\d{1,2}(?:st|nd|rd|th)?\s+[A-Z][a-z]+)\b/gi)];
+const deadlineSeen=new Set<string>();
+const deadlines=deadlineMatches.map(match=>({label:cleanName(match[0].split(/\s+(?:closes?|close|ends?|end|due|before)\s+/i)[0]),date:dateText(match[1])})).filter(item=>{const key=item.label+"|"+item.date;if(deadlineSeen.has(key))return false;deadlineSeen.add(key);return true});
+const teamMatch=firstMatch(text,[/\bteams?\s+(?:of\s+)?(\d+)\s*(?:-|to)\s*(\d+)\b/i,/\b(\d+)\s*(?:-|to)\s*(\d+)\s+(?:members?|participants?)\b/i]);
+const requirements:string[]=[];
+if(teamMatch)requirements.push("Team size "+teamMatch[1]+"–"+teamMatch[2]);
+if(/\bbring your laptop\b/i.test(text))requirements.push("Bring a laptop");
+if(/\bsubmit (?:your|the) idea\b/i.test(text))requirements.push("Submit an idea");
+const eventName=eventMatch?cleanName(eventMatch[1]):input.title;
+const organizationName=organizerMatch?cleanName(organizerMatch[1]):input.club;
+const baseId=slug(eventName||input.title)||"announcement";
+const eventId=baseId;
+const orgId=slug(organizationName)||"campus-source";
+const extractedEntities:Entity[]=[];
+const extractedRelationships:Relationship[]=[];
+if(isOpportunity){
+const opportunityName=cleanName(input.title.replace(/^opportunity[:\-]?/i,""));
+extractedEntities.push({id:baseId,type:"opportunity",name:opportunityName,meta:"Extracted from announcement"});
+if(organizationName)extractedEntities.push({id:orgId,type:"club",name:organizationName,meta:"Announcement source"});
+extractedRelationships.push({from:orgId,relation:"organizes",to:baseId,reason:"Announcement source"});
+}else{
+extractedEntities.push({id:eventId,type:"event",name:eventName,meta:dateMatch?"Event · "+dateText(dateMatch[1]):"Extracted from announcement"});
+if(organizationName)extractedEntities.push({id:orgId,type:"club",name:organizationName,meta:"Announcement source"});
+if(organizationName)extractedRelationships.push({from:orgId,relation:"organizes",to:eventId,reason:"Announcement states the organizer"});
+}
+const tasks:Task[]=[];
+let taskId=nextId;
+if(!isOpportunity&&teamMatch)tasks.push({id:taskId++,title:"Find "+Math.max(1,Number(teamMatch[1])-1)+"–"+Math.max(1,Number(teamMatch[2])-1)+" teammates",meta:"Derived from "+requirements[0],done:false,source:eventId});
+for(const deadline of deadlines){
+const label=deadline.label.toLowerCase();
+let title=label.includes("registration")||label.includes("register")?"Register for "+eventName:label.includes("idea")||label.includes("submission")?"Prepare and submit idea":"Complete "+deadline.label;
+tasks.push({id:taskId++,title,meta:"Derived deadline · "+deadline.date,done:false,source:eventId});
+const deadlineId=slug(eventId+"-"+deadline.label+"-"+deadline.date);
+extractedEntities.push({id:deadlineId,type:"deadline",name:deadline.label+" · "+deadline.date,meta:"Extracted deadline"});
+extractedRelationships.push({from:eventId,relation:"has_deadline",to:deadlineId,reason:"Deadline extracted from announcement"});
+}
+if(!isOpportunity&&/\bidea\b/i.test(text)&&!tasks.some(t=>/idea/i.test(t.title)))tasks.push({id:taskId++,title:"Prepare hackathon idea",meta:"Derived from announcement requirement",done:false,source:eventId});
+if(isOpportunity&&deadlines.length===0)tasks.push({id:taskId++,title:"Review and apply",meta:"Derived from opportunity announcement",done:false,source:baseId});
+if(teamMatch){
+const reqId=slug(eventId+"-team-"+teamMatch[1]+"-"+teamMatch[2]);
+extractedEntities.push({id:reqId,type:"project",name:"Team of "+teamMatch[1]+"–"+teamMatch[2],meta:"Participation requirement"});
+extractedRelationships.push({from:eventId,relation:"requires",to:reqId,reason:"Team constraint extracted from announcement"});
+}
+const reasons:string[]=[];
+if(eventMatch)reasons.push("Detected an event name from event/hackathon language");
+if(organizerMatch)reasons.push("Detected the publishing organization from organizer language");
+if(dateMatch)reasons.push("Detected an event date");
+if(deadlines.length)reasons.push("Detected "+deadlines.length+" deadline statement"+(deadlines.length===1?"":"s"));
+if(teamMatch)reasons.push("Detected a team-size requirement");
+const confidence=Math.min(0.98,0.45+reasons.length*0.09);
+return {input,event:isOpportunity?undefined:{name:eventName,date:dateMatch?dateText(dateMatch[1]):undefined},organization:organizationName?{name:organizationName}:undefined,opportunity:isOpportunity?{name:eventName}:undefined,deadlines,requirements,entities:extractedEntities,relationships:extractedRelationships,tasks,confidence,reasons};
+}
+
+export function commitExtraction(store:ReturnType<typeof createCampusStore>,result:ExtractedAnnouncement){
+const ids=new Set(store.getState().entities.map(e=>e.id));
+store.addEntities(result.entities.filter(e=>!ids.has(e.id)));
+store.addRelationships(result.relationships.filter(r=>!store.getState().relationships.some(x=>x.from===r.from&&x.relation===r.relation&&x.to===r.to)));
+const mainName=result.event?.name||result.opportunity?.name||result.input.title;
+const post:Post={id:store.nextId(),type:result.input.type||"NOTICE",title:result.input.title,body:result.input.body,author:result.input.author,club:result.input.club,time:"now",votes:0,comments:0,tags:["Campus OS","Understood"],deadline:result.deadlines[0]?.date,linked:mainName,sourceText:result.input.body};
+store.addPost(post);
+store.addTasks(result.tasks);
+return post;
+}
+
+export function generateWorkflow(source:string):Task[]{return initialTasks.filter(t=>t.source===source)}
