@@ -1,9 +1,9 @@
-export type EntityType="user"|"club"|"event"|"opportunity"|"resource"|"task"|"deadline"|"project"|"person"|"notice"|"competition";
-export type RelationType="member_of"|"organizes"|"has_deadline"|"requires"|"derived_from"|"references"|"interested_in"|"uses"|"assigned_to"|"participates_in";
+export type EntityType="user"|"club"|"event"|"opportunity"|"resource"|"task"|"deadline"|"project"|"person"|"notice"|"competition"|"registration"|"milestone"|"volunteer_slot";
+export type RelationType="member_of"|"organizes"|"has_deadline"|"requires"|"derived_from"|"references"|"interested_in"|"uses"|"assigned_to"|"participates_in"|"registration_for"|"volunteers_for"|"milestone_of"|"supports";
 export type Entity={id:string;type:EntityType;name:string;meta?:string};
 export type Relationship={from:string;relation:RelationType;to:string;reason?:string};
 export type Post={id:number;type:string;title:string;body:string;author:string;club:string;time:string;votes:number;comments:number;tags:string[];deadline?:string;linked?:string;sourceText?:string};
-export type Task={id:number;title:string;meta:string;done:boolean;source:string};
+export type Task={id:number;title:string;meta:string;done:boolean;source:string;dueDate?:string;kind?:"task"|"reminder"|"project_action"};
 export type CampusEvent={id:string;name:string;societyId:string;societyName:string;date:string;nature:string;highlight:string;specialGuests:string[];progress:number;venue:string;deadline:string;eligibility:string;status:"upcoming"|"in_progress"|"completed"|"cancelled";};
 export type SocietyMember={userId:string;name:string;position:string;};
 export type SocietyTimelineItem={id:string;date:string;title:string;description:string;};
@@ -18,9 +18,14 @@ export type FeedbackCategory="event"|"venue"|"organization"|"promotion"|"content
 export type FeedbackRecord={id:string;eventId?:string;societyId?:string;category:FeedbackCategory;priority:"low"|"medium"|"high";sentiment:"positive"|"neutral"|"negative";text:string;submitter:string;createdAt:string;};
 export type SocietyMembership={societyId:string;userId:string;role:"member"|"lead"|"admin";};
 export type SocietyWorkspace={societyId:string;private:boolean;};
+export type UserRole="student"|"club_coordinator";
+export type KnowledgeRecord={id:string;title:string;content:string;source:"campus"|"notion";notionPageId?:string;notionDatabaseId?:string;tags:string[];linkedEntityIds:string[];authorizedRoles:UserRole[];updatedAt:string;};
+export type SavedOpportunity={id:string;entityId:string;title:string;sourcePostId?:number;savedAt:string;};
+export type Reminder={id:string;taskId?:number;title:string;dueAt:string;done:boolean;};
+export type NotionSyncState={status:"disconnected"|"connected"|"syncing"|"error";lastSyncedAt?:string;knowledgePages:number;databases:number;message?:string;};
 export type AnnouncementInput={title:string;body:string;type:string;author:string;club:string};
 export type ExtractedAnnouncement={input:AnnouncementInput;event?:{name:string;date?:string};organization?:{name:string};opportunity?:{name:string};deadlines:Array<{label:string;date:string}>;requirements:string[];entities:Entity[];relationships:Relationship[];tasks:Task[];confidence:number;reasons:string[]};
-export type CampusState={entities:Entity[];relationships:Relationship[];posts:Post[];tasks:Task[];events:CampusEvent[];societies:Society[];societyEventPosts:SocietyEventPost[];societyTasks:SocietyTask[];budgets:SocietyBudget[];promotions:PromotionItem[];requirements:ResourceRequirement[];analyses:SocietyAnalysis[];feedback:FeedbackRecord[];memberships:SocietyMembership[];workspaces:SocietyWorkspace[]};
+export type CampusState={entities:Entity[];relationships:Relationship[];posts:Post[];tasks:Task[];events:CampusEvent[];societies:Society[];societyEventPosts:SocietyEventPost[];societyTasks:SocietyTask[];budgets:SocietyBudget[];promotions:PromotionItem[];requirements:ResourceRequirement[];analyses:SocietyAnalysis[];feedback:FeedbackRecord[];memberships:SocietyMembership[];workspaces:SocietyWorkspace[];knowledge:KnowledgeRecord[];savedOpportunities:SavedOpportunity[];reminders:Reminder[];notionSync:NotionSyncState;};
 export interface ExtractionProvider{understand(input:AnnouncementInput):Promise<ExtractedAnnouncement>}
 export type ExtractionValidation={valid:boolean;errors:string[]};
 export function validateExtraction(result:ExtractedAnnouncement):ExtractionValidation{
@@ -50,6 +55,11 @@ export const entities:Entity[]=[
 {id:"ai-hackathon",type:"event",name:"AI Hackathon",meta:"24-hour · Oct 15"},
 {id:"hack-deadline",type:"deadline",name:"Registration · Oct 10",meta:"Deadline"},
 {id:"hack-team",type:"project",name:"Team of 2–4",meta:"Participation requirement"},
+{id:"hack-registration",type:"registration",name:"AI Hackathon registration",meta:"Registration workflow"},
+{id:"hack-volunteer",type:"volunteer_slot",name:"Hackathon volunteer crew",meta:"Event support role"},
+{id:"campus-os-project",type:"project",name:"Campus OS",meta:"Connected campus product"},
+{id:"campus-os-milestone",type:"milestone",name:"Knowledge layer milestone",meta:"Notion + discovery + workflow"},
+{id:"user-shiv",type:"user",name:"Shiv",meta:"Student / Club Coordinator"}
 {id:"ms-ambassador",type:"opportunity",name:"Microsoft Ambassador",meta:"Career opportunity"},
 {id:"figma",type:"event",name:"Figma Workshop",meta:"Design Club event"},
 {id:"cn-notes",type:"resource",name:"CN Viva Notes",meta:"Academic resource"}];
@@ -57,6 +67,11 @@ export const relationships:Relationship[]=[
 {from:"ai-club",relation:"organizes",to:"ai-hackathon"},
 {from:"ai-hackathon",relation:"has_deadline",to:"hack-deadline"},
 {from:"ai-hackathon",relation:"requires",to:"hack-team"},
+{from:"hack-registration",relation:"registration_for",to:"ai-hackathon"},
+{from:"ai-hackathon",relation:"requires",to:"hack-registration"},
+{from:"hack-volunteer",relation:"volunteers_for",to:"ai-hackathon"},
+{from:"campus-os-milestone",relation:"milestone_of",to:"campus-os-project"},
+{from:"user-shiv",relation:"assigned_to",to:"campus-os-milestone"},
 {from:"ms-ambassador",relation:"references",to:"ai-hackathon"}];
 export const posts:Post[]=[
 {id:1,type:"EVENT",title:"24-Hour AI Hackathon — registrations are open",body:"Build anything with AI. Teams of 2–4. Registration closes October 10 and idea submissions close October 13.",author:"AI Club",club:"AI Club",time:"2h",votes:128,comments:24,tags:["AI/ML","Hackathon","Teams"],deadline:"Oct 10",linked:"AI Hackathon"},
@@ -64,10 +79,10 @@ export const posts:Post[]=[
 {id:3,type:"EVENT",title:"Design Club: Figma crash course this Saturday",body:"A practical two-hour session covering components, auto-layout and prototyping. Bring your laptop.",author:"Design Club",club:"Design Club",time:"1d",votes:64,comments:11,tags:["Design","Workshop"],linked:"Figma Workshop"},
 {id:4,type:"RESOURCE",title:"Seniors uploaded the complete CN lab viva notes",body:"Routing, transport layer, socket programming and common viva questions in one place.",author:"B-30 Community",club:"B-30",time:"1d",votes:52,comments:9,tags:["Academics","CN"],linked:"CN Viva Notes"}];
 export const initialTasks:Task[]=[
-{id:1,title:"Register for AI Hackathon",meta:"AI Club · due Oct 10",done:false,source:"ai-hackathon"},
-{id:2,title:"Find 1–3 hackathon teammates",meta:"Derived from team size 2–4",done:false,source:"ai-hackathon"},
-{id:3,title:"Prepare hackathon idea submission",meta:"AI Club · due Oct 13",done:false,source:"ai-hackathon"},
-{id:4,title:"Apply for Microsoft Ambassador",meta:"Tech Society · due Oct 18",done:false,source:"ms-ambassador"}];
+{id:1,title:"Register for AI Hackathon",meta:"AI Club · due Oct 10",done:false,source:"ai-hackathon",dueDate:"October 10, 2026",kind:"task"},
+{id:2,title:"Find 1–3 hackathon teammates",meta:"Derived from team size 2–4",done:false,source:"ai-hackathon",kind:"project_action"},
+{id:3,title:"Prepare hackathon idea submission",meta:"AI Club · due Oct 13",done:false,source:"ai-hackathon",dueDate:"October 13, 2026",kind:"task"},
+{id:4,title:"Apply for Microsoft Ambassador",meta:"Tech Society · due Oct 18",done:false,source:"ms-ambassador",dueDate:"October 18, 2026",kind:"task"}];
 
 export const initialEvents:CampusEvent[]=[
 {id:"ai-hackathon-2026",name:"24-Hour AI Hackathon",societyId:"ai-club-society",societyName:"AI Club",date:"October 15, 2026",nature:"Competition / Hackathon",highlight:"Build an AI project in 24 hours with teams of 2–4.",specialGuests:["Industry mentor panel"],progress:65,venue:"Innovation Lab",deadline:"October 10, 2026",eligibility:"KIIT students; teams of 2–4",status:"in_progress"},
@@ -110,10 +125,14 @@ export const initialWorkspaces:SocietyWorkspace[]=[
 {societyId:"ai-club-society",private:true},
 {societyId:"design-club-society",private:true}
 ];
-export const initialState:CampusState={entities,relationships,posts,tasks:initialTasks,events:initialEvents,societies:initialSocieties,societyEventPosts:initialSocietyEventPosts,societyTasks:initialSocietyTasks,budgets:initialBudgets,promotions:initialPromotions,requirements:initialRequirements,analyses:initialAnalyses,feedback:initialFeedback,memberships:initialMemberships,workspaces:initialWorkspaces};
+export const initialKnowledge:KnowledgeRecord[]=posts.map((post,index)=>({id:"knowledge-"+post.id,title:post.title,content:post.body,source:"campus",tags:post.tags,linkedEntityIds:post.linked?[entities.find(e=>e.name===post.linked)?.id||""]:[],authorizedRoles:["student","club_coordinator"],updatedAt:"2026-10-03T00:00:00.000Z"}));
+export const initialSavedOpportunities:SavedOpportunity[]=[];
+export const initialReminders:Reminder[]=[{id:"reminder-hackathon-registration",taskId:1,title:"AI Hackathon registration closes",dueAt:"2026-10-10T18:00:00+05:30",done:false}];
+export const initialNotionSync:NotionSyncState={status:"disconnected",knowledgePages:0,databases:0,message:"Notion is optional until a deployment owner configures the server-side integration."};
+export const initialState:CampusState={entities,relationships,posts,tasks:initialTasks,events:initialEvents,societies:initialSocieties,societyEventPosts:initialSocietyEventPosts,societyTasks:initialSocietyTasks,budgets:initialBudgets,promotions:initialPromotions,requirements:initialRequirements,analyses:initialAnalyses,feedback:initialFeedback,memberships:initialMemberships,workspaces:initialWorkspaces,knowledge:initialKnowledge,savedOpportunities:initialSavedOpportunities,reminders:initialReminders,notionSync:initialNotionSync};
 
 export function createCampusStore(seed:CampusState=initialState){
-let state:CampusState={entities:[...seed.entities],relationships:[...seed.relationships],posts:[...seed.posts],tasks:[...seed.tasks],events:[...(seed.events||[])],societies:[...(seed.societies||[])],societyEventPosts:[...(seed.societyEventPosts||[])],societyTasks:[...(seed.societyTasks||[])],budgets:[...(seed.budgets||[])],promotions:[...(seed.promotions||[])],requirements:[...(seed.requirements||[])],analyses:[...(seed.analyses||[])],feedback:[...(seed.feedback||[])],memberships:[...(seed.memberships||[])],workspaces:[...(seed.workspaces||[])]};
+let state:CampusState={entities:[...seed.entities],relationships:[...seed.relationships],posts:[...seed.posts],tasks:[...seed.tasks],events:[...(seed.events||[])],societies:[...(seed.societies||[])],societyEventPosts:[...(seed.societyEventPosts||[])],societyTasks:[...(seed.societyTasks||[])],budgets:[...(seed.budgets||[])],promotions:[...(seed.promotions||[])],requirements:[...(seed.requirements||[])],analyses:[...(seed.analyses||[])],feedback:[...(seed.feedback||[])],memberships:[...(seed.memberships||[])],workspaces:[...(seed.workspaces||[])],knowledge:[...(seed.knowledge||[])],savedOpportunities:[...(seed.savedOpportunities||[])],reminders:[...(seed.reminders||[])],notionSync:seed.notionSync||initialNotionSync};
 let nextId=Math.max(99,...state.posts.map(p=>p.id),...state.tasks.map(t=>t.id))+1;
 return {
 getState:()=>state,
@@ -130,6 +149,11 @@ addPromotion:(item:PromotionItem)=>{state={...state,promotions:[...state.promoti
 addRequirement:(item:ResourceRequirement)=>{state={...state,requirements:[...state.requirements.filter(r=>r.id!==item.id),item]}},
 addAnalysis:(analysis:SocietyAnalysis)=>{state={...state,analyses:[...state.analyses.filter(a=>a.eventId!==analysis.eventId),analysis]}},
 addFeedback:(item:FeedbackRecord)=>{state={...state,feedback:[...state.feedback,item]}},
+addKnowledge:(item:KnowledgeRecord)=>{state={...state,knowledge:[...state.knowledge.filter(x=>x.id!==item.id),item]}},
+addSavedOpportunity:(item:SavedOpportunity)=>{state={...state,savedOpportunities:[...state.savedOpportunities.filter(x=>x.id!==item.id),item]}},
+removeSavedOpportunity:(id:string)=>{state={...state,savedOpportunities:state.savedOpportunities.filter(x=>x.id!==id)}},
+addReminder:(item:Reminder)=>{state={...state,reminders:[...state.reminders.filter(x=>x.id!==item.id),item]}},
+setNotionSync:(notionSync:NotionSyncState)=>{state={...state,notionSync}},
 toggleTask:(id:number)=>{state={...state,tasks:state.tasks.map(t=>t.id===id?{...t,done:!t.done}:t)}},
 nextId:()=>nextId++
 };
@@ -235,7 +259,7 @@ const raw=window.localStorage.getItem(STORAGE_KEY);
 if(!raw)return initialState;
 const parsed=JSON.parse(raw) as CampusState;
 if(!parsed||!Array.isArray(parsed.entities)||!Array.isArray(parsed.relationships)||!Array.isArray(parsed.posts)||!Array.isArray(parsed.tasks))return initialState;
-return {...initialState,...parsed,events:Array.isArray(parsed.events)?parsed.events:initialState.events,societyEventPosts:Array.isArray(parsed.societyEventPosts)?parsed.societyEventPosts:initialState.societyEventPosts,societies:Array.isArray(parsed.societies)?parsed.societies:initialState.societies,societyTasks:Array.isArray(parsed.societyTasks)?parsed.societyTasks:initialState.societyTasks,budgets:Array.isArray(parsed.budgets)?parsed.budgets:initialState.budgets,promotions:Array.isArray(parsed.promotions)?parsed.promotions:initialState.promotions,requirements:Array.isArray(parsed.requirements)?parsed.requirements:initialState.requirements,analyses:Array.isArray(parsed.analyses)?parsed.analyses:initialState.analyses,feedback:Array.isArray(parsed.feedback)?parsed.feedback:initialState.feedback,memberships:Array.isArray(parsed.memberships)?parsed.memberships:initialState.memberships,workspaces:Array.isArray(parsed.workspaces)?parsed.workspaces:initialState.workspaces};
+return {...initialState,...parsed,knowledge:Array.isArray(parsed.knowledge)?parsed.knowledge:initialState.knowledge,savedOpportunities:Array.isArray(parsed.savedOpportunities)?parsed.savedOpportunities:initialState.savedOpportunities,reminders:Array.isArray(parsed.reminders)?parsed.reminders:initialState.reminders,notionSync:parsed.notionSync||initialState.notionSync,events:Array.isArray(parsed.events)?parsed.events:initialState.events,societyEventPosts:Array.isArray(parsed.societyEventPosts)?parsed.societyEventPosts:initialState.societyEventPosts,societies:Array.isArray(parsed.societies)?parsed.societies:initialState.societies,societyTasks:Array.isArray(parsed.societyTasks)?parsed.societyTasks:initialState.societyTasks,budgets:Array.isArray(parsed.budgets)?parsed.budgets:initialState.budgets,promotions:Array.isArray(parsed.promotions)?parsed.promotions:initialState.promotions,requirements:Array.isArray(parsed.requirements)?parsed.requirements:initialState.requirements,analyses:Array.isArray(parsed.analyses)?parsed.analyses:initialState.analyses,feedback:Array.isArray(parsed.feedback)?parsed.feedback:initialState.feedback,memberships:Array.isArray(parsed.memberships)?parsed.memberships:initialState.memberships,workspaces:Array.isArray(parsed.workspaces)?parsed.workspaces:initialState.workspaces};
 }catch{return initialState}
 },
 save:(state)=>{if(typeof window==="undefined")return;try{window.localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch{}}
@@ -245,14 +269,33 @@ export function loadCampusState(){return localCampusPersistence.load();}
 export function saveCampusState(state:CampusState){localCampusPersistence.save(state);}
 
 
-export type UserProfile={id:string;name:string;branch:string;year:number;interests:string[];clubs:string[];activeProjects:string[]};
-export const demoProfile:UserProfile={id:"user-shiv",name:"Shiv",branch:"CSE",year:2,interests:["AI/ML","Hackathon","Development","Career"],clubs:["AI Club"],activeProjects:["Campus OS"]};
+export type UserProfile={id:string;name:string;branch:string;year:number;interests:string[];clubs:string[];activeProjects:string[];role:UserRole};
+export const demoProfile:UserProfile={id:"user-shiv",name:"Shiv",branch:"CSE",year:2,interests:["AI/ML","Hackathon","Development","Career"],clubs:["AI Club"],activeProjects:["Campus OS"],role:"club_coordinator"};
 const PROFILE_STORAGE_KEY="campus-os-profile-v1";
 export function loadUserProfile():UserProfile{
 if(typeof window==="undefined")return demoProfile;
-try{const raw=window.localStorage.getItem(PROFILE_STORAGE_KEY);if(!raw)return demoProfile;const parsed=JSON.parse(raw) as UserProfile;if(!parsed||!parsed.name||!Array.isArray(parsed.interests)||!Array.isArray(parsed.clubs)||!Array.isArray(parsed.activeProjects))return demoProfile;return {...demoProfile,...parsed}}catch{return demoProfile}
+try{const raw=window.localStorage.getItem(PROFILE_STORAGE_KEY);if(!raw)return demoProfile;const parsed=JSON.parse(raw) as UserProfile;if(!parsed||!parsed.name||!Array.isArray(parsed.interests)||!Array.isArray(parsed.clubs)||!Array.isArray(parsed.activeProjects))return demoProfile;return {...demoProfile,...parsed,role:parsed.role==="club_coordinator"?"club_coordinator":"student"}}catch{return demoProfile}
 }
 export function saveUserProfile(profile:UserProfile){if(typeof window==="undefined")return;try{window.localStorage.setItem(PROFILE_STORAGE_KEY,JSON.stringify(profile))}catch{}}
+
+export function roleLabel(role:UserRole){return role==="club_coordinator"?"Club Coordinator":"Student"}
+export function roleCan(role:UserRole,action:"view_analytics"|"manage_society"|"sync_notion"|"create_workflow"){if(action==="view_analytics"||action==="create_workflow")return true;if(action==="sync_notion")return role==="club_coordinator";return role==="club_coordinator"}
+export function personalizedWorkflow(state:CampusState,user:UserProfile){
+const relevant=state.posts.map(post=>({post,relevance:relevanceForUser(post,user)})).filter(x=>x.relevance.score>0);
+const existing=new Set(state.tasks.map(t=>t.title));
+const actions:Task[]=[];
+for(const item of relevant){if(item.post.type==="OPPORTUNITY"&&!existing.has("Review and apply: "+item.post.title))actions.push({id:10000+actions.length,title:"Review and apply: "+item.post.title,meta:"Personalized from a relevant opportunity",done:false,source:item.post.linked||"campus-os-project",kind:"task"});}
+return actions;
+}
+export function discoveryTokens(query:string){return query.toLowerCase().split(/[^a-z0-9]+/).filter(x=>x.length>2&&!["what","when","where","with","from","for","the","and","are","can","show","find","tell","about","need"].includes(x));}
+export function discoverCampus(state:CampusState,profile:UserProfile,query:string){
+const tokens=discoveryTokens(query);const allowed=state.knowledge.filter(k=>k.authorizedRoles.includes(profile.role));
+const scored=allowed.map(k=>{const hay=(k.title+" "+k.content+" "+k.tags.join(" ")).toLowerCase();const direct=tokens.filter(t=>hay.includes(t)).length;const links=k.linkedEntityIds.flatMap(id=>state.relationships.filter(r=>r.from===id||r.to===id));const graphBonus=links.reduce((n,r)=>n+(tokens.some(t=>(state.entities.find(e=>e.id===r.from)?.name+" "+state.entities.find(e=>e.id===r.to)?.name).toLowerCase().includes(t))?1:0),0);const profileBonus=userMatch(k,profile)?2:0;return {...k,score:direct*3+graphBonus+profileBonus,matchedTokens:tokens.filter(t=>hay.includes(t))};}).filter(k=>k.score>0).sort((a,b)=>b.score-a.score);
+return scored.slice(0,8);
+}
+function userMatch(k:KnowledgeRecord,user:UserProfile){const hay=(k.title+" "+k.content+" "+k.tags.join(" ")).toLowerCase();return user.interests.some(x=>hay.includes(x.toLowerCase()))||user.clubs.some(x=>hay.includes(x.toLowerCase()))||user.activeProjects.some(x=>hay.includes(x.toLowerCase()));}
+export function analyticsSnapshot(state:CampusState){
+const registrations=state.entities.filter(e=>e.type==="registration");const registrationTasks=state.tasks.filter(t=>/register|registration/i.test(t.title));const deadlines=campusDeadlines(state);const completedTasks=state.tasks.filter(t=>t.done).length;const participation=state.analyses.reduce((n,a)=>n+a.attendees,0);const registrationsObserved=state.analyses.reduce((n,a)=>n+a.registrations,0);const workloadBySource=state.tasks.filter(t=>!t.done).reduce((acc,t)=>{acc[t.source]=(acc[t.source]||0)+1;return acc},{} as Record<string,number>);const projects=state.entities.filter(e=>e.type==="project").map(project=>{const milestones=state.entities.filter(e=>e.type==="milestone"&&state.relationships.some(r=>r.from===e.id&&r.relation==="milestone_of"&&r.to===project.id));const actions=state.tasks.filter(t=>t.source===project.id);return {project,milestones:milestones.length,actions:actions.length,completed:actions.filter(t=>t.done).length,progress:actions.length?Math.round(actions.filter(t=>t.done).length/actions.length*100):0};});return {pendingRegistrations:registrationTasks.filter(t=>!t.done).length+registrations.filter(r=>!state.tasks.some(t=>t.source===r.id&&t.done)).length,upcomingDeadlines:deadlines.filter(d=>d.status!=="overdue").length,participation:participation||registrationsObserved,workload:state.tasks.filter(t=>!t.done).length,completedTasks,totalTasks:state.tasks.length,workloadBySource,projects};}
 export function relevanceForUser(post:Post,user:UserProfile=demoProfile){
 const hay=(post.title+" "+post.body+" "+post.tags.join(" ")+" "+post.club).toLowerCase();
 const matches=user.interests.filter(x=>hay.includes(x.toLowerCase()));
