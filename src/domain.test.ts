@@ -7,7 +7,7 @@ const result=extractAnnouncement({title:"24-Hour AI Hackathon — registrations 
 expect(result.event?.name.toLowerCase()).toContain("hackathon");
 expect(result.organization?.name).toBe("AI Club");
 expect(result.deadlines.map(x=>x.date)).toEqual(["October 10","October 13"]);
-expect(result.requirements[0]).toContain("Team size 2–4");
+expect(result.requirements).toContain("Team size 2–4");
 expect(result.relationships.some(x=>x.relation==="organizes")).toBe(true);
 expect(result.relationships.some(x=>x.relation==="has_deadline")).toBe(true);
 expect(result.tasks.length).toBeGreaterThanOrEqual(3);
