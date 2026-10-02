@@ -64,3 +64,10 @@ npm run build
 ## Scope
 
 This repository is optimized for the hackathon demonstration rather than production infrastructure. Authentication, campus isolation, backend synchronization and external AI can be added after the core product loop is stable.
+
+
+## Deployment readiness
+
+Campus OS is a Vite static web application and is deployment-ready on any static host that runs npm install and npm run build and serves dist/. Vercel can deploy the repository directly with the default Vite detection; no backend is required for the current offline-first MVP. The application keeps campus state in browser localStorage, so a future shared deployment should add a backend implementation of the CampusRepository contract before claiming multi-user synchronization.
+
+For a hackathon demo, use the main branch, open the deployed site, click + Create, run the announcement understanding flow, and use Network, For You, and My Tasks to demonstrate the connected loop. The profile menu also contains Reset demo for a clean presentation state.
