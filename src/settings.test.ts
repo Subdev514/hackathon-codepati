@@ -15,3 +15,8 @@ it("distinguishes prototype controls from deployment responsibilities",()=>{
 for(const phrase of ["CURRENT IMPLEMENTATION","DEPLOYMENT OWNER","NOT CLAIMED","local-first","centralized institutional retention engine"])expect(source).toContain(phrase);
 });
 });
+
+
+describe("knowledge and operations surfaces",()=>{
+it("exposes discovery, Notion, role and analytics UI",()=>{for(const phrase of ["KNOWLEDGE LAYER","SYNC TO NOTION","Student","Club Coordinator","PENDING REGISTRATIONS","PROJECT PROGRESS","DEPENDENCY CHAINS"])expect(source).toContain(phrase);});
+});
