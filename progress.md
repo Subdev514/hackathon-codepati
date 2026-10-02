@@ -581,3 +581,10 @@ Status: COMPLETE
 - Past posts expose winners and media/photographs.
 - Seeded both upcoming and past examples.
 - Added responsive card/grid presentation and mobile handling.
+
+
+### CP13D — Responsive styling + regression coverage
+Status: IN PROGRESS
+- Added desktop/tablet/mobile styling for the Society directory, profile, timeline, members, upcoming event posts and past-event archive.
+- Added regression tests covering public society metadata, member positions, event-post authorship, collaboration, registration links, winners and media.
+- Next: CI/build verification, then final documentation checkpoint.
