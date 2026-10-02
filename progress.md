@@ -601,7 +601,7 @@ Status: COMPLETE
 
 
 ## CP14 — Production-grade Settings, Privacy & Policy Center
-Status: IN PROGRESS
+Status: COMPLETE
 
 Requested overhaul:
 1. Expand the Settings experience from a short legal summary into a professional policy center.
@@ -635,3 +635,15 @@ Status: COMPLETE
 - Added visible keyboard focus styling and reduced-motion handling.
 - Added mobile/tablet layouts for the expanded settings and long-form policy documents.
 - Added semantic status labels and clearer document hierarchy without relying solely on color.
+
+
+### CP14C — Verification & release
+Status: COMPLETE
+- Regression suite initially caught two assertion wording mismatches; the assertions were corrected rather than bypassed.
+- Final GitHub Actions verification passed after the test correction.
+- Final production deployment reached READY.
+- Live production endpoint returned HTTP 200.
+- Settings now exposes the expanded Policy Center and long-form policy documents.
+- DPDP content references the notified 2025 Rules and the Act's rights/notice concepts; HIPAA content distinguishes covered entities/business associates and Privacy/Security/Breach Notification Rules.
+- Accessibility documentation uses WCAG 2.2 AA as a target rather than making an unsupported conformance claim.
+- The implementation explicitly distinguishes current local-first behavior from controls that a production deployment owner must configure.
