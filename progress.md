@@ -562,3 +562,22 @@ Status: COMPLETE
 - Added separate Society Event Post records so public society content is distinct from private Society Ops.
 - Event posts support authoring society, collaborating societies, optional description, registration link, prizes, special guests, join reason, X-Factor, media, upcoming/past status and winners.
 - Added seeded public examples and local persistence migration support.
+
+
+### CP13B — Public Society page
+Status: COMPLETE
+- Added a dedicated Societies navigation surface.
+- Added society selector so the public profile can switch between societies.
+- Added society name, FIC, genre, member count and description.
+- Added approximately 50-word X-Factor presentation.
+- Added timeline of significant society changes/contributions.
+- Added all public members with positions.
+- Kept this surface separate from the private Society Ops workspace.
+
+### CP13C — Society Event Posts
+Status: COMPLETE
+- Added public event post cards linked to the society and existing event records.
+- Upcoming posts expose authoring society, collaborators, event date/venue, description, registration link, prizes, special guests, join reason and X-Factor.
+- Past posts expose winners and media/photographs.
+- Seeded both upcoming and past examples.
+- Added responsive card/grid presentation and mobile handling.
