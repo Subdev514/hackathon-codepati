@@ -781,3 +781,21 @@ Status: COMPLETE
 - Deployed JavaScript was inspected and contains the universal mobile navigator plus the Campus OS page destinations.
 - Deployed CSS was inspected and contains the mobile navigation layout, hidden mobile sidebar and removal of bottom-nav viewport padding.
 - The resulting mobile architecture is: sticky topbar → universal 12-page dropdown → page content, with no mobile bottom navigation bar.
+
+
+## CP18 — Mobile navigation affordance clarity
+Status: COMPLETE
+
+Requested refinement:
+- Make the mobile page-navigation control unmistakably interactive so users do not have to discover that the dropdown is the navigation mechanism.
+
+Implementation:
+- Added an explicit `TAP TO OPEN` action cue above the mobile navigator.
+- Added `12 pages · one tap away` supporting text and an accessible description for the control.
+- Added an acid-accented navigation frame and visible animated focus/attention treatment around the select.
+- Preserved reduced-motion behavior and keyboard/focus accessibility.
+- Added regression assertions for the new navigation affordance.
+
+Verification:
+- Source-level navigation regression coverage updated for the explicit affordance.
+- Production deployment is handled by the repository's Vercel pipeline from the committed changes.
