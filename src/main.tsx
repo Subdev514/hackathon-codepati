@@ -41,7 +41,8 @@ return <div className="app">
 {tab==="Network"&&<Relationship state={state}/>}
 </main>
 {error&&<div className="error-toast" role="alert">{error}<button onClick={()=>setError("")}>×</button></div>}
-{showProfile&&<ProfileEditor profile={profile} save={next=>{setProfile(next);saveUserProfile(next);setShowProfile(false)}} close={()=>setShowProfile(false)}/>}\n{showCreate&&<CreateAnnouncement form={form} setForm={setForm} preview={preview} submit={submitAnnouncement} confirm={confirmAnnouncement} close={()=>{setShowCreate(false);setPreview(null)}}/>}
+{showProfile&&<ProfileEditor profile={profile} save={next=>{setProfile(next);saveUserProfile(next);setShowProfile(false)}} close={()=>setShowProfile(false)}/>}
+{showCreate&&<CreateAnnouncement form={form} setForm={setForm} preview={preview} submit={submitAnnouncement} confirm={confirmAnnouncement} close={()=>{setShowCreate(false);setPreview(null)}}/>}
 </div>
 }
 
