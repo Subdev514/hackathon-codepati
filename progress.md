@@ -253,7 +253,7 @@ Personalization affects relevance and surfaced actions, but reasons remain visib
 
 Active checkpoint: CP6 — Persistence.
 
-Next action: connect the new local persistence helpers to application startup and every store mutation, then continue to personalization.
+Next action: wire local persistence into startup/mutations. Then finish CP7 transparent personalization.
 
 
 ### 2026-10-02 — CP2/CP4/CP5 announcement vertical slice
@@ -270,4 +270,11 @@ Next action: connect the new local persistence helpers to application startup an
 - Added versioned localStorage key and safe load/save helpers to the domain layer.
 - Invalid or unavailable stored state falls back to the seeded demo state.
 - Persistence is browser-only and does not leak storage concerns into React components beyond startup/mutation wiring.
+- Verification: static review completed; build/browser verification still pending.
+
+
+### 2026-10-02 — CP7 relevance model
+- Added a demo UserProfile and relevanceForUser() domain service.
+- Relevance is intentionally explainable: interest matches, followed-club matches and year-aware opportunity relevance each expose a reason.
+- No opaque recommendation score is presented to the user.
 - Verification: static review completed; build/browser verification still pending.
