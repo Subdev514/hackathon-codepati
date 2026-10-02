@@ -1,5 +1,5 @@
 import{describe,expect,it}from"vitest";
-import{commitExtraction,createCampusStore,extractAnnouncement,initialState,normalizeExtraction,validateExtraction,deterministicExtractionProvider,relevanceForUser,deadlineStatus}from"./domain";
+import{commitExtraction,createCampusStore,extractAnnouncement,initialState,normalizeExtraction,validateExtraction,deterministicExtractionProvider,relevanceForUser,deadlineStatus,createCampusRepository}from"./domain";
 
 describe("announcement extraction",()=>{
 it("extracts the hackathon demo into connected facts and actions",()=>{
@@ -64,5 +64,17 @@ describe("deadline intelligence",()=>{
   expect(deadlineStatus("October 2",now)).toBe("today");
   expect(deadlineStatus("October 5",now)).toBe("due_soon");
   expect(deadlineStatus("September 30",now)).toBe("overdue");
+ });
+});
+
+describe("persistence boundary",()=>{
+ it("can swap the local persistence implementation without changing domain consumers",()=>{
+  let saved=initialState;
+  const persistence={load:()=>saved,save:(next:typeof initialState)=>{saved=next}};
+  const repository=createCampusRepository(persistence);
+  const state=repository.load();
+  expect(state.entities.length).toBeGreaterThan(0);
+  repository.save({...state,posts:[]});
+  expect(repository.load().posts).toHaveLength(0);
  });
 });
