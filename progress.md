@@ -757,3 +757,14 @@ Status: COMPLETE
 - Seeded the databases with the existing Campus OS domain examples: AI Hackathon, Microsoft Ambassador, Campus OS project context, registration/submission tasks and volunteer workflow.
 - Added a Campus OS Operating Guide documenting the knowledge → discovery → action → task/reminder → analytics flow and the Student/Club Coordinator roles.
 - This workspace is now usable as the human-facing knowledge/collaboration layer for the application.
+
+
+## CP17 — Mobile navigation and responsive optimization
+Status: IN PROGRESS
+
+### Plan
+- CP17A — Replace the six-item mobile bottom navigation with an always-available 12-destination navigation control in the sticky topbar.
+- CP17B — Make the mobile header, search/actions and page spacing work cleanly across phone widths without horizontal overflow.
+- CP17C — Preserve desktop/tablet navigation behavior while removing the obsolete mobile bottom bar.
+- CP17D — Add regression coverage for all 12 navigation destinations and mobile-navigation source presence.
+- CP17E — Build, test and deploy the responsive navigation update.
