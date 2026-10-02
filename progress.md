@@ -671,3 +671,9 @@ Reference research:
 - Inspection showed the preceding Network conditional render was missing its closing JSX expression brace.
 - Added the missing brace and verified the source now uses a real newline between Network and Settings rather than a literal escaped newline.
 - Required next verification: rerun npm test and npm run build locally.
+
+### 2026-10-03 — Verified and fixed persistent Network JSX defect
+- Re-read the committed `src/main.tsx` after the repeated local build failure.
+- The Network conditional still lacked its final `}` in the actual repository state; the earlier attempted repair had not produced the required source line.
+- Replaced the exact malformed line with a complete JSX conditional and committed it as `badeba1e616b07aabc381f2af2de0a278ab15fb6`.
+- Required next verification: pull the latest commit, then rerun npm test and npm run build.
