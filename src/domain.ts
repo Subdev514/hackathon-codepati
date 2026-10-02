@@ -175,16 +175,24 @@ try{window.localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch{}
 }
 
 
-export type UserProfile={id:string;name:string;branch:string;year:number;interests:string[];clubs:string[]};
-export const demoProfile:UserProfile={id:"user-shiv",name:"Shiv",branch:"CSE",year:2,interests:["AI/ML","Hackathon","Development","Career"],clubs:["AI Club"]};
+export type UserProfile={id:string;name:string;branch:string;year:number;interests:string[];clubs:string[];activeProjects:string[]};
+export const demoProfile:UserProfile={id:"user-shiv",name:"Shiv",branch:"CSE",year:2,interests:["AI/ML","Hackathon","Development","Career"],clubs:["AI Club"],activeProjects:["Campus OS"]};
+const PROFILE_STORAGE_KEY="campus-os-profile-v1";
+export function loadUserProfile():UserProfile{
+if(typeof window==="undefined")return demoProfile;
+try{const raw=window.localStorage.getItem(PROFILE_STORAGE_KEY);if(!raw)return demoProfile;const parsed=JSON.parse(raw) as UserProfile;if(!parsed||!parsed.name||!Array.isArray(parsed.interests)||!Array.isArray(parsed.clubs)||!Array.isArray(parsed.activeProjects))return demoProfile;return {...demoProfile,...parsed}}catch{return demoProfile}
+}
+export function saveUserProfile(profile:UserProfile){if(typeof window==="undefined")return;try{window.localStorage.setItem(PROFILE_STORAGE_KEY,JSON.stringify(profile))}catch{}}
 export function relevanceForUser(post:Post,user:UserProfile=demoProfile){
 const hay=(post.title+" "+post.body+" "+post.tags.join(" ")+" "+post.club).toLowerCase();
 const matches=user.interests.filter(x=>hay.includes(x.toLowerCase()));
 const clubMatch=user.clubs.some(x=>post.club.toLowerCase().includes(x.toLowerCase()));
-const score=matches.length+(clubMatch?2:0)+(post.type==="OPPORTUNITY"&&user.year>=2?1:0);
+const projectMatch=user.activeProjects.some(x=>hay.includes(x.toLowerCase()));
+const score=matches.length+(clubMatch?2:0)+(projectMatch?2:0)+(post.type==="OPPORTUNITY"&&user.year>=2?1:0);
 const reasons:string[]=[];
 if(matches.length)reasons.push("matches "+matches.slice(0,2).join(" and "));
 if(clubMatch)reasons.push("from a club you follow");
+if(projectMatch)reasons.push("connected to an active project");
 if(post.type==="OPPORTUNITY"&&user.year>=2)reasons.push("career opportunity for your year");
 return {score,reasons};
 }
