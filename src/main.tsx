@@ -1,9 +1,9 @@
 import React from "react";
 import{createRoot}from"react-dom/client";
 import"./styles.css";
-import{AnnouncementInput,ExtractedAnnouncement,Post,Task,createCampusStore,extractAnnouncement,commitExtraction}from"./domain";
+import{AnnouncementInput,ExtractedAnnouncement,Post,Task,createCampusStore,extractAnnouncement,commitExtraction,loadCampusState,saveCampusState,demoProfile,relevanceForUser}from"./domain";
 
-const store=createCampusStore();
+const store=createCampusStore(loadCampusState());
 
 function App(){
 const[tab,setTab]=React.useState("Home");
@@ -16,7 +16,7 @@ const[preview,setPreview]=React.useState<ExtractedAnnouncement|null>(null);
 const[form,setForm]=React.useState<AnnouncementInput>({title:"",body:"",type:"EVENT",author:"AI Club",club:"AI Club"});
 const state=store.getState();
 const filtered=state.posts.filter(p=>(p.title+" "+p.body+" "+p.tags.join(" ")).toLowerCase().includes(query.toLowerCase()));
-const sync=()=>{setTasks([...store.getState().tasks]);refresh(x=>x+1)};
+const sync=()=>{saveCampusState(store.getState());setTasks([...store.getState().tasks]);refresh(x=>x+1)};
 const toggle=(id:number)=>{store.toggleTask(id);sync()};
 const submitAnnouncement=()=>{if(!form.title.trim()||!form.body.trim())return;setPreview(extractAnnouncement(form))};
 const confirmAnnouncement=()=>{if(!preview)return;commitExtraction(store,preview);setPreview(null);setShowCreate(false);setForm({title:"",body:"",type:"EVENT",author:"AI Club",club:"AI Club"});setTab("Home");sync()};
@@ -31,7 +31,7 @@ return <div className="app">
 <main>
 <header><div><span className="eyebrow">CAMPUS OPERATING SYSTEM</span><h1>{tab==="Home"?"Good evening, Shiv.":tab}</h1></div><div className="header-actions"><div className="search"><span>⌕</span><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search campus..." /></div><button className="bell">♢</button><button className="primary" onClick={()=>setShowCreate(true)}>+ Create</button></div></header>
 {tab==="Home"&&<><section className="hero"><div><span className="eyebrow">PERSONALIZED CAMPUS FEED</span><h2>Everything happening around you,<br/><em>connected to what matters.</em></h2><p>Posts become events, opportunities become deadlines, and information becomes your next action.</p><button className="primary hero-action" onClick={()=>setShowCreate(true)}>Turn an announcement into a workflow →</button></div><div className="hero-orbit"><div className="orbit center">YOU</div><div className="node n1">EVENT</div><div className="node n2">TASK</div><div className="node n3">CLUB</div><div className="node n4">DEADLINE</div></div></section><div className="grid"><section><div className="section-head"><div><span className="eyebrow">CAMPUS SIGNAL</span><h3>Latest from your campus</h3></div><button className="ghost">Filter · All</button></div>{filtered.map(p=><PostCard key={p.id} p={p} liked={liked.includes(p.id)} onLike={()=>setLiked(l=>l.includes(p.id)?l.filter(x=>x!==p.id):[...l,p.id])}/>)}</section><Workflow tasks={tasks} toggle={toggle}/></div></>}
-{tab==="For You"&&<div className="page-grid"><Workflow tasks={tasks} toggle={toggle}/><Relationship state={state}/></div>}
+{tab==="For You"&&<div className="page-grid"><section><div className="panel"><span className="eyebrow">PERSONALIZED FOR SHIV</span><h3>Why these campus signals matter</h3>{[...filtered].sort((a,b)=>relevanceForUser(b,demoProfile).score-relevanceForUser(a,demoProfile).score).map(p=><div className="relevance-item" key={p.id}><div><b>{p.title}</b><small>{relevanceForUser(p,demoProfile).reasons.join(" · ")||"General campus information"}</small></div><span>{relevanceForUser(p,demoProfile).score>0?"Relevant":"General"}</span></div>)}</div></section><Workflow tasks={tasks} toggle={toggle}/></div>}
 {tab==="My Tasks"&&<div className="page-grid"><Workflow tasks={tasks} toggle={toggle}/><section className="panel"><span className="eyebrow">WHY THIS TASK EXISTS</span><h3>Tasks are connected to campus context</h3><p>Every generated task keeps a source entity so the user can understand why it exists.</p><div className="relation"><b>AI Hackathon</b><span>→</span><b>Registration</b><span>→</span><b>Deadline</b></div><div className="relation"><b>AI Hackathon</b><span>→</span><b>Team</b><span>→</span><b>Find teammates</b></div></section></div>}
 {tab==="Explore"&&<div className="explore">{filtered.map(p=><PostCard key={p.id} p={p} liked={liked.includes(p.id)} onLike={()=>setLiked(l=>l.includes(p.id)?l.filter(x=>x!==p.id):[...l,p.id])}/>)}</div>}
 {tab==="Network"&&<Relationship state={state}/>}
