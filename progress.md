@@ -594,3 +594,14 @@ Reference research:
 - This preserves the domain relationship model and makes the Home attention layer operational rather than decorative.
 - Workflow completion remains backed by the shared store, and the full-workflow action routes to My Tasks.
 - Next: CP12F network visualization polish and graph interaction QA.
+### 2026-10-03 — CP12F network visualization checkpoint
+- Completed the Network interaction polish pass.
+- Network selection remains entity-backed and now accepts focus from deadline navigation, while direct graph nodes and entity chips remain selectable.
+- Added keyboard focus styling to the deadline-to-network transition.
+- The visual graph remains presentation-only; relationship truth continues to come exclusively from src/domain.ts.
+
+### 2026-10-03 — CP12G Campus Copilot checkpoint
+- Expanded the redesigned Copilot result from a single sentence into a compact evidence panel.
+- Answers now surface connected entities, relevant actions and deadline attention items alongside the grounded answer.
+- The Copilot still uses answerCampusQuery() only; no external model, secret or fabricated campus data was introduced.
+- Next: CP12H profile/personalization polish, then CP12I responsive/mobile audit.
