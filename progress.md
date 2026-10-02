@@ -174,10 +174,14 @@ Status: COMPLETE
 - Verification: source-level type/extraction/test review completed.
 
 #### CP10D — Personal campus workspace
-Status: NOT STARTED
+Status: COMPLETE
 - Make the profile editable locally.
 - Store branch, year, interests, clubs and active projects.
 - Recompute relevance and workflow presentation from profile state.
+- Added local profile persistence with name, branch, year, interests, clubs and active projects.
+- Added editable profile modal from the sidebar and wired For You relevance to the current profile.
+- Added active-project relevance reasons.
+- Verification: source-level UI/domain/test review completed.
 
 #### CP10E — Deadline intelligence
 Status: NOT STARTED
@@ -397,6 +401,9 @@ Remaining work:
 
 ### 2026-10-02 — CP10C broader information types complete
 - Completed CP10C. Campus OS can preserve more than event/opportunity records without flattening them into posts.
+
+### 2026-10-02 — CP10D personal workspace complete
+- Completed CP10D. Personalization is now editable local state rather than a fixed demo-only profile.
 
 ### 2026-10-02 — Final CP9 audit
 - Re-read progress.md before final audit as required by the execution contract.
