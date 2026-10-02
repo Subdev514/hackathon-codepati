@@ -10,6 +10,7 @@ const navItems=[["01","Home","⌂"],["02","For You","✦"],["03","Explore","◌"
 
 function App(){
 const[tab,setTab]=React.useState("Home");
+React.useEffect(()=>{const handler=(event:Event)=>{const detail=(event as CustomEvent<string>).detail;if(navItems.some(([,name])=>name===detail))setTab(detail)};window.addEventListener("campus:navigate",handler);return()=>window.removeEventListener("campus:navigate",handler)},[]);
 const[,refresh]=React.useState(0);
 const[tasks,setTasks]=React.useState(store.getState().tasks);
 const[query,setQuery]=React.useState("");
@@ -50,7 +51,7 @@ return <div className="app-shell">
 </div>
 }
 
-function Home({state,profile,filtered,tasks,toggle,liked,setLiked,copilotQuery,setCopilotQuery,openCreate}:{state:ReturnType<typeof store.getState>;profile:UserProfile;filtered:Post[];tasks:Task[];toggle:(id:number)=>void;liked:number[];setLiked:React.Dispatch<React.SetStateAction<number[]>>;copilotQuery:string;setCopilotQuery:(v:string)=>void;openCreate:()=>void;openTasks:()=>void}){
+function Home({state,profile,filtered,tasks,toggle,liked,setLiked,copilotQuery,setCopilotQuery,openCreate,openTasks}:{state:ReturnType<typeof store.getState>;profile:UserProfile;filtered:Post[];tasks:Task[];toggle:(id:number)=>void;liked:number[];setLiked:React.Dispatch<React.SetStateAction<number[]>>;copilotQuery:string;setCopilotQuery:(v:string)=>void;openCreate:()=>void;openTasks:()=>void}){
 const open=tasks.filter(t=>!t.done).length;
 return <div className="page home-page">
 <section className="hero-command">
@@ -59,7 +60,7 @@ return <div className="page home-page">
 </section>
 <DeadlineTimeline state={state}/>
 <section className="copilot-strip"><div className="copilot-copy"><div className="signal-line">CAMPUS COPILOT <span className="mini-tag">GRAPH-GROUNDED</span></div><h2>Ask the campus.</h2><p>Get answers from the relationships, deadlines and workflow already stored in your Campus OS.</p></div><div className="copilot-query"><span>⌘</span><input value={copilotQuery} onChange={e=>setCopilotQuery(e.target.value)} placeholder="What do I need to do for the hackathon?"/><span className="enter">ENTER ↵</span>{copilotQuery.trim()&&<div className="copilot-result">{answerCampusQuery(state,profile,copilotQuery).answer}</div>}</div></section>
-<div className="content-grid" id="campus-feed"><section><SectionHeading kicker="LIVE CAMPUS SIGNALS" title="What is happening" action="Explore all"/>{filtered.map((p,i)=><PostCard key={p.id} p={p} liked={liked.includes(p.id)} onLike={()=>setLiked(l=>l.includes(p.id)?l.filter(x=>x!==p.id):[...l,p.id])} index={i}/>)}</section><Workflow tasks={tasks} toggle={toggle} openTasks={openTasks}/></div>
+<div className="content-grid" id="campus-feed"><section><SectionHeading kicker="LIVE CAMPUS SIGNALS" title="What is happening" action="Explore all" onAction={()=>window.dispatchEvent(new CustomEvent("campus:navigate",{detail:"Explore"}))}/>{filtered.map((p,i)=><PostCard key={p.id} p={p} liked={liked.includes(p.id)} onLike={()=>setLiked(l=>l.includes(p.id)?l.filter(x=>x!==p.id):[...l,p.id])} index={i}/>)}</section><Workflow tasks={tasks} toggle={toggle} openTasks={openTasks}/></div>
 </div>
 }
 
@@ -75,7 +76,7 @@ const deadlines=campusDeadlines(state);
 return <section className="deadline-section"><SectionHeading kicker="ATTENTION LAYER" title="Deadlines in your orbit" action={deadlines.length+" connected"}/><div className="deadline-track">{deadlines.slice(0,5).map((d,i)=><article className={"deadline-card "+d.status} key={d.entity.id}><div className="deadline-index">0{i+1}</div><div><small>{d.status.replace("_"," ").toUpperCase()}</small><h3>{d.entity.name}</h3><p>{d.source?.name||"Campus information"}{d.task?" · "+d.task.title:""}</p></div><span className="deadline-arrow">↗</span></article>)}</div></section>
 }
 
-function SectionHeading({kicker,title,action}:{kicker:string;title:string;action:string}){return <div className="section-heading"><div><span>{kicker}</span><h2>{title}</h2></div><button>{action} ↗</button></div>}
+function SectionHeading({kicker,title,action,onAction}:{kicker:string;title:string;action:string;onAction?:()=>void}){return <div className="section-heading"><div><span>{kicker}</span><h2>{title}</h2></div>{onAction?<button onClick={onAction}>{action} ↗</button>:<span className="section-action">{action}</span>}</div>
 
 function PostCard({p,liked,onLike,index}:{p:Post;liked:boolean;onLike:()=>void;index:number}){
 return <article className="signal-card" style={{"--delay":index*70+"ms"} as React.CSSProperties}><div className="signal-number">0{index+1}</div><div className="signal-main"><div className="signal-meta"><span className={"type-badge "+p.type.toLowerCase()}>{p.type}</span><span>{p.club}</span><span>·</span><span>{p.time==="now"?"JUST NOW":p.time.toUpperCase()+" AGO"}</span></div><h3>{p.title}</h3><p>{p.body}</p><div className="signal-footer"><button onClick={onLike}>{liked?"▲":"△"} {p.votes+(liked?1:0)}</button><span>{p.comments} comments</span>{p.deadline&&<b>DEADLINE {p.deadline}</b>}<span className="linked">CONNECTED ↗</span></div></div></article>
