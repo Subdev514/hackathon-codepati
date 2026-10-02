@@ -204,10 +204,15 @@ Status: COMPLETE
 - Verification: source-level architecture/test review completed.
 
 #### CP10G — Hackathon polish and deployment readiness
-Status: NOT STARTED
+Status: COMPLETE
 - Add reset/demo controls and intentional loading/empty/error states.
 - Improve graph presentation and demo reliability.
 - Verify production build and document deployment path if tooling permits.
+- Added visible extraction/commit error handling and a Reset demo recovery action.
+- Hardened persisted numeric IDs to continue above existing state and deduplicated generated tasks by title/source.
+- Added state-hardening tests for ID allocation and duplicate task prevention.
+- Documented Vite/Vercel/static-host deployment readiness in README.
+- GitHub workflow-run lookup for the latest commit returned no runs; production build could not be executed locally because outbound package/network access is unavailable. Source-level verification completed.
 
 Completion rule: do not mark CP10 complete until CP10A–CP10G are complete or a concrete external blocker is documented.
 
@@ -369,7 +374,7 @@ Superseded by the final execution state below.
 
 ## 13. Final execution state
 
-Status: MVP COMPLETE. CP0–CP9 are complete.
+Status: CP10 COMPLETE. CP0–CP9 MVP plus CP10A–CP10G post-MVP expansion are complete.
 
 Final verification:
 - Source-level audit completed across package.json, domain.ts, main.tsx, styles.css, README.md and progress.md.
@@ -392,7 +397,7 @@ Final demo path:
 10. Open Network to show the connected graph.
 
 Remaining work:
-- CP10A–CP10G are now the active post-MVP execution plan.
+- No planned CP10 sub-checkpoints remain. Future work is optional product evolution: real server-backed AI extraction, authentication/multi-campus isolation, shared backend sync, richer graph visualization and production analytics.
 
 
 ### 2026-10-02 — CP10 autonomous expansion plan
@@ -418,6 +423,9 @@ Remaining work:
 
 ### 2026-10-02 — CP10F backend-ready boundary complete
 - Completed CP10F. A future backend adapter can implement the repository contract without changing the domain model or core UI flow.
+
+### 2026-10-02 — CP10G polish and deployment readiness complete
+- Completed CP10G. Demo recovery, error handling, state hardening and deployment documentation are now included.
 
 ### 2026-10-02 — Final CP9 audit
 - Re-read progress.md before final audit as required by the execution contract.
