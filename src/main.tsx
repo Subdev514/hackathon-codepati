@@ -12,7 +12,7 @@ function App(){
 const[tab,setTab]=React.useState("Home");
 const[settingsView,setSettingsView]=React.useState<"settings"|"privacy"|"terms">("settings");
 const[theme,setTheme]=React.useState<"dark"|"light">(()=>window.localStorage.getItem("campus-os-theme")==="light"?"light":"dark");
-React.useEffect(()=>{document.documentElement.dataset.theme=theme;window.localStorage.setItem("campus-os-theme",theme)},[theme]);
+React.useEffect(()=>{document.documentElement.dataset.theme=theme;window.localStorage.setItem("campus-os-theme",theme);document.querySelector('meta[name="theme-color"]')?.setAttribute("content",theme==="light"?"#f4f6f1":"#080908")},[theme]);
 const[networkEntityId,setNetworkEntityId]=React.useState<string|undefined>();
 React.useEffect(()=>{const handler=(event:Event)=>{const detail=(event as CustomEvent<string>).detail;if(navItems.some(([,name])=>name===detail))setTab(detail)};window.addEventListener("campus:navigate",handler);return()=>window.removeEventListener("campus:navigate",handler)},[]);
 const[,refresh]=React.useState(0);
