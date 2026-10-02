@@ -387,3 +387,35 @@ html[data-theme="light"] .not-found-grid{background-image:linear-gradient(rgba(2
   .feedback-composer .form-grid{grid-template-columns:1fr;gap:0}
   .feedback-composer label{margin:0 0 15px}
 }
+
+
+/* Personal context header: keep the copy column flexible and the edit control intrinsic. */
+.personal-context-card .settings-card-head{
+  display:flex;
+  width:100%;
+  min-width:0;
+  box-sizing:border-box;
+}
+.personal-context-card .settings-card-head>div:first-child{
+  flex:1 1 auto;
+  min-width:0;
+}
+.personal-context-card .settings-card-head .settings-edit-context{
+  width:auto;
+  max-width:max-content;
+  flex:0 0 auto;
+  align-self:center;
+  box-sizing:border-box;
+}
+.personal-context-card .settings-card-head h2{
+  overflow-wrap:anywhere;
+}
+@media(max-width:680px){
+  .personal-context-card .settings-card-head{
+    align-items:stretch;
+  }
+  .personal-context-card .settings-card-head .settings-edit-context{
+    width:100%;
+    max-width:none;
+  }
+}
