@@ -346,3 +346,44 @@ html[data-theme="light"] .not-found-grid{background-image:linear-gradient(rgba(2
   .feedback-composer,.feedback-overview{padding:15px}
   .feedback-note{line-height:1.5}
 }
+
+
+/* Feedback form hardening: labels are block controls here, so field captions never collapse beside inputs. */
+.feedback-composer label{
+  display:block;
+  width:100%;
+  margin:0;
+  color:#717970;
+  font:8px var(--mono);
+  letter-spacing:.1em;
+  box-sizing:border-box;
+}
+.feedback-composer .form-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:15px;
+  width:100%;
+}
+.feedback-composer input,
+.feedback-composer textarea,
+.feedback-composer select{
+  display:block;
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  box-sizing:border-box;
+  margin-top:7px;
+}
+.feedback-composer textarea{
+  min-height:120px;
+  resize:vertical;
+  line-height:1.6;
+}
+.feedback-composer .modal-actions{
+  width:100%;
+  box-sizing:border-box;
+}
+@media(max-width:680px){
+  .feedback-composer .form-grid{grid-template-columns:1fr;gap:0}
+  .feedback-composer label{margin:0 0 15px}
+}
