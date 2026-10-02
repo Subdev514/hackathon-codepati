@@ -588,3 +588,9 @@ Reference research:
 - Added a lightweight app-level navigation event seam so section actions do not duplicate tab state or move domain logic into presentation helpers.
 - Confirmed the redesigned Home already routes Create, For You, My Tasks, task completion, profile editing, search, graph selection and announcement confirmation through real state handlers.
 - Next: CP12E tasks/deadline interaction polish and source-context navigation.
+### 2026-10-03 — CP12E deadline/workflow interaction checkpoint
+- Deadline cards now act as real context links: selecting a deadline opens Network and focuses its originating deadline entity.
+- Network accepts an externally selected entity ID while retaining direct local entity selection.
+- This preserves the domain relationship model and makes the Home attention layer operational rather than decorative.
+- Workflow completion remains backed by the shared store, and the full-workflow action routes to My Tasks.
+- Next: CP12F network visualization polish and graph interaction QA.
