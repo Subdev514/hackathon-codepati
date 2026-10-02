@@ -165,3 +165,25 @@ describe("society operations",()=>{
   expect(contribution.find(x=>x.member==="Riya")?.completed).toBe(1);
  });
 });
+
+
+describe("public society pages",()=>{
+ it("contains public profile information without private operations fields",()=>{
+  const society=initialState.societies.find(s=>s.id==="ai-club-society")!;
+  expect(society.fic).toBeTruthy();
+  expect(society.genre).toContain("AI");
+  expect(society.xfactor.split(/\s+/).length).toBeGreaterThan(30);
+  expect(society.timeline.length).toBeGreaterThan(0);
+  expect(society.publicMembers.every(member=>member.position)).toBe(true);
+ });
+ it("models society-authored upcoming and past event posts separately",()=>{
+  const upcoming=initialState.societyEventPosts.find(p=>p.status==="upcoming")!;
+  const past=initialState.societyEventPosts.find(p=>p.status==="past")!;
+  expect(upcoming.postedBy).toBe("AI Club");
+  expect(upcoming.collaboratingSocieties).toContain("Design Club");
+  expect(upcoming.registrationLink).toContain("http");
+  expect(upcoming.joinReason).toBeTruthy();
+  expect(past.winners.length).toBeGreaterThan(0);
+  expect(past.media.length).toBeGreaterThan(0);
+ });
+});
