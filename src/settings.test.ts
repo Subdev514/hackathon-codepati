@@ -20,7 +20,7 @@ for(const phrase of ["CURRENT IMPLEMENTATION","DEPLOYMENT OWNER","NOT CLAIMED","
 describe("knowledge and operations surfaces",()=>{
 it("exposes discovery, Notion, role and analytics UI",()=>{for(const phrase of ["KNOWLEDGE LAYER","SYNC TO NOTION","Student","Club Coordinator","PENDING REGISTRATIONS","PROJECT PROGRESS","DEPENDENCY CHAINS"])expect(source).toContain(phrase);});
 it("exposes all twelve destinations through the universal mobile navigator",()=>{
-for(const label of ["Home","For You","Explore","Knowledge","Events","My Tasks","Network","Societies","Society Ops","Analytics","Feedback","Settings"])expect(source).toContain("\`<option key={name} value={name}>{num} · {name}</option>\`");
+for(const label of ["Home","For You","Explore","Knowledge","Events","My Tasks","Network","Societies","Society Ops","Analytics","Feedback","Settings"])expect(source).toContain('"' + label + '"');
 expect(source).toContain('className="mobile-navigation"');
 expect(source).toContain('aria-label="Navigate to Campus OS page"');
 });
