@@ -19,9 +19,10 @@ Campus information → structured entities → relationships → personalization
 - Task completion and workflow progress
 - LocalStorage persistence across reloads
 - Explainable “For You” relevance based on student profile
-- Responsive UI
+- Responsive UI with animated spatial terrain and relationship graph
+- Reduced-motion support for accessibility
 - Vitest extraction/commit tests
-- GitHub Actions verification workflow for test + production build
+- Vite production build configuration
 
 ## Demo
 
@@ -88,4 +89,4 @@ Example questions:
 
 ## Deployment
 
-The repository includes `vercel.json` with the Vite build command and `dist/` output directory. Vercel can deploy the main branch directly. The current application is still local-first: each browser has its own campus state and profile. A shared multi-user deployment must not be represented as synchronized until a backend repository implementation is added.
+The repository includes `vercel.json` with the Vite build command and `dist/` output directory. Vercel can deploy the main branch directly. The current redesign is dependency-light and uses CSS/DOM motion rather than requiring a WebGL runtime. The current application is still local-first: each browser has its own campus state and profile. A shared multi-user deployment must not be represented as synchronized until a backend repository implementation is added.
