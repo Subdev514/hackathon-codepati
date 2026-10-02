@@ -60,12 +60,14 @@ return <div className="page home-page">
 <CampusTerrain state={state}/>
 </section>
 <DeadlineTimeline state={state} openNetwork={openNetwork}/>
-<section className="copilot-strip"><div className="copilot-copy"><div className="signal-line">CAMPUS COPILOT <span className="mini-tag">GRAPH-GROUNDED</span></div><h2>Ask the campus.</h2><p>Get answers from the relationships, deadlines and workflow already stored in your Campus OS.</p></div><div className="copilot-query"><span>⌘</span><input value={copilotQuery} onChange={e=>setCopilotQuery(e.target.value)} placeholder="What do I need to do for the hackathon?"/><span className="enter">ENTER ↵</span>{copilotQuery.trim()&&<div className="copilot-result">{answerCampusQuery(state,profile,copilotQuery).answer}</div>}</div></section>
+<section className="copilot-strip"><div className="copilot-copy"><div className="signal-line">CAMPUS COPILOT <span className="mini-tag">GRAPH-GROUNDED</span></div><h2>Ask the campus.</h2><p>Get answers from the relationships, deadlines and workflow already stored in your Campus OS.</p></div><div className="copilot-query"><span>⌘</span><input value={copilotQuery} onChange={e=>setCopilotQuery(e.target.value)} placeholder="What do I need to do for the hackathon?"/><span className="enter">ENTER ↵</span>{copilotQuery.trim()&&<CopilotResult result={answerCampusQuery(state,profile,copilotQuery)}/>}</div></section>
 <div className="content-grid" id="campus-feed"><section><SectionHeading kicker="LIVE CAMPUS SIGNALS" title="What is happening" action="Explore all" onAction={()=>window.dispatchEvent(new CustomEvent("campus:navigate",{detail:"Explore"}))}/>{filtered.map((p,i)=><PostCard key={p.id} p={p} liked={liked.includes(p.id)} onLike={()=>setLiked(l=>l.includes(p.id)?l.filter(x=>x!==p.id):[...l,p.id])} index={i}/>)}</section><Workflow tasks={tasks} toggle={toggle} openTasks={openTasks}/></div>
 </div>
 }
 
 function Metric({value,label}:{value:string;label:string}){return <div className="metric"><b>{value}</b><span>{label}</span></div>}
+
+function CopilotResult({result}:{result:ReturnType<typeof answerCampusQuery>}){return <div className="copilot-result"><p>{result.answer}</p>{result.entities.length>0&&<div className="copilot-links"><small>CONNECTED</small>{result.entities.slice(0,4).map(e=><span key={e.id}>{e.type} · {e.name}</span>)}</div>}{result.tasks.length>0&&<div className="copilot-links"><small>ACTIONS</small>{result.tasks.slice(0,3).map(t=><span key={t.id}>{t.done?"✓":"→"} {t.title}</span>)}</div>}{result.deadlines.length>0&&<div className="copilot-links"><small>DEADLINES</small>{result.deadlines.slice(0,3).map(d=><span key={d.entity.id}>{d.status.replace("_"," ")} · {d.entity.name}</span>)}</div>}</div>}
 
 function CampusTerrain({state}:{state:ReturnType<typeof store.getState>}){
 const blocks=Array.from({length:49},(_,i)=>{const x=i%7,y=Math.floor(i/7);const center=Math.max(0,5-Math.abs(x-3)-Math.abs(y-3));return {x,y,h:1+((x*7+y*3)%4)+center*2}});
