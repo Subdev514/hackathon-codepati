@@ -445,3 +445,10 @@ Remaining work:
 - Cross-file contract audit found one known non-compilation consistency issue: seeded task sources use entity names while extracted task sources use entity IDs. This is intentionally deferred from the compilation repair to avoid mixing a behavior refactor into the audit.
 - Actual local Vite/TypeScript execution still must be confirmed from the developer machine; this environment cannot reach GitHub to clone/install the repository.
 - Next action: developer pulls this audited version and runs npm test, then npm run build. No further source changes should be made before those results unless a new failure is observed.
+
+
+### 2026-10-02 — Hackathon requirement extraction repair
+- Local Vitest exposed one remaining parser defect in the documented hackathon case: the team-size regex accepted ASCII hyphen and the word "to", but not the Unicode en dash used by "2–4".
+- Fixed team-size extraction to accept hyphen, en dash, em dash, or "to" separators.
+- Strengthened the test assertion to verify the requirement is present rather than depending on array position.
+- Verification from this environment is limited to source inspection and direct regex exercise; the developer checkout must run npm test and npm run build to confirm the full toolchain.
