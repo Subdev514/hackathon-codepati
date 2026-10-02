@@ -696,3 +696,10 @@ Status: COMPLETE
 - Added knowledge records, saved opportunities, reminders and Notion sync state to the persistent CampusState with migration-safe defaults.
 - Added due dates/kinds to workflow tasks and seeded event → registration → task, club → event → volunteer and project → milestone → member examples.
 - Added deterministic personalized workflow generation, role permissions, graph-aware discovery scoring and analytics aggregation services.
+
+### CP16B — Notion integration boundary
+Status: COMPLETE
+- Added a server-side Vercel function at api/notion.js using Notion API version 2026-03-11.
+- Added bootstrap support for Campus OS Knowledge, Tasks and Opportunities databases under a configured Notion parent page.
+- Added page creation/sync endpoints and a browser-side src/notion.ts client that stores only database IDs, never the Notion token.
+- Added explicit disconnected behavior when NOTION_TOKEN or NOTION_PARENT_PAGE_ID is absent; the application does not fabricate a connected state.
