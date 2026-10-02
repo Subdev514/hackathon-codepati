@@ -140,7 +140,7 @@ Acceptance:
 - final demo path is documented
 
 ### CP10 — Post-MVP product expansion
-Status: IN PROGRESS
+Status: COMPLETE
 Execution order is fixed and each sub-checkpoint must be completed, verified, recorded here, then reread before moving on.
 
 #### CP10A — AI-ready understanding boundary
@@ -208,7 +208,7 @@ Status: COMPLETE
 - Add reset/demo controls and intentional loading/empty/error states.
 - Improve graph presentation and demo reliability.
 - Verify production build and document deployment path if tooling permits.
-- Added visible extraction/commit error handling and a Reset demo recovery action.
+- Added visible extraction/commit error handling, intentional search empty states and a Reset demo recovery action.
 - Hardened persisted numeric IDs to continue above existing state and deduplicated generated tasks by title/source.
 - Added state-hardening tests for ID allocation and duplicate task prevention.
 - Documented Vite/Vercel/static-host deployment readiness in README.
@@ -425,6 +425,7 @@ Remaining work:
 - Completed CP10F. A future backend adapter can implement the repository contract without changing the domain model or core UI flow.
 
 ### 2026-10-02 — CP10G polish and deployment readiness complete
+- Final audit fixed one personalization leak in the UI so relevance labels consistently use the editable profile.
 - Completed CP10G. Demo recovery, error handling, state hardening and deployment documentation are now included.
 
 ### 2026-10-02 — Final CP9 audit
