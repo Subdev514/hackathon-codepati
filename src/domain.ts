@@ -209,4 +209,13 @@ const due=new Date(now.getFullYear(),new Date(match[1]+" 1, "+now.getFullYear())
 if(due.getTime()<now.getTime())return "overdue";
 const days=Math.ceil((due.getTime()-now.getTime())/86400000);if(days<=1)return "today";if(days<=7)return "due_soon";return "upcoming";
 }
-export function campusDeadlines(state:CampusState,now=new Date()){return state.entities.filter(e=>e.type==="deadline").map(entity=>{const relation=state.relationships.find(r=>r.to===entity.id&&r.relation==="has_deadline");const source=relation?state.entities.find(e=>e.id===relation.from):undefined;const task=source?state.tasks.find(t=>t.source===source.id&&!t.done):undefined;const date=entity.name.match(/[A-Z][a-z]+\s+\d{1,2}/)?.[0]||"";return {entity,source,task,date,status:deadlineStatus(date,now)}}).sort((a,b)=>({overdue:0,today:1,due_soon:2,upcoming:3}[a.status]-({overdue:0,today:1,due_soon:2,upcoming:3}[b.status]));}
+export function campusDeadlines(state:CampusState,now=new Date()){
+const rank:Record<DeadlineStatus,number>={overdue:0,today:1,due_soon:2,upcoming:3};
+return state.entities.filter(e=>e.type==="deadline").map(entity=>{
+const relation=state.relationships.find(r=>r.to===entity.id&&r.relation==="has_deadline");
+const source=relation?state.entities.find(e=>e.id===relation.from):undefined;
+const task=source?state.tasks.find(t=>t.source===source.id&&!t.done):undefined;
+const date=entity.name.match(/[A-Z][a-z]+\\s+\\d{1,2}/)?.[0]||"";
+return {entity,source,task,date,status:deadlineStatus(date,now)};
+}).sort((a,b)=>rank[a.status]-rank[b.status]);
+}
