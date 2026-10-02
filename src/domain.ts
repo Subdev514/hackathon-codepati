@@ -19,7 +19,7 @@ for(const relation of result.relationships){
 if(!entityIds.has(relation.from)&&!result.entities.some(e=>e.id===relation.from))errors.push("Relationship source is missing: "+relation.from);
 if(!entityIds.has(relation.to)&&!result.entities.some(e=>e.id===relation.to))errors.push("Relationship target is missing: "+relation.to);
 }
-for(const task of result.tasks)if(!task.title.trim()||!task.source)errors.push("Every generated task needs a title and source");
+for(const task of result.tasks){if(!task.title.trim()||!task.source)errors.push("Every generated task needs a title and source");else if(!entityIds.has(task.source))errors.push("Task source is missing: "+task.source)}
 return {valid:errors.length===0,errors};
 }
 export function normalizeExtraction(result:ExtractedAnnouncement):ExtractedAnnouncement{
