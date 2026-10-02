@@ -536,5 +536,6 @@ Remaining work:
 ### 2026-10-02 — CP11D deployment configuration
 - Added explicit Vercel configuration for Vite production builds.
 - Updated README with deployment behavior and the local-first multi-user boundary.
-- Vercel account access was inspected, but no Campus OS Vercel project exists in the connected team and the available deployment action is unavailable in this session. Actual public deployment is therefore blocked on project provisioning/connection.
-- Final source changes still require the developer checkout to run npm test and npm run build.
+- Developer verification has now completed the required `npm test` and `npm run build` checks successfully.
+- Vercel account access was inspected; the connected team currently has no Campus OS project, and the available deployment connector cannot provision one from this session.
+- CP11D is therefore blocked only on creating/connecting the Vercel project; no application-code blocker remains.
