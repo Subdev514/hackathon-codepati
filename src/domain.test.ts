@@ -35,3 +35,15 @@ describe("extraction boundary",()=>{
   expect(providerResult.entities.length).toBeGreaterThan(0);
  });
 });
+
+describe("campus information types",()=>{
+ it("preserves resource, notice and competition announcements as first-class entities",()=>{
+  const resource=extractAnnouncement({title:"CN Viva Notes",body:"Seniors uploaded routing and socket notes.",type:"RESOURCE",author:"B-30",club:"B-30"});
+  const notice=extractAnnouncement({title:"Exam form notice",body:"Submit the examination form before October 20.",type:"NOTICE",author:"Admin",club:"Administration"});
+  const competition=extractAnnouncement({title:"National Coding Competition",body:"Teams of 2-4 can participate. Registration closes October 12.",type:"COMPETITION",author:"Coding Club",club:"Coding Club"});
+  expect(resource.entities.some(e=>e.type==="resource")).toBe(true);
+  expect(notice.entities.some(e=>e.type==="notice")).toBe(true);
+  expect(competition.entities.some(e=>e.type==="competition")).toBe(true);
+  expect(competition.relationships.some(r=>r.relation==="has_deadline")).toBe(true);
+ });
+});
