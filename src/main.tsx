@@ -38,7 +38,7 @@ return <div className="app-shell">
 </aside>
 <main className="main-stage">
 <header className="topbar"><div className="crumb"><span>CAMPUS OS</span><b>/</b><strong>{tab}</strong></div><div className="top-actions"><label className="command-search"><span>⌕</span><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search campus"/></label><button className="icon-button" aria-label="Open personalized signals" onClick={()=>setTab("For You")}>◌</button><button className="create-button" onClick={()=>setShowCreate(true)}><span>+</span> Create</button></div></header>
-{tab==="Home"&&<Home state={state} profile={profile} filtered={filtered} tasks={tasks} toggle={toggle} liked={liked} setLiked={setLiked} copilotQuery={copilotQuery} setCopilotQuery={setCopilotQuery} openCreate={()=>setShowCreate(true)}/>}
+{tab==="Home"&&<Home state={state} profile={profile} filtered={filtered} tasks={tasks} toggle={toggle} liked={liked} setLiked={setLiked} copilotQuery={copilotQuery} setCopilotQuery={setCopilotQuery} openCreate={()=>setShowCreate(true)} openTasks={()=>setTab("My Tasks")}/>}
 {tab==="For You"&&<ForYou state={state} profile={profile} filtered={filtered} tasks={tasks} toggle={toggle} editProfile={()=>setShowProfile(true)}/>}
 {tab==="Explore"&&<Explore filtered={filtered} liked={liked} setLiked={setLiked}/>}
 {tab==="My Tasks"&&<TasksPage state={state} tasks={tasks} toggle={toggle}/>}
@@ -50,7 +50,7 @@ return <div className="app-shell">
 </div>
 }
 
-function Home({state,profile,filtered,tasks,toggle,liked,setLiked,copilotQuery,setCopilotQuery,openCreate}:{state:ReturnType<typeof store.getState>;profile:UserProfile;filtered:Post[];tasks:Task[];toggle:(id:number)=>void;liked:number[];setLiked:React.Dispatch<React.SetStateAction<number[]>>;copilotQuery:string;setCopilotQuery:(v:string)=>void;openCreate:()=>void}){
+function Home({state,profile,filtered,tasks,toggle,liked,setLiked,copilotQuery,setCopilotQuery,openCreate}:{state:ReturnType<typeof store.getState>;profile:UserProfile;filtered:Post[];tasks:Task[];toggle:(id:number)=>void;liked:number[];setLiked:React.Dispatch<React.SetStateAction<number[]>>;copilotQuery:string;setCopilotQuery:(v:string)=>void;openCreate:()=>void;openTasks:()=>void}){
 const open=tasks.filter(t=>!t.done).length;
 return <div className="page home-page">
 <section className="hero-command">
@@ -59,7 +59,7 @@ return <div className="page home-page">
 </section>
 <DeadlineTimeline state={state}/>
 <section className="copilot-strip"><div className="copilot-copy"><div className="signal-line">CAMPUS COPILOT <span className="mini-tag">GRAPH-GROUNDED</span></div><h2>Ask the campus.</h2><p>Get answers from the relationships, deadlines and workflow already stored in your Campus OS.</p></div><div className="copilot-query"><span>⌘</span><input value={copilotQuery} onChange={e=>setCopilotQuery(e.target.value)} placeholder="What do I need to do for the hackathon?"/><span className="enter">ENTER ↵</span>{copilotQuery.trim()&&<div className="copilot-result">{answerCampusQuery(state,profile,copilotQuery).answer}</div>}</div></section>
-<div className="content-grid" id="campus-feed"><section><SectionHeading kicker="LIVE CAMPUS SIGNALS" title="What is happening" action="Explore all"/>{filtered.map((p,i)=><PostCard key={p.id} p={p} liked={liked.includes(p.id)} onLike={()=>setLiked(l=>l.includes(p.id)?l.filter(x=>x!==p.id):[...l,p.id])} index={i}/>)}</section><Workflow tasks={tasks} toggle={toggle} openTasks={()=>document.querySelector<HTMLElement>(".nav-item.active")?.click()}/></div>
+<div className="content-grid" id="campus-feed"><section><SectionHeading kicker="LIVE CAMPUS SIGNALS" title="What is happening" action="Explore all"/>{filtered.map((p,i)=><PostCard key={p.id} p={p} liked={liked.includes(p.id)} onLike={()=>setLiked(l=>l.includes(p.id)?l.filter(x=>x!==p.id):[...l,p.id])} index={i}/>)}</section><Workflow tasks={tasks} toggle={toggle} openTasks={openTasks}/></div>
 </div>
 }
 
@@ -83,7 +83,7 @@ return <article className="signal-card" style={{"--delay":index*70+"ms"} as Reac
 
 function Workflow({tasks,toggle,openTasks}:{tasks:Task[];toggle:(id:number)=>void;openTasks?:()=>void}){
 const done=tasks.filter(t=>t.done).length;
-return <section className="workflow-panel"><div className="panel-kicker"><span>YOUR WORKFLOW</span><b>{done}/{tasks.length}</b></div><h2>Next actions</h2><div className="workflow-progress"><i style={{width:(tasks.length?done/tasks.length*100:0)+"%"}}/></div><p>Generated from the campus graph.</p>{tasks.slice(0,6).map(t=><label className={"action-row "+(t.done?"done":"")} key={t.id}><input type="checkbox" checked={t.done} onChange={()=>toggle(t.id)}/><span className="action-check"/><span className="action-copy"><b>{t.title}</b><small>{t.meta}</small></span><span className="action-arrow">↗</span></label>)}<button className="outline-button" onClick={openTasks}>OPEN FULL WORKFLOW</button></section>
+return <section className="workflow-panel"><div className="panel-kicker"><span>YOUR WORKFLOW</span><b>{done}/{tasks.length}</b></div><h2>Next actions</h2><div className="workflow-progress"><i style={{width:(tasks.length?done/tasks.length*100:0)+"%"}}/></div><p>Generated from the campus graph.</p>{tasks.slice(0,6).map(t=><label className={"action-row "+(t.done?"done":"")} key={t.id}><input type="checkbox" checked={t.done} onChange={()=>toggle(t.id)}/><span className="action-check"/><span className="action-copy"><b>{t.title}</b><small>{t.meta}</small></span><span className="action-arrow">↗</span></label>)}{openTasks&&<button className="outline-button" onClick={openTasks}>OPEN FULL WORKFLOW</button>}</section>
 }
 
 function ForYou({state,profile,filtered,tasks,toggle,editProfile}:{state:ReturnType<typeof store.getState>;profile:UserProfile;filtered:Post[];tasks:Task[];toggle:(id:number)=>void;editProfile:()=>void}){
