@@ -219,13 +219,13 @@ Completion rule: do not mark CP10 complete until CP10A–CP10G are complete or a
 ## 14. Next-phase roadmap — CP11
 
 ### CP11A — Graph/workflow integrity
-Status: IN PROGRESS
+Status: COMPLETE
 Goal: make every generated task and deadline resolve to a real source entity consistently.
 Acceptance:
 - generated tasks use canonical entity IDs
 - graph actions resolve for both seeded and generated data
 - deadline cards resolve their originating entity/task
-- regression tests cover the source-link contract
+- regression tests cover the source-link contract\n- Seed workflow tasks now use canonical entity IDs. Graph action lookup now resolves tasks by entity ID. Added regression coverage for seeded and generated task source integrity.
 
 ### CP11B — Campus Copilot
 Status: PLANNED
@@ -494,3 +494,4 @@ Remaining work:
 - Fixed team-size extraction to accept hyphen, en dash, em dash, or "to" separators.
 - Strengthened the test assertion to verify the requirement is present rather than depending on array position.
 - Verification from this environment is limited to source inspection and direct regex exercise; the developer checkout must run npm test and npm run build to confirm the full toolchain.
+\n### 2026-10-02 — CP11A complete\n- Normalized seeded task sources to canonical entity IDs.\n- Updated the relationship graph to resolve generated actions by entity ID.\n- Added regression coverage proving seeded and generated task sources resolve to real entities.\n- Next checkpoint: CP11B Campus Copilot.\n
