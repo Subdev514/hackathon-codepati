@@ -84,7 +84,7 @@ const normalizedType=input.type.toUpperCase();
 const specialType=normalizedType==="RESOURCE"?"resource":normalizedType==="NOTICE"?"notice":normalizedType==="COMPETITION"?"competition":normalizedType==="PROJECT"?"project":undefined;
 const isEventLike=!isOpportunity&&!specialType||specialType==="competition";
 const eventMatch=firstMatch(text,[/\b(?:conducting|hosting|organizing|running)\s+(?:a\s+)?(?:\d+[- ]hour\s+)?([^.!?]+?\s+(?:hackathon|workshop|event|meetup|session))\b/i,/\b([A-Z][A-Za-z0-9 -]+(?:hackathon|workshop|event|meetup|session))\b/i]);
-const organizerPatterns=[/\\b([A-Z][A-Za-z0-9& ]+?)\\s+(?:is\\s+)?(?:conducting|hosting|organizing|running)\\b/i,/^([A-Z][A-Za-z0-9& ]+?)\\s+(?:is\\s+)?(?:opening|announcing|inviting)\\b/i];
+const organizerPatterns=[/\b([A-Z][A-Za-z0-9& ]+?)\s+(?:is\s+)?(?:conducting|hosting|organizing|running)\b/i,/^([A-Z][A-Za-z0-9& ]+)\s+(?:is\s+)?(?:opening|announcing|inviting)\b/i];
 const organizerMatch=firstMatch(input.body,organizerPatterns)||firstMatch(text,organizerPatterns);
 const dateMatch=firstMatch(text,[/\bon\s+([A-Z][a-z]+\s+\d{1,2})\b/i,/\b(?:on|this)\s+(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\b/i]);
 const deadlineMatches=[...text.matchAll(/\b(?:registration|register|applications?|application|idea submission|submit(?:ting)?(?:\s+(?:the|their|your))?\s+idea|submission)\b[^.!?]{0,45}?\b(?:closes?|close|ends?|end|due|before)\s+([A-Z][a-z]+\s+\d{1,2}|\d{1,2}(?:st|nd|rd|th)?\s+[A-Z][a-z]+)\b/gi)];
@@ -94,7 +94,7 @@ const teamMatch=firstMatch(text,[/\bteams?\s+(?:of\s+)?(\d+)\s*(?:-|to)\s*(\d+)\
 const requirements:string[]=[];
 if(teamMatch)requirements.push("Team size "+teamMatch[1]+"–"+teamMatch[2]);
 if(/\bbring your laptop\b/i.test(text))requirements.push("Bring a laptop");
-if(/\bsubmit (?:your|the) idea\b/i.test(text))requirements.push("Submit an idea");
+if(/\bsubmit (?:your|the|their) idea\b/i.test(text))requirements.push("Submit an idea");
 const eventName=eventMatch?cleanName(eventMatch[1]):input.title;
 const organizationName=organizerMatch?cleanName(organizerMatch[1]):input.club;
 const baseId=slug(eventName||input.title)||"announcement";
@@ -216,7 +216,7 @@ return state.entities.filter(e=>e.type==="deadline").map(entity=>{
 const relation=state.relationships.find(r=>r.to===entity.id&&r.relation==="has_deadline");
 const source=relation?state.entities.find(e=>e.id===relation.from):undefined;
 const task=source?state.tasks.find(t=>t.source===source.id&&!t.done):undefined;
-const date=entity.name.match(/[A-Z][a-z]+\\s+\\d{1,2}/)?.[0]||"";
+const date=entity.name.match(/[A-Z][a-z]+\s+\d{1,2}/)?.[0]||"";
 return {entity,source,task,date,status:deadlineStatus(date,now)};
 }).sort((a,b)=>rank[a.status]-rank[b.status]);
 }
