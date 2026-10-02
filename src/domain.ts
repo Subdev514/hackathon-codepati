@@ -87,7 +87,7 @@ const eventMatch=firstMatch(text,[/\b(?:conducting|hosting|organizing|running)\s
 const organizerPatterns=[/\\b([A-Z][A-Za-z0-9& ]+?)\\s+(?:is\\s+)?(?:conducting|hosting|organizing|running)\\b/i,/^([A-Z][A-Za-z0-9& ]+?)\\s+(?:is\\s+)?(?:opening|announcing|inviting)\\b/i];
 const organizerMatch=firstMatch(input.body,organizerPatterns)||firstMatch(text,organizerPatterns);
 const dateMatch=firstMatch(text,[/\bon\s+([A-Z][a-z]+\s+\d{1,2})\b/i,/\b(?:on|this)\s+(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\b/i]);
-const deadlineMatches=[...text.matchAll(/\b(?:registration|register|applications?|application|idea submission|submit(?:ting)? (?:the )?idea|submission)\b[^.!?]{0,45}?\b(?:closes?|close|ends?|end|due|before)\s+([A-Z][a-z]+\s+\d{1,2}|\d{1,2}(?:st|nd|rd|th)?\s+[A-Z][a-z]+)\b/gi)];
+const deadlineMatches=[...text.matchAll(/\\b(?:registration|register|applications?|application|idea submission|submit(?:ting)?(?:\\s+(?:the|their|your))?\\s+idea|submission)\\b[^.!?]{0,45}?\\b(?:closes?|close|ends?|end|due|before)\\s+([A-Z][a-z]+\\s+\\d{1,2}|\\d{1,2}(?:st|nd|rd|th)?\\s+[A-Z][a-z]+)\\b/gi)];
 const deadlineSeen=new Set<string>();
 const deadlines=deadlineMatches.map(match=>({label:cleanName(match[0].split(/\s+(?:closes?|close|ends?|end|due|before)\s+/i)[0]),date:dateText(match[1])})).filter(item=>{const key=item.label+"|"+item.date;if(deadlineSeen.has(key))return false;deadlineSeen.add(key);return true});
 const teamMatch=firstMatch(text,[/\bteams?\s+(?:of\s+)?(\d+)\s*(?:-|to)\s*(\d+)\b/i,/\b(\d+)\s*(?:-|to)\s*(\d+)\s+(?:members?|participants?)\b/i]);
