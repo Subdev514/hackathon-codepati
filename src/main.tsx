@@ -1,7 +1,7 @@
 import React from "react";
 import{createRoot}from"react-dom/client";
 import"./styles.css";
-import{AnnouncementInput,ExtractedAnnouncement,Post,Task,createCampusStore,extractAnnouncement,commitExtraction,createCampusRepository,initialState,loadUserProfile,saveUserProfile,relevanceForUser,UserProfile,campusDeadlines,answerCampusQuery,demoProfile,discoverCampus,analyticsSnapshot,personalizedWorkflow,roleCan,roleLabel,KnowledgeRecord}from"./domain";
+import{AnnouncementInput,ExtractedAnnouncement,Post,Task,createCampusStore,extractAnnouncement,commitExtraction,createCampusRepository,initialState,loadUserProfile,saveUserProfile,relevanceForUser,UserProfile,campusDeadlines,answerCampusQuery,demoProfile,discoverCampus,analyticsSnapshot,personalizedWorkflow,roleCan,roleLabel}from"./domain";
 import{bootstrapNotion,getNotionStatus,loadNotionDatabases,syncToNotion}from"./notion";
 import{EventsPage,SocietyPage,SocietyOpsPage,FeedbackPage}from"./society";
 
@@ -69,13 +69,15 @@ return <div className="app-shell">
 <div className="brand-mark"><div className="brand-symbol">C</div><div><strong>Campus OS</strong><span>CONNECTED CAMPUS</span></div></div>
 <nav className="nav-list">{navItems.map(([num,name,icon])=><button key={name} className={"nav-item "+(tab===name?"active":"")} onClick={()=>setTab(name)}><span className="nav-num">{num}</span><span className="nav-icon">{icon}</span><span>{name}</span></button>)}</nav>
 <div className="sidebar-pulse"><span className="pulse-dot"/><div><small>LIVE CAMPUS GRAPH</small><b>{state.entities.length} connected objects</b></div></div>
-<div className="sidebar-bottom"><button className="profile-chip" onClick={()=>setShowProfile(true)}><span className="avatar">{profile.name.slice(0,1).toUpperCase()}</span><span><b>{profile.name}</b><small>{profile.branch} · Year {profile.year}</small></span><i>↗</i></button></div>
+<div className="sidebar-bottom"><button className="profile-chip" onClick={()=>setShowProfile(true)}><span className="avatar">{profile.name.slice(0,1).toUpperCase()}</span><span><b>{profile.name}</b><small>{profile.branch} · Year {profile.year} · {roleLabel(profile.role)}</small></span><i>↗</i></button></div>
 </aside>
 <main className="main-stage">
 <header className="topbar"><div className="crumb"><span>CAMPUS OS</span><b>/</b><strong>{tab}</strong></div><div className="top-actions"><label className="command-search"><span>⌕</span><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search campus"/></label><button className="icon-button" aria-label="Open personalized signals" onClick={()=>setTab("For You")}>◌</button><button className="create-button" onClick={()=>setShowCreate(true)}><span>+</span> Create</button></div></header>
 {tab==="Home"&&<Home state={state} profile={profile} filtered={filtered} tasks={tasks} toggle={toggle} liked={liked} setLiked={setLiked} copilotQuery={copilotQuery} setCopilotQuery={setCopilotQuery} openCreate={()=>setShowCreate(true)} openTasks={()=>setTab("My Tasks")} openNetwork={id=>{setNetworkEntityId(id);setTab("Network")}}/>}
 {tab==="For You"&&<ForYou state={state} profile={profile} filtered={filtered} tasks={tasks} toggle={toggle} editProfile={()=>setShowProfile(true)} saveOpportunity={saveOpportunity} createTask={createPersonalTask}/>}
-{tab==="Explore"&&<Explore filtered={filtered} liked={liked} setLiked={setLiked}/>}\n{tab==="Knowledge"&&<KnowledgePage state={state} profile={profile} query={knowledgeQuery} setQuery={setKnowledgeQuery} notionStatus={notionStatus} notionMessage={notionMessage} notionBusy={notionBusy} syncNotion={syncNotion} saveOpportunity={saveOpportunity} createTask={createPersonalTask}/>}\n{tab==="Analytics"&&<AnalyticsPage state={state} profile={profile}/>} 
+{tab==="Explore"&&<Explore filtered={filtered} liked={liked} setLiked={setLiked}/>}
+{tab==="Knowledge"&&<KnowledgePage state={state} profile={profile} query={knowledgeQuery} setQuery={setKnowledgeQuery} notionStatus={notionStatus} notionMessage={notionMessage} notionBusy={notionBusy} syncNotion={syncNotion} saveOpportunity={saveOpportunity} createTask={createPersonalTask}/>}
+{tab==="Analytics"&&<AnalyticsPage state={state} profile={profile}/>} 
 {tab==="My Tasks"&&<TasksPage state={state} tasks={tasks} toggle={toggle}/>}
 {tab==="Network"&&<Relationship state={state} selectedId={networkEntityId}/>}
 {tab==="Societies"&&<SocietyPage state={state}/>}
