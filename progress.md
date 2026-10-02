@@ -490,7 +490,8 @@ Remaining work:
 - Fixed double-escaped organizer and deadline regexes in src/domain.ts.
 - Fixed requirement extraction for the phrase “submit their idea”.
 - Added deadline timeline regression coverage in src/domain.test.ts.
-- Scanned all tracked project files for accidental literal \\n sequences and unintended double backslashes; none remain.
+- Scanned all tracked project files for accidental literal \
+ sequences and unintended double backslashes; none remain.
 - Independently exercised the organizer/deadline/requirement matching logic against the documented hackathon announcement; expected matches are produced.
 - Cross-file contract audit found one known non-compilation consistency issue: seeded task sources use entity names while extracted task sources use entity IDs. This is intentionally deferred from the compilation repair to avoid mixing a behavior refactor into the audit.
 - Actual local Vite/TypeScript execution still must be confirmed from the developer machine; this environment cannot reach GitHub to clone/install the repository.
@@ -503,7 +504,12 @@ Remaining work:
 - Strengthened the test assertion to verify the requirement is present rather than depending on array position.
 - Verification from this environment is limited to source inspection and direct regex exercise; the developer checkout must run npm test and npm run build to confirm the full toolchain.
 
-### 2026-10-02 — CP11A complete\n- Normalized seeded task sources to canonical entity IDs.\n- Updated the relationship graph to resolve generated actions by entity ID.\n- Added regression coverage proving seeded and generated task sources resolve to real entities.\n- Next checkpoint: CP11B Campus Copilot.\n
+### 2026-10-02 — CP11A complete
+- Normalized seeded task sources to canonical entity IDs.
+- Updated the relationship graph to resolve generated actions by entity ID.
+- Added regression coverage proving seeded and generated task sources resolve to real entities.
+- Next checkpoint: CP11B Campus Copilot.
+
 ### 2026-10-02 — CP11B complete
 - Added a deterministic Campus Copilot query engine over the existing campus graph, deadlines, tasks and user profile.
 - Added Home UI for natural-language workflow/deadline/event questions.
