@@ -158,8 +158,11 @@ return post;
 
 export function generateWorkflow(source:string):Task[]{return initialTasks.filter(t=>t.source===source)}
 
+export interface CampusPersistence{load():CampusState;save(state:CampusState):void;}
+export interface CampusRepository extends CampusPersistence{sync?(state:CampusState):Promise<void>;}
 const STORAGE_KEY="campus-os-state-v1";
-export function loadCampusState():CampusState{
+export const localCampusPersistence:CampusPersistence={
+load:()=>{
 if(typeof window==="undefined")return initialState;
 try{
 const raw=window.localStorage.getItem(STORAGE_KEY);
@@ -168,11 +171,12 @@ const parsed=JSON.parse(raw) as CampusState;
 if(!parsed||!Array.isArray(parsed.entities)||!Array.isArray(parsed.relationships)||!Array.isArray(parsed.posts)||!Array.isArray(parsed.tasks))return initialState;
 return parsed;
 }catch{return initialState}
-}
-export function saveCampusState(state:CampusState){
-if(typeof window==="undefined")return;
-try{window.localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch{}
-}
+},
+save:(state)=>{if(typeof window==="undefined")return;try{window.localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch{}}
+};
+export function createCampusRepository(persistence:CampusPersistence=localCampusPersistence):CampusRepository{return persistence;}
+export function loadCampusState(){return localCampusPersistence.load();}
+export function saveCampusState(state:CampusState){localCampusPersistence.save(state);}
 
 
 export type UserProfile={id:string;name:string;branch:string;year:number;interests:string[];clubs:string[];activeProjects:string[]};
