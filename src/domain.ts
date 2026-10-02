@@ -1,4 +1,4 @@
-export type EntityType="user"|"club"|"event"|"opportunity"|"resource"|"task"|"deadline"|"project"|"person";
+export type EntityType="user"|"club"|"event"|"opportunity"|"resource"|"task"|"deadline"|"project"|"person"|"notice"|"competition";
 export type RelationType="member_of"|"organizes"|"has_deadline"|"requires"|"derived_from"|"references"|"interested_in"|"uses"|"assigned_to"|"participates_in";
 export type Entity={id:string;type:EntityType;name:string;meta?:string};
 export type Relationship={from:string;relation:RelationType;to:string;reason?:string};
@@ -80,6 +80,9 @@ export function extractAnnouncement(input:AnnouncementInput):ExtractedAnnounceme
 const text=(input.title+" "+input.body).replace(/\s+/g," ").trim();
 const lower=text.toLowerCase();
 const isOpportunity=input.type==="OPPORTUNITY"||/\b(opportunity|applications?|ambassador|internship|scholarship)\b/i.test(text);
+const normalizedType=input.type.toUpperCase();
+const specialType=normalizedType==="RESOURCE"?"resource":normalizedType==="NOTICE"?"notice":normalizedType==="COMPETITION"?"competition":normalizedType==="PROJECT"?"project":undefined;
+const isEventLike=!isOpportunity&&!specialType||specialType==="competition";
 const eventMatch=firstMatch(text,[/\b(?:conducting|hosting|organizing|running)\s+(?:a\s+)?(?:\d+[- ]hour\s+)?([^.!?]+?\s+(?:hackathon|workshop|event|meetup|session))\b/i,/\b([A-Z][A-Za-z0-9 -]+(?:hackathon|workshop|event|meetup|session))\b/i]);
 const organizerMatch=firstMatch(text,[/\b([A-Z][A-Za-z0-9& ]+?)\s+(?:is\s+)?(?:conducting|hosting|organizing|running)\b/i,/^([A-Z][A-Za-z0-9& ]+?)\s+(?:is\s+)?(?:opening|announcing|inviting)\b/i]);
 const dateMatch=firstMatch(text,[/\bon\s+([A-Z][a-z]+\s+\d{1,2})\b/i,/\b(?:on|this)\s+(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\b/i]);
@@ -104,13 +107,16 @@ extractedEntities.push({id:baseId,type:"opportunity",name:opportunityName,meta:"
 if(organizationName)extractedEntities.push({id:orgId,type:"club",name:organizationName,meta:"Announcement source"});
 extractedRelationships.push({from:orgId,relation:"organizes",to:baseId,reason:"Announcement source"});
 }else{
-extractedEntities.push({id:eventId,type:"event",name:eventName,meta:dateMatch?"Event · "+dateText(dateMatch[1]):"Extracted from announcement"});
+const entityType= specialType||"event";
+const entityName=specialType==="resource"?cleanName(input.title):specialType==="notice"?cleanName(input.title):eventName;
+const entityMeta=specialType?("Extracted "+specialType+" announcement"):(dateMatch?"Event · "+dateText(dateMatch[1]):"Extracted from announcement");
+extractedEntities.push({id:eventId,type:entityType as EntityType,name:entityName,meta:entityMeta});
 if(organizationName)extractedEntities.push({id:orgId,type:"club",name:organizationName,meta:"Announcement source"});
-if(organizationName)extractedRelationships.push({from:orgId,relation:"organizes",to:eventId,reason:"Announcement states the organizer"});
+if(organizationName)extractedRelationships.push({from:orgId,relation:"organizes",to:eventId,reason:"Announcement states the source organization"});
 }
 const tasks:Task[]=[];
 let taskId=nextId;
-if(!isOpportunity&&teamMatch)tasks.push({id:taskId++,title:"Find "+Math.max(1,Number(teamMatch[1])-1)+"–"+Math.max(1,Number(teamMatch[2])-1)+" teammates",meta:"Derived from "+requirements[0],done:false,source:eventId});
+if(isEventLike&&teamMatch)tasks.push({id:taskId++,title:"Find "+Math.max(1,Number(teamMatch[1])-1)+"–"+Math.max(1,Number(teamMatch[2])-1)+" teammates",meta:"Derived from "+requirements[0],done:false,source:eventId});
 for(const deadline of deadlines){
 const label=deadline.label.toLowerCase();
 let title=label.includes("registration")||label.includes("register")?"Register for "+eventName:label.includes("idea")||label.includes("submission")?"Prepare and submit idea":"Complete "+deadline.label;
@@ -119,7 +125,7 @@ const deadlineId=slug(eventId+"-"+deadline.label+"-"+deadline.date);
 extractedEntities.push({id:deadlineId,type:"deadline",name:deadline.label+" · "+deadline.date,meta:"Extracted deadline"});
 extractedRelationships.push({from:eventId,relation:"has_deadline",to:deadlineId,reason:"Deadline extracted from announcement"});
 }
-if(!isOpportunity&&/\bidea\b/i.test(text)&&!tasks.some(t=>/idea/i.test(t.title)))tasks.push({id:taskId++,title:"Prepare hackathon idea",meta:"Derived from announcement requirement",done:false,source:eventId});
+if(isEventLike&&/\bidea\b/i.test(text)&&!tasks.some(t=>/idea/i.test(t.title)))tasks.push({id:taskId++,title:"Prepare hackathon idea",meta:"Derived from announcement requirement",done:false,source:eventId});
 if(isOpportunity&&deadlines.length===0)tasks.push({id:taskId++,title:"Review and apply",meta:"Derived from opportunity announcement",done:false,source:baseId});
 if(teamMatch){
 const reqId=slug(eventId+"-team-"+teamMatch[1]+"-"+teamMatch[2]);
