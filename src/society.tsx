@@ -3,6 +3,32 @@ import{canAccessSociety,societyContribution,feedbackSummary,createCampusStore}fr
 import type{CampusState,CampusEvent,SocietyAnalysis,UserProfile,FeedbackRecord,FeedbackCategory}from"./domain";
 type Mutate=(fn:(store:ReturnType<typeof createCampusStore>)=>void)=>void;
 
+
+export function SocietyPage({state}:{state:CampusState}){
+const[societyId,setSocietyId]=React.useState(state.societies[0]?.id||"");
+const society=state.societies.find(s=>s.id===societyId);
+if(!society)return <div className="page inner-page"><h1>No societies found.</h1></div>;
+const posts=state.societyEventPosts.filter(p=>p.societyId===society.id);
+const upcoming=posts.filter(p=>p.status==="upcoming");
+const past=posts.filter(p=>p.status==="past");
+const societyEvents=state.events.filter(e=>e.societyId===society.id);
+return <div className="page inner-page public-society-page">
+<div className="society-directory"><div><span className="signal-line">CAMPUS SOCIETIES</span><h1>Find your <em>people.</em></h1><p>Discover who builds each community, what it stands for and what it is doing next.</p></div><div className="public-society-tabs">{state.societies.map(s=><button className={s.id===society.id?"active":""} key={s.id} onClick={()=>setSocietyId(s.id)}>{s.name}<small>{s.genre}</small></button>)}</div></div>
+<section className="society-public-hero"><div className="society-identity"><span className="signal-line">SOCIETY PROFILE</span><h2>{society.name}</h2><p>{society.description}</p><div className="society-meta-strip"><div><span>FIC</span><b>{society.fic}</b></div><div><span>GENRE</span><b>{society.genre}</b></div><div><span>MEMBERS</span><b>{society.publicMembers.length}</b></div></div></div><div className="society-xfactor"><span className="signal-line">X-FACTOR · 50 WORDS</span><p>{society.xfactor}</p></div></section>
+<section className="society-public-section"><div className="public-section-head"><div><span className="signal-line">TIMELINE</span><h2>What changed. What we built.</h2></div><span>{society.timeline.length} milestones</span></div><div className="society-timeline">{society.timeline.map(item=><article key={item.id}><b>{item.date}</b><div><h3>{item.title}</h3><p>{item.description}</p></div></article>)}</div></section>
+<section className="society-public-section"><div className="public-section-head"><div><span className="signal-line">THE PEOPLE</span><h2>Members & positions.</h2></div><span>{society.publicMembers.length} members</span></div><div className="public-members-grid">{society.publicMembers.map(member=><article key={member.userId}><span className="member-avatar">{member.name.slice(0,1)}</span><div><b>{member.name}</b><small>{member.position}</small></div></article>)}</div></section>
+<section className="society-public-section"><div className="public-section-head"><div><span className="signal-line">UPCOMING EVENTS</span><h2>Join what happens next.</h2></div><span>{upcoming.length} events</span></div>{upcoming.length?<div className="public-event-grid">{upcoming.map(post=><SocietyEventPostCard key={post.id} post={post} event={societyEvents.find(e=>e.id===post.eventId)}/>)}</div>:<div className="public-empty">No upcoming event posts yet.</div>}</section>
+<section className="society-public-section"><div className="public-section-head"><div><span className="signal-line">PAST EVENTS</span><h2>What the society has done.</h2></div><span>{past.length} events</span></div>{past.length?<div className="public-event-grid">{past.map(post=><SocietyEventPostCard key={post.id} post={post} event={state.events.find(e=>e.id===post.eventId)}/>)}</div>:<div className="public-empty">Past event records will appear here.</div>}</section>
+</div>
+}
+
+function SocietyEventPostCard({post,event}:{post:import("./domain").SocietyEventPost;event:CampusEvent|undefined}){
+return <article className={"society-post-card "+post.status}>
+{post.media[0]&&<div className="society-post-media"><img src={post.media[0]} alt="" loading="lazy"/></div>}
+<div className="society-post-body"><div className="society-post-kicker"><span>{post.status==="upcoming"?"UPCOMING EVENT":"PAST EVENT"}</span><span>POSTED BY {post.postedBy.toUpperCase()}</span></div><h3>{post.title}</h3>{event&&<div className="society-post-date">{event.date} · {event.venue}</div>}{post.description&&<p>{post.description}</p>}<div className="society-post-grid"><div><span>X-FACTOR</span><b>{post.xfactor}</b></div>{post.prizes&&<div><span>PRIZES</span><b>{post.prizes}</b></div>}{post.specialGuests.length>0&&<div><span>SPECIAL GUESTS</span><b>{post.specialGuests.join(", ")}</b></div>}{post.winners.length>0&&<div><span>WINNERS</span><b>{post.winners.join(", ")}</b></div>}</div>{post.collaboratingSocieties.length>0&&<div className="society-collabs"><span>COLLABORATION</span><b>{post.collaboratingSocieties.join(" · ")}</b></div>}{post.joinReason&&post.status==="upcoming"&&<div className="join-reason"><span>WHY JOIN</span><p>{post.joinReason}</p></div>}<div className="society-post-actions">{post.registrationLink&&post.status==="upcoming"&&<a href={post.registrationLink} target="_blank" rel="noreferrer">REGISTER ↗</a>}<span>{post.status==="past"?"ARCHIVE":"EVENT POST"}</span></div></div>
+</article>
+}
+
 export function EventsPage({state,mutate}:{state:CampusState;mutate:Mutate}){
 const[editing,setEditing]=React.useState<CampusEvent|null>(null);
 const[showForm,setShowForm]=React.useState(false);
