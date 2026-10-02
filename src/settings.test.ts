@@ -3,6 +3,7 @@ import{readFileSync}from"node:fs";
 import{resolve}from"node:path";
 
 const source=readFileSync(resolve(process.cwd(),"src/main.tsx"),"utf8");
+const styles=readFileSync(resolve(process.cwd(),"src/styles.css"),"utf8");
 
 describe("settings policy center",()=>{
 it("exposes the complete production policy catalog",()=>{
@@ -23,5 +24,16 @@ it("exposes all twelve destinations through the universal mobile navigator",()=>
 for(const label of ["Home","For You","Explore","Knowledge","Events","My Tasks","Network","Societies","Society Ops","Analytics","Feedback","Settings"])expect(source).toContain('"' + label + '"');
 expect(source).toContain('className="mobile-navigation"');
 expect(source).toContain('aria-label="Navigate to Campus OS page"');expect(source).toContain('TAP TO OPEN');expect(source).toContain('12 pages · one tap away');
+});
+});
+
+
+describe("custom 404 responsive behavior",()=>{
+it("keeps the 404 visual centered and reserves mobile space for the graphic",()=>{
+expect(source).toContain('function NotFoundPage()');
+expect(styles).toContain('@media(max-width:800px){.not-found-page{min-height:100svh');
+expect(styles).toContain('.not-found-core{left:50%;top:auto;bottom:76px');
+expect(styles).toContain('.not-found-orbit{left:50%;top:auto;bottom:74px');
+expect(styles).toContain('.not-found-copy{width:100%;padding-top:10px;padding-bottom:270px}');
 });
 });
