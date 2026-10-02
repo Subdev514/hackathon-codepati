@@ -154,10 +154,14 @@ Status: COMPLETE
 - Verification: source-level contract/test review completed; local npm execution remains blocked by unavailable outbound network.
 
 #### CP10B — Interactive relationship graph
-Status: NOT STARTED
+Status: COMPLETE
 - Make graph nodes real selectable campus entities.
 - Show connected relationships, source context and actions for the selected node.
 - Preserve the existing graph demo as the default view.
+- Network now supports selectable entity nodes and entity filter chips.
+- Selected entities expose connected relationships, source announcement context and generated actions.
+- Added graph control styling without changing the underlying domain model.
+- Verification: source-level UI/state review completed.
 
 #### CP10C — Broader campus information types
 Status: NOT STARTED
@@ -383,6 +387,9 @@ Remaining work:
 ### 2026-10-02 — CP10A extraction boundary complete
 - Completed CP10A without introducing a client-side AI secret or destabilizing the existing deterministic path.
 - The UI can keep using the same ExtractedAnnouncement contract when a server-backed AI provider is added later.
+
+### 2026-10-02 — CP10B interactive graph complete
+- Completed CP10B. The graph is now an exploration surface over real domain entities rather than a static illustration.
 
 ### 2026-10-02 — Final CP9 audit
 - Re-read progress.md before final audit as required by the execution contract.
