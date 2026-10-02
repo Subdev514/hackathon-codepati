@@ -581,3 +581,10 @@ Reference research:
 - Wired the redesigned profile-context action back to the existing profile editor so the visual redesign does not introduce a dead primary control.
 - Research reviewed React Bits animation patterns, Three.js dashboard inspiration and current shadcn/Vercel interface guidance; implementation deliberately stays dependency-light for the Vite MVP.
 - Next: CP12D–CP12J, beginning with a functional interaction audit and visual verification before deployment.
+### 2026-10-03 — CP12D interaction audit / checkpoint
+- Completed the first functional interaction audit of the redesigned shell.
+- Wired the Home “Explore all” action to the real Explore tab through the app navigation state.
+- Updated SectionHeading so informational counts render as non-interactive labels instead of dead buttons; actionable headings remain buttons.
+- Added a lightweight app-level navigation event seam so section actions do not duplicate tab state or move domain logic into presentation helpers.
+- Confirmed the redesigned Home already routes Create, For You, My Tasks, task completion, profile editing, search, graph selection and announcement confirmation through real state handlers.
+- Next: CP12E tasks/deadline interaction polish and source-context navigation.
