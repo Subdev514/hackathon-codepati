@@ -530,3 +530,27 @@ Status: FIXED
 - Scoped the fix to the Personal Context card: the copy column now flexes, while EDIT CONTEXT keeps intrinsic button width on desktop.
 - Preserved the full-width edit control behavior for mobile layouts.
 - Production verification will follow the normal CI/Vercel rebuild.
+
+
+## CP13 — Society public pages + society event posts
+Status: IN PROGRESS
+
+Requested product changes from the supplied specification:
+1. Build a public Society page following the existing Campus OS visual/system language.
+2. Society hero/main page must expose: society name, FIC, genre, an approximately 50-word X-Factor, and a timeline of significant changes/contributions.
+3. Add a members section showing all members and their positions.
+4. Add an Upcoming Events section with event post information, prizes, special guests, and a clear reason/value proposition for joining.
+5. Add a Past Events section with photographs/media and winners.
+6. Define Society Event Posts as authored by a society, including collaborating societies where applicable.
+7. Support an optional event description, registration link, X-Factor, and poster/image/video media.
+8. Connect society public pages to the existing event/society domain model without exposing private Society Ops data.
+9. Add responsive styling and regression coverage.
+10. Update documentation/progress checkpoints after each implementation stage.
+11. Run CI/build verification and finish only when the complete feature set is implemented.
+
+Execution order:
+- CP13A: public society domain schema + seeded content
+- CP13B: public society page and navigation
+- CP13C: society event post model/UI and upcoming/past event presentation
+- CP13D: responsive styling + tests
+- CP13E: CI/build/deployment verification and final documentation
