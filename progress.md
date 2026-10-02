@@ -648,3 +648,14 @@ Reference research:
 - Added explicit width/min-width and normal word wrapping to `.action-copy` and its title/metadata so long actions remain readable without changing workflow data or component logic.
 - No domain behavior changed; the fix applies to every page using the shared Workflow component.
 - Required next verification: rerun `npm test` and `npm run build`, then visually confirm Home, For You and My Tasks workflow panels from the developer checkout.
+
+
+### 2026-10-03 — Settings, privacy, compliance and theme checkpoint
+- Added a new Settings tab to the primary left navigation.
+- Added a persistent app-wide light/dark mode toggle using `localStorage` and a `data-theme` root attribute; the preference survives reloads and updates the browser theme color.
+- Added an initial-load theme bootstrap in index.html to avoid a dark-mode flash before React mounts.
+- Added a Compliance section documenting India DPDP Act 2023 / DPDP Rules 2025 and HIPAA healthcare privacy context without claiming legal certification or compliance status.
+- Interpreted the requested “HEPA” reference as HIPAA, the established U.S. healthcare privacy framework; the UI explicitly uses HIPAA terminology.
+- Added dedicated Privacy Policy and Terms & Conditions views inside Settings, with content matching the current local-first prototype architecture and clearly separating product documentation from legal advice/certification.
+- Added responsive Settings navigation and light-theme overrides across the shell, cards, workflow, terrain, network graph, modals and policy surfaces.
+- Required next verification: rerun `npm test` and `npm run build`, then browser-check Settings, light/dark switching, Privacy, Terms and mobile navigation.
