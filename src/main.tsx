@@ -14,7 +14,7 @@ const pathname=window.location.pathname.replace(/\/+$/, "")||"/";
 if(pathname!=="/")return <NotFoundPage/>;
 const[tab,setTab]=React.useState("Home");
 const[loading,setLoading]=React.useState(true);
-const[settingsView,setSettingsView]=React.useState<"settings"|"privacy"|"terms">("settings");
+const[settingsView,setSettingsView]=React.useState<SettingsView>("settings");
 const[theme,setTheme]=React.useState<"dark"|"light">(()=>window.localStorage.getItem("campus-os-theme")==="light"?"light":"dark");
 React.useEffect(()=>{document.documentElement.dataset.theme=theme;window.localStorage.setItem("campus-os-theme",theme);document.querySelector('meta[name="theme-color"]')?.setAttribute("content",theme==="light"?"#f4f6f1":"#080908")},[theme]);
 const[networkEntityId,setNetworkEntityId]=React.useState<string|undefined>();
