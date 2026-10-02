@@ -222,3 +222,28 @@ const date=entity.name.match(/[A-Z][a-z]+\s+\d{1,2}/)?.[0]||"";
 return {entity,source,task,date,status:deadlineStatus(date,now)};
 }).sort((a,b)=>rank[a.status]-rank[b.status]);
 }
+
+export type CampusCopilotAnswer={answer:string;entities:Entity[];tasks:Task[];deadlines:ReturnType<typeof campusDeadlines>;reason:string};
+export function answerCampusQuery(state:CampusState,profile:UserProfile,query:string):CampusCopilotAnswer{
+const q=query.toLowerCase();
+const deadlines=campusDeadlines(state).filter(d=>d.status!=="overdue"||q.includes("overdue"));
+const relevantPosts=state.posts.map(post=>({post,relevance:relevanceForUser(post,profile)})).sort((a,b)=>b.relevance.score-a.relevance.score).filter(x=>x.relevance.score>0);
+const openTasks=state.tasks.filter(t=>!t.done);
+const wantsTasks=/\b(task|tasks|todo|to-do|action|actions|do i need|need to do)\b/i.test(q);
+const wantsDeadlines=/\b(deadline|deadlines|due|due date|when.*(close|due)|registration)\b/i.test(q);
+const wantsEvents=/\b(event|events|hackathon|workshop|happening)\b/i.test(q);
+if(wantsTasks){
+const tasks=openTasks.filter(t=>!q.includes("hackathon")||t.source==="ai-hackathon");
+return {answer:tasks.length?"You have "+tasks.length+" open workflow task"+(tasks.length===1?"":"s")+": "+tasks.slice(0,4).map(t=>t.title).join("; "):"You have no open workflow tasks.",entities:tasks.map(t=>state.entities.find(e=>e.id===t.source)).filter(Boolean) as Entity[],tasks:tasks.slice(0,6),deadlines:[],reason:"Answer derived from your saved campus workflow."};
+}
+if(wantsDeadlines){
+const selected=deadlines.filter(d=>!q.includes("hackathon")||d.source?.id==="ai-hackathon").slice(0,6);
+return {answer:selected.length?selected.map(d=>d.entity.name+" for "+(d.source?.name||"campus information")).join("; "):"I could not find a connected deadline for that question.",entities:selected.flatMap(d=>[d.source,d.entity]).filter(Boolean) as Entity[],tasks:selected.map(d=>d.task).filter(Boolean) as Task[],deadlines:selected,reason:"Answer derived from connected deadline entities; no external facts were added."};
+}
+if(wantsEvents){
+const events=state.entities.filter(e=>e.type==="event"||e.type==="competition").filter(e=>!q.includes("hackathon")||/hackathon/i.test(e.name));
+return {answer:events.length?"Connected campus events: "+events.map(e=>e.name).join(", "):"I could not find a connected event matching that question.",entities:events,tasks:events.flatMap(e=>state.tasks.filter(t=>t.source===e.id&&!t.done)).slice(0,6),deadlines:events.flatMap(e=>deadlines.filter(d=>d.source?.id===e.id)).slice(0,6),reason:"Answer derived from event entities currently stored in Campus OS."};
+}
+if(relevantPosts.length){const top=relevantPosts.slice(0,3);return {answer:"Based on your profile, the most relevant campus signals are: "+top.map(x=>x.post.title).join("; "),entities:top.map(x=>state.entities.find(e=>e.name===x.post.linked)).filter(Boolean) as Entity[],tasks:openTasks.slice(0,4),deadlines:[],reason:top.map(x=>x.relevance.reasons.join(", ")).filter(Boolean).join("; ")||"Matches your saved campus context."};}
+return {answer:"I could not find a connected campus fact for that question. Try asking about deadlines, tasks, events, or what is relevant to you.",entities:[],tasks:[],deadlines:[],reason:"Campus Copilot only answers from stored campus state."};
+}
