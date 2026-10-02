@@ -284,3 +284,13 @@ Everything built next should strengthen that sentence.
 - Added responsive styling.
 - Added README.
 - Added this project brain.
+
+### 2026-10-02 — Domain layer
+- Added src/domain.ts with typed campus entities, relationship types, demo entities and relationships.
+- Moved feed/task demo data out of src/main.tsx.
+- Added deterministic generateWorkflow() service function as the future AI extraction/workflow seam.
+- Kept the UI behavior unchanged while separating product data from presentation.
+- Temporary refactor file was removed after migration.
+- Tests/build: not executed in a local runtime yet; GitHub repository edits completed successfully.
+
+Next priority: add a Create Announcement flow and an extraction pipeline that converts free-form campus text into domain entities, relationships, deadlines and generated tasks.
