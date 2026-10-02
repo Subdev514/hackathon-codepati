@@ -82,7 +82,34 @@ describe("persistence boundary",()=>{
  });
 });
 
-describe("campus copilot",()=>{\n it("answers workflow questions only from connected campus state",()=>{\n  const profile={id:"u",name:"A",branch:"CSE",year:2,interests:["Hackathon"],clubs:["AI Club"],activeProjects:["Campus OS"]};\n  const result=answerCampusQuery(initialState,profile,"What do I need to do for the hackathon?");\n  expect(result.answer).toContain("Register for AI Hackathon");\n  expect(result.tasks.every(t=>initialState.entities.some(e=>e.id===t.source))).toBe(true);\n  expect(result.reason).toContain("saved campus workflow");\n });\n it("returns connected deadline facts for deadline questions",()=>{\n  const profile={id:"u",name:"A",branch:"CSE",year:2,interests:[],clubs:[],activeProjects:[]};\n  const result=answerCampusQuery(initialState,profile,"What is the hackathon registration deadline?");\n  expect(result.answer).toContain("Registration");\n  expect(result.deadlines.length).toBeGreaterThan(0);\n  expect(result.entities.some(e=>e.id==="hack-deadline")).toBe(true);\n });\n});\n\ndescribe("graph workflow integrity",()=>{\n it("keeps seeded and generated task sources resolvable as entity ids",()=>{\n  const seeded=initialState.tasks.find(t=>t.title.startsWith("Register"));\n  expect(seeded?.source).toBe("ai-hackathon");\n  expect(initialState.entities.some(e=>e.id===seeded?.source)).toBe(true);\n  const result=extractAnnouncement({title:"AI Hackathon",body:"AI Club is conducting a hackathon on October 15. Registration closes October 10.",type:"EVENT",author:"AI Club",club:"AI Club"});\n  expect(result.tasks.every(task=>result.entities.some(entity=>entity.id===task.source))).toBe(true);\n });\n});\n\ndescribe("state hardening",()=>{
+describe("campus copilot",()=>{
+ it("answers workflow questions only from connected campus state",()=>{
+  const profile={id:"u",name:"A",branch:"CSE",year:2,interests:["Hackathon"],clubs:["AI Club"],activeProjects:["Campus OS"]};
+  const result=answerCampusQuery(initialState,profile,"What do I need to do for the hackathon?");
+  expect(result.answer).toContain("Register for AI Hackathon");
+  expect(result.tasks.every(t=>initialState.entities.some(e=>e.id===t.source))).toBe(true);
+  expect(result.reason).toContain("saved campus workflow");
+ });
+ it("returns connected deadline facts for deadline questions",()=>{
+  const profile={id:"u",name:"A",branch:"CSE",year:2,interests:[],clubs:[],activeProjects:[]};
+  const result=answerCampusQuery(initialState,profile,"What is the hackathon registration deadline?");
+  expect(result.answer).toContain("Registration");
+  expect(result.deadlines.length).toBeGreaterThan(0);
+  expect(result.entities.some(e=>e.id==="hack-deadline")).toBe(true);
+ });
+});
+
+describe("graph workflow integrity",()=>{
+ it("keeps seeded and generated task sources resolvable as entity ids",()=>{
+  const seeded=initialState.tasks.find(t=>t.title.startsWith("Register"));
+  expect(seeded?.source).toBe("ai-hackathon");
+  expect(initialState.entities.some(e=>e.id===seeded?.source)).toBe(true);
+  const result=extractAnnouncement({title:"AI Hackathon",body:"AI Club is conducting a hackathon on October 15. Registration closes October 10.",type:"EVENT",author:"AI Club",club:"AI Club"});
+  expect(result.tasks.every(task=>result.entities.some(entity=>entity.id===task.source))).toBe(true);
+ });
+});
+
+describe("state hardening",()=>{
  it("allocates ids above persisted state and avoids duplicate generated tasks",()=>{
   const seed={...initialState,posts:[{...initialState.posts[0],id:900}],tasks:[{...initialState.tasks[0],id:901}]};
   const store=createCampusStore(seed);
