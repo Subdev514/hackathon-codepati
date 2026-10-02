@@ -1,5 +1,5 @@
 import{describe,expect,it}from"vitest";
-import{commitExtraction,createCampusStore,extractAnnouncement,initialState,normalizeExtraction,answerCampusQuery,validateExtraction,deterministicExtractionProvider,relevanceForUser,deadlineStatus,campusDeadlines,createCampusRepository}from"./domain";
+import{commitExtraction,createCampusStore,extractAnnouncement,initialState,normalizeExtraction,answerCampusQuery,validateExtraction,deterministicExtractionProvider,relevanceForUser,deadlineStatus,campusDeadlines,createCampusRepository,canAccessSociety,societyContribution,feedbackSummary}from"./domain";
 
 describe("announcement extraction",()=>{
 it("extracts the hackathon demo into connected facts and actions",()=>{
@@ -127,5 +127,41 @@ describe("state hardening",()=>{
   const count=store.getState().tasks.length;
   commitExtraction(store,result);
   expect(store.getState().tasks.length).toBe(count);
+ });
+});
+
+
+describe("society operations",()=>{
+ it("keeps public events and private society access as separate domain records",()=>{
+  expect(initialState.events[0].societyId).toBe("ai-club-society");
+  expect(canAccessSociety(initialState,"ai-club-society","user-shiv")).toBe(true);
+  expect(canAccessSociety(initialState,"design-club-society","unknown-user")).toBe(false);
+ });
+ it("supports event, task, budget, promotion, requirement and analysis mutations",()=>{
+  const store=createCampusStore(initialState);
+  const event={...initialState.events[0],id:"test-event",name:"Test Event"};
+  store.addEvent(event);
+  store.addSocietyTask({...initialState.societyTasks[0],id:900,eventId:"test-event"});
+  store.addBudget({eventId:"test-event",societyId:"ai-club-society",estimated:1000,actual:400,sponsorship:500,currency:"INR"});
+  store.addPromotion({id:"test-promo",eventId:"test-event",societyId:"ai-club-society",channel:"Instagram",owner:"A",plannedDate:"Oct 4",status:"planned"});
+  store.addRequirement({id:"test-req",eventId:"test-event",societyId:"ai-club-society",category:"equipment",item:"Camera",quantity:"1",owner:"A",status:"needed"});
+  store.addAnalysis({eventId:"test-event",registrations:20,attendees:15,winners:["A"],participantFeedback:["Good"],guestFeedback:[],whatWentWell:["Good"],problems:["Late start"],suggestions:["Start earlier"],finalExpenditure:450,photos:["photo.jpg"],sponsors:["Sponsor"],eventReport:"Report"});
+  const state=store.getState();
+  expect(state.events.some(e=>e.id==="test-event")).toBe(true);
+  expect(state.societyTasks.some(t=>t.eventId==="test-event")).toBe(true);
+  expect(state.budgets.find(b=>b.eventId==="test-event")?.sponsorship).toBe(500);
+  expect(state.promotions.find(p=>p.id==="test-promo")?.status).toBe("planned");
+  expect(state.requirements.find(r=>r.id==="test-req")?.item).toBe("Camera");
+  expect(state.analyses.find(a=>a.eventId==="test-event")?.attendees).toBe(15);
+ });
+ it("summarizes categorical feedback and member contribution",()=>{
+  const store=createCampusStore(initialState);
+  store.addFeedback({id:"f1",eventId:"ai-hackathon-2026",societyId:"ai-club-society",category:"venue",priority:"high",sentiment:"negative",text:"Room was crowded",submitter:"A",createdAt:"2026-10-03"});
+  store.addFeedback({id:"f2",eventId:"ai-hackathon-2026",societyId:"ai-club-society",category:"venue",priority:"medium",sentiment:"positive",text:"Good location",submitter:"B",createdAt:"2026-10-03"});
+  const summary=feedbackSummary(store.getState(),"ai-club-society","ai-hackathon-2026");
+  expect(summary.find(x=>x.category==="venue")?.count).toBe(2);
+  expect(summary.find(x=>x.category==="venue")?.negative).toBe(1);
+  const contribution=societyContribution(store.getState(),"ai-club-society","ai-hackathon-2026");
+  expect(contribution.find(x=>x.member==="Riya")?.completed).toBe(1);
  });
 });
