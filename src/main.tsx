@@ -2,12 +2,12 @@ import React from "react";
 import{createRoot}from"react-dom/client";
 import"./styles.css";
 import{AnnouncementInput,ExtractedAnnouncement,Post,Task,createCampusStore,extractAnnouncement,commitExtraction,createCampusRepository,initialState,loadUserProfile,saveUserProfile,relevanceForUser,UserProfile,campusDeadlines,answerCampusQuery,demoProfile}from"./domain";
-import{EventsPage,SocietyOpsPage,FeedbackPage}from"./society";
+import{EventsPage,SocietyPage,SocietyOpsPage,FeedbackPage}from"./society";
 
 const repository=createCampusRepository();
 const store=createCampusStore(repository.load());
 
-const navItems=[["01","Home","⌂"],["02","For You","✦"],["03","Explore","◌"],["04","Events","▦"],["05","My Tasks","✓"],["06","Network","◎"],["07","Society Ops","▤"],["08","Feedback","◍"],["09","Settings","⚙"]];
+const navItems=[["01","Home","⌂"],["02","For You","✦"],["03","Explore","◌"],["04","Events","▦"],["05","My Tasks","✓"],["06","Network","◎"],["07","Societies","▤"],["08","Society Ops","▥"],["09","Feedback","◍"],["10","Settings","⚙"]];
 
 function App(){
 const pathname=window.location.pathname.replace(/\/+$/, "")||"/";
@@ -37,10 +37,11 @@ Explore:{title:"Explore — Campus OS",description:"Explore campus events, oppor
 "My Tasks":{title:"My Tasks — Campus OS",description:"Manage actionable campus workflows and trace every task back to the campus information that created it."},
 Network:{title:"Network — Campus OS",description:"Explore relationships between campus people, events, opportunities, resources, projects, deadlines and tasks."},
 Events:{title:"Events — Campus OS",description:"Structured campus events with society, dates, eligibility, venues, deadlines and progress."},
+Societies:{title:"Societies — Campus OS",description:"Discover campus societies, their people, history, upcoming events and past work."},
 "Society Ops":{title:"Society Operations — Campus OS",description:"Private society event operations, tasks, budgets, promotion and resources."},
 Feedback:{title:"Feedback — Campus OS",description:"Categorical feedback and suggestions for campus events and societies."},
 Settings:{title:"Settings — Campus OS",description:"Manage Campus OS appearance, privacy documentation, terms and product data-protection context."}
-}[tab as "Home"|"For You"|"Explore"|"Events"|"My Tasks"|"Network"|"Society Ops"|"Feedback"|"Settings"];
+}[tab as "Home"|"For You"|"Explore"|"Events"|"My Tasks"|"Network"|"Societies"|"Society Ops"|"Feedback"|"Settings"];
 React.useEffect(()=>{const id=requestAnimationFrame(()=>setLoading(false));return()=>cancelAnimationFrame(id)},[]);
 React.useEffect(()=>{document.title=pageMeta.title;document.querySelector('meta[name="description"]')?.setAttribute("content",pageMeta.description);document.querySelector('meta[property="og:title"]')?.setAttribute("content",pageMeta.title);document.querySelector('meta[property="og:description"]')?.setAttribute("content",pageMeta.description);document.querySelector('meta[name="twitter:title"]')?.setAttribute("content",pageMeta.title);document.querySelector('meta[name="twitter:description"]')?.setAttribute("content",pageMeta.description);document.querySelector('link[rel="canonical"]')?.setAttribute("href",window.location.origin+"/");document.querySelector('meta[name="robots"]')?.setAttribute("content","index,follow")},[pageMeta.title,pageMeta.description]);
 const state=store.getState();
@@ -65,7 +66,7 @@ return <div className="app-shell">
 {tab==="For You"&&<ForYou state={state} profile={profile} filtered={filtered} tasks={tasks} toggle={toggle} editProfile={()=>setShowProfile(true)}/>}
 {tab==="Explore"&&<Explore filtered={filtered} liked={liked} setLiked={setLiked}/>}
 {tab==="My Tasks"&&<TasksPage state={state} tasks={tasks} toggle={toggle}/>}
-{tab==="Network"&&<Relationship state={state} selectedId={networkEntityId}/>}\n{tab==="Events"&&<EventsPage state={state} mutate={fn=>{fn(store);sync()}}/>}\n{tab==="Society Ops"&&<SocietyOpsPage state={state} profile={profile} mutate={fn=>{fn(store);sync()}}/>}\n{tab==="Feedback"&&<FeedbackPage state={state} profile={profile} mutate={fn=>{fn(store);sync()}}/>}
+{tab==="Network"&&<Relationship state={state} selectedId={networkEntityId}/>}\n{tab==="Societies"&&<SocietyPage state={state}/>}\n{tab==="Events"&&<EventsPage state={state} mutate={fn=>{fn(store);sync()}}/>}\n{tab==="Society Ops"&&<SocietyOpsPage state={state} profile={profile} mutate={fn=>{fn(store);sync()}}/>}\n{tab==="Feedback"&&<FeedbackPage state={state} profile={profile} mutate={fn=>{fn(store);sync()}}/>}
 {tab==="Settings"&&<SettingsPage view={settingsView} setView={setSettingsView} theme={theme} setTheme={setTheme} profile={profile} editProfile={()=>setShowProfile(true)}/>}
 </main>
 {error&&<div className="error-toast" role="alert">{error}<button onClick={()=>setError("")}>×</button></div>}
