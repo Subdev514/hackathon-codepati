@@ -2,295 +2,246 @@
 
 Last updated: 2026-10-02
 Repository: sarkarshivaditya-lab/for-friends
-Status: Active hackathon build
+Status: Active autonomous hackathon build
 
 ## 1. Product definition
 
 Campus OS is a Campus Operating System, not a Reddit clone.
 
-Core problem:
-Campus information is fragmented across announcements, events, clubs, opportunities, resources, people, deadlines and projects. The system must preserve relationships between these objects and turn relevant information into personalized workflows.
+Core loop:
+Campus information → structured entities → relationships/context → personalization → tasks/workflows → reminders/actions.
 
-Core product loop:
+The feed is an input/discovery surface. The product differentiator is understanding campus information as connected objects and converting that understanding into useful work.
 
-Campus information
-→ structured entities
-→ relationships/context
-→ personalization
-→ tasks/workflows
-→ reminders/actions
+## 2. Execution contract
 
-The Reddit-style feed is only the input/discovery surface.
+This file is the execution state for the project.
 
-## 2. Hackathon strategy
+Autonomous work loop:
+1. Read this file before architectural changes.
+2. Identify the highest-priority incomplete checkpoint.
+3. Implement that checkpoint as a working vertical slice.
+4. Verify the change where tooling permits.
+5. Update this file immediately with the result, tests, decisions, bugs and next checkpoint.
+6. Read this file again.
+7. Continue to the next incomplete checkpoint without waiting for user approval.
+8. Stop only when all planned MVP checkpoints are complete or a genuine blocker requires user input.
 
-Time is limited. Prioritize the smallest vertical slice that clearly demonstrates the problem statement.
+Never treat the repository as fresh. Preserve working behavior unless replacement is necessary.
 
-The judge should be able to see:
-1. A messy campus information item enters the system.
-2. The system understands what it represents.
-3. Relationships are preserved.
-4. The user's context changes what is relevant.
+## 3. Hackathon scope
+
+The judge should understand within two minutes:
+1. A messy campus announcement enters Campus OS.
+2. The system understands the announcement.
+3. Entities, deadlines and relationships are preserved.
+4. User context changes relevance.
 5. The system produces concrete next actions.
+6. Completing an action updates the user's workflow.
 
-Do NOT spend hackathon time on:
-- elaborate Reddit karma systems
-- complex moderation
-- unnecessary social features
+Do not spend time on:
+- karma/moderation/social complexity
 - premature microservices
-- overbuilt authentication
 - production-scale infrastructure
+- elaborate authentication
+- features that do not strengthen the core loop
 
-## 3. Current implementation
+## 4. Checkpoint roadmap
 
-The repository started empty. Initial MVP has been created.
+### CP0 — Foundation and project brain
+Status: COMPLETE
+- Vite + React + TypeScript application
+- Responsive Campus OS UI
+- Domain types extracted from UI
+- progress.md execution brain
 
-Current files:
-- package.json — Vite/React/TypeScript setup
-- index.html — application entry
-- vite.config.ts — Vite React config
-- tsconfig.json — TypeScript config
-- .gitignore
-- src/main.tsx — complete MVP UI and local demo data
-- src/styles.css — responsive visual system
-- README.md — project overview
-- progress.md — this project brain
+### CP1 — Local domain/store boundary
+Status: IN PROGRESS
+Goal: make entities, posts, relationships and tasks mutable through a small application store rather than hard-coded UI data.
+Acceptance:
+- one store/service owns current campus state
+- UI can add entities/posts/tasks/relationships through service functions
+- initial demo data still renders
 
-Current UI:
-- Home
-- For You
-- Explore
-- My Tasks
-- Network
-- Campus search
-- Reddit-style feed cards
-- Personalized workflow panel
-- Task completion/progress
-- Campus relationship graph
-- Responsive layout
+### CP2 — Announcement ingestion
+Status: NOT STARTED
+Goal: user can paste/write a campus announcement and submit it.
+Acceptance:
+- Create Announcement action visible from primary UI
+- announcement form captures title/body/type/source
+- submitted text reaches domain service
 
-Current demo entities include:
-- AI Hackathon
-- AI Club
-- Microsoft Ambassador opportunity
-- Figma Workshop
-- CN Viva Notes
+### CP3 — Deterministic extraction engine
+Status: NOT STARTED
+Goal: turn common campus announcement language into structured facts without requiring an external API key.
+Acceptance:
+- extracts likely event/opportunity/resource
+- extracts organizer
+- extracts dates/deadlines
+- extracts team/participation constraints
+- preserves source text
+- returns confidence/reason fields
+- handles the hackathon demo announcement
 
-Current example relationship:
-AI Club
-→ organizes
-AI Hackathon
-→ has
-Oct 10 deadline
-→ creates
-registration/team/idea tasks
+### CP4 — Understanding preview
+Status: NOT STARTED
+Goal: show the user what Campus OS understood before committing.
+Acceptance:
+- extracted entities shown as cards/chips
+- relationships shown explicitly
+- deadlines and requirements visible
+- generated tasks previewed
+- user can confirm or edit basic extracted fields
 
-## 4. Current data model concept
+### CP5 — Commit graph + workflow
+Status: NOT STARTED
+Goal: confirmed announcement becomes real campus state.
+Acceptance:
+- creates post/entity/relationships
+- creates derived deadlines and tasks
+- tasks retain source entity/reason
+- graph and workflow views reflect newly ingested data
 
-The system should eventually use first-class entities rather than treating every item as a post.
+### CP6 — Persistence
+Status: NOT STARTED
+Goal: refresh-safe local MVP.
+Acceptance:
+- domain state survives reload using localStorage
+- safe hydration/fallback to demo data
+- no loss when schema evolves
 
-Primary entities:
-- User
-- Person
-- Club
-- Organization
-- Event
-- Opportunity
-- Project
-- Task
-- Deadline
-- Resource
-- Post
+### CP7 — Personalization
+Status: NOT STARTED
+Goal: demonstrate why the same campus graph becomes a personalized OS.
+Acceptance:
+- local demo user profile has branch/year/interests/clubs
+- relevance score/reason is transparent
+- feed/workflow can surface relevant items with reasons
+- no opaque recommendation claims
 
-Relationships include:
-- User member_of Club
-- Club organizes Event
-- Organization publishes Opportunity
-- Event has Deadline
-- Event requires Team
-- User interested_in Opportunity
-- Project uses Resource
-- User assigned Task
-- Task derived_from Event
-- Post references Entity
-- Person participates_in Project/Event
+### CP8 — Product loop polish
+Status: NOT STARTED
+Goal: make the full POST → UNDERSTOOD → CONNECTED → ACTIONABLE flow obvious.
+Acceptance:
+- clear transitions/status labels
+- announcement detail opens its relationships
+- task completion updates progress
+- empty/error states are intentional
+- mobile layout remains usable
 
-The graph is a core product feature, not merely a visualization.
+### CP9 — Verification and demo hardening
+Status: NOT STARTED
+Goal: verify build and core user journey.
+Acceptance:
+- production build passes
+- core parser cases pass
+- no obvious TypeScript/runtime errors
+- README and progress reflect actual architecture
+- final demo path is documented
 
-## 5. Immediate next priority
+### CP10 — Optional deployment/integration
+Status: NOT STARTED
+Only after CP0–CP9 are complete. Deployment, backend/API or external AI can be added if time permits and does not destabilize the MVP.
 
-Build the first real structured data layer.
+## 5. Current architecture
 
-Recommended order:
-1. Define TypeScript domain types for entities and relationships.
-2. Move demo data out of the UI component.
-3. Create a local repository/store abstraction.
-4. Add event/opportunity/task relationship generation.
-5. Add a Create Post / Create Announcement flow.
-6. Add an AI extraction layer for unstructured campus text.
-7. Convert extracted information into entities and relationships.
-8. Generate personalized workflows from those relationships.
-9. Add persistence.
-10. Add authentication/campus scoping only after the core workflow is convincing.
+UI
+→ application/domain services
+→ local store
+→ optional persistence
+→ optional external AI/API
 
-## 6. AI extraction target
-
-Example input:
-
-"AI Club is conducting a 24-hour hackathon on October 15. Teams of 2–4 can participate. Registration closes October 10. Participants need to submit their idea before October 13."
-
-Expected structured result:
-
-Event:
-- name: AI Hackathon
-- organization: AI Club
-- date: October 15
-
-Constraint:
-- team size: 2–4
-
-Deadlines:
-- registration: October 10
-- idea submission: October 13
-
-Generated workflow:
-- Find teammates
-- Register for hackathon
-- Prepare idea
-- Submit idea
-
-The extraction result must retain source/context so generated tasks can explain why they exist.
-
-## 7. Personalization target
-
-User context should eventually contain things such as:
-- year
-- branch
-- interests
-- clubs
-- followed topics
-- active projects
-- existing tasks
-- availability/preferences
-
-Example:
-A hackathon announcement may be highly relevant to an AI-interested CSE student but less relevant to another student.
-
-Personalization should affect:
-- feed ordering
-- recommended opportunities
-- generated tasks
-- deadlines surfaced
-- related people/clubs/resources
-
-Do not make opaque recommendations the core demo. Always show the reason/context behind important recommendations.
-
-## 8. Demo storyline
-
-Preferred hackathon demo:
-
-1. Open Campus OS.
-2. Show mixed campus feed.
-3. Open a hackathon announcement.
-4. Show that the announcement is understood as an Event with an Organization, Deadline and Team requirement.
-5. Show relationship graph.
-6. Show personalized workflow being generated.
-7. Complete one task.
-8. Show progress update.
-9. Explain that the same architecture can ingest notices, club announcements, opportunities, academic resources and project information.
-
-The strongest visual transition is:
-POST → UNDERSTOOD → CONNECTED → ACTIONABLE.
-
-## 9. Technical direction
-
-Current:
+Current technology:
 - React
 - TypeScript
 - Vite
-- Local in-memory demo data
+- CSS
+- GitHub repository
 
-Preferred near-term architecture:
-UI
-→ domain/service layer
-→ local persistence
-→ optional API/AI service
+The domain layer should not depend on React.
 
-Keep domain logic separate from UI so the demo can later move from local state to a backend without rewriting the product.
+## 6. Domain model
 
-Avoid coupling business logic directly to React components.
+Primary entities:
+User, Person, Club, Organization, Event, Opportunity, Project, Task, Deadline, Resource, Post.
 
-## 10. Visual direction
+Relationships:
+member_of, organizes, has_deadline, requires, derived_from, references, interested_in, uses, assigned_to, participates_in.
 
-Current visual language:
-- dark sidebar
-- warm off-white main background
-- muted green/lime accent
-- compact information-dense cards
-- premium productivity-tool aesthetic
-- responsive desktop/mobile behavior
+Important rule: deadlines and requirements are first-class objects, not merely strings inside posts.
 
-Maintain this visual identity unless there is a strong product reason to change it.
+## 7. Extraction target
 
-## 11. Development rules
+Input example:
+“AI Club is conducting a 24-hour hackathon on October 15. Teams of 2–4 can participate. Registration closes October 10. Participants need to submit their idea before October 13.”
 
-IMPORTANT: This file is the project brain.
+Expected understanding:
+- Event: AI Hackathon
+- Organizer: AI Club
+- Event date: October 15
+- Team size: 2–4
+- Registration deadline: October 10
+- Idea submission deadline: October 13
+- Tasks: find teammates, register, prepare idea, submit idea
 
-After EVERY meaningful code edit:
-1. Read progress.md before making architectural changes.
-2. Update progress.md after the edit.
-3. Record what changed.
-4. Record important decisions.
-5. Record bugs/test status if relevant.
-6. Update the immediate next priority.
-7. Never treat the repository as a fresh project.
+Every generated item must retain source/context.
 
-Before adding a feature, check whether it conflicts with the product definition or hackathon strategy.
+## 8. Personalization target
 
-Prefer working vertical slices over isolated infrastructure.
+Demo profile:
+- branch/year
+- interests
+- clubs
+- active projects
+- current tasks
 
-Do not delete working functionality unless there is a clear reason.
+Personalization affects relevance and surfaced actions, but reasons remain visible.
 
-## 12. Current risks
+## 9. Preferred demo storyline
 
-- The current application is demo/local-state only.
-- No backend persistence yet.
-- No real AI extraction yet.
-- No authentication/campus isolation.
-- Relationship graph is currently visual/demo data rather than a true graph store.
-- Build has not yet been executed in this environment after initial bootstrap.
+1. Open Campus OS.
+2. Show mixed campus feed.
+3. Click Create Announcement.
+4. Paste a messy announcement.
+5. Show “Campus OS understood this”.
+6. Show entities + relationships + deadlines.
+7. Confirm.
+8. Show new item in feed and graph.
+9. Show generated workflow.
+10. Complete one task.
+11. Explain that the same graph can ingest events, opportunities, notices, resources and projects.
 
-These are known limitations, not reasons to expand scope prematurely.
+## 10. Known risks
 
-## 13. Definition of success
+- No backend yet.
+- External AI is intentionally deferred until the deterministic vertical slice works.
+- Authentication/campus isolation is out of hackathon MVP scope.
+- Graph visualization is currently partly presentation-oriented.
+- Build/runtime verification must be completed before final demo.
 
-For the hackathon MVP, success means a judge can understand in under two minutes that:
-
-"This system does not merely display campus information. It understands how campus information is connected and turns it into personalized work."
-
-Everything built next should strengthen that sentence.
-
-## 14. Change log
+## 11. Change log
 
 ### 2026-10-02 — Initial MVP
-- Repository confirmed empty.
 - Bootstrapped Vite + React + TypeScript.
-- Created campus Reddit-style feed.
-- Added structured post metadata.
-- Added personalized workflow panel.
-- Added task completion/progress.
-- Added campus relationship graph.
-- Added Home, For You, Explore, My Tasks and Network views.
-- Added responsive styling.
-- Added README.
-- Added this project brain.
+- Created campus feed, workflow, tasks, graph, navigation and responsive styling.
+- Added README and project brain.
 
 ### 2026-10-02 — Domain layer
-- Added src/domain.ts with typed campus entities, relationship types, demo entities and relationships.
-- Moved feed/task demo data out of src/main.tsx.
-- Added deterministic generateWorkflow() service function as the future AI extraction/workflow seam.
-- Kept the UI behavior unchanged while separating product data from presentation.
-- Temporary refactor file was removed after migration.
-- Tests/build: not executed in a local runtime yet; GitHub repository edits completed successfully.
+- Added typed campus entities, relationships, posts and tasks in src/domain.ts.
+- Moved demo data out of the UI.
+- Added deterministic workflow service seam.
+- UI behavior remained unchanged.
+- Build/tests had not yet been executed in a local runtime.
 
-Next priority: add a Create Announcement flow and an extraction pipeline that converts free-form campus text into domain entities, relationships, deadlines and generated tasks.
+### 2026-10-02 — Autonomous roadmap
+- Replaced the short immediate-priority list with explicit checkpoints CP0–CP10.
+- Added an execution contract requiring reread → implement → verify → update → reread → continue.
+- Defined acceptance criteria for the complete hackathon MVP.
+- Marked CP1 as the active checkpoint.
+
+## 12. Current execution state
+
+Active checkpoint: CP1 — Local domain/store boundary.
+
+Next action:
+Create a small domain store/service that owns mutable campus state while retaining the current demo data and keeping React-specific code in the UI layer.
