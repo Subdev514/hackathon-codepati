@@ -719,3 +719,11 @@ Reference research:
 - Reduced overflow risk with narrow-screen width constraints, wrapping and touch-friendly full-width controls.
 - Committed as `f1572646688f1500808d25df8c1acf131422d96c`.
 - Required next verification: run `npm test` and `npm run build`, then inspect the deployed site at phone widths around 320px, 375px and 430px in both themes.
+
+### 2026-10-03 — Mobile graph and terrain isolation
+- Reworked the narrow-screen Network graph into a contained 330px visual zone with smaller nodes, reduced connector intensity and explicit overflow containment.
+- Repositioned mobile graph nodes so labels stay inside the graph and do not collide with surrounding page copy.
+- Changed the Home terrain on mobile from an overlapping absolute layer to a dedicated flow section below the hero copy.
+- Reduced mobile terrain scale and orbit size to preserve the visual concept without covering text.
+- Committed as 3d11e399c0d6a20d65e8b1fd90253470f4cf3f47.
+- Required next verification: test at 320px, 375px and 430px, especially Home and Network, then run npm test and npm run build.
