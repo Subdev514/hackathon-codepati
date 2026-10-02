@@ -1,5 +1,5 @@
 import{describe,expect,it}from"vitest";
-import{commitExtraction,createCampusStore,extractAnnouncement,initialState,normalizeExtraction,validateExtraction,deterministicExtractionProvider,relevanceForUser}from"./domain";
+import{commitExtraction,createCampusStore,extractAnnouncement,initialState,normalizeExtraction,validateExtraction,deterministicExtractionProvider,relevanceForUser,deadlineStatus}from"./domain";
 
 describe("announcement extraction",()=>{
 it("extracts the hackathon demo into connected facts and actions",()=>{
@@ -57,3 +57,12 @@ describe("personal workspace",()=>{
  });
 });
 
+
+describe("deadline intelligence",()=>{
+ it("classifies deadline attention windows",()=>{
+  const now=new Date(2026,9,2,12);
+  expect(deadlineStatus("October 2",now)).toBe("today");
+  expect(deadlineStatus("October 5",now)).toBe("due_soon");
+  expect(deadlineStatus("September 30",now)).toBe("overdue");
+ });
+});
