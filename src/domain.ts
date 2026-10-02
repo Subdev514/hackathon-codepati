@@ -124,3 +124,19 @@ return post;
 }
 
 export function generateWorkflow(source:string):Task[]{return initialTasks.filter(t=>t.source===source)}
+
+const STORAGE_KEY="campus-os-state-v1";
+export function loadCampusState():CampusState{
+if(typeof window==="undefined")return initialState;
+try{
+const raw=window.localStorage.getItem(STORAGE_KEY);
+if(!raw)return initialState;
+const parsed=JSON.parse(raw) as CampusState;
+if(!parsed||!Array.isArray(parsed.entities)||!Array.isArray(parsed.relationships)||!Array.isArray(parsed.posts)||!Array.isArray(parsed.tasks))return initialState;
+return parsed;
+}catch{return initialState}
+}
+export function saveCampusState(state:CampusState){
+if(typeof window==="undefined")return;
+try{window.localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch{}
+}
