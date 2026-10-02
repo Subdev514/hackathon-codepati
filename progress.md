@@ -709,3 +709,13 @@ Reference research:
 - Added 404 metadata handling with noindex/nofollow and removal of the canonical link.
 - Audited the frontend for image accessibility: there are currently no img elements or image assets requiring alt text; the visual terrain, graph and branding are CSS/DOM primitives.
 - Required next verification: rerun npm test and npm run build, then inspect document head metadata, favicon, social-card metadata, loading state, 404 noindex behavior and Lighthouse/accessibility output in the browser.
+
+
+### 2026-10-03 — Mobile responsive hardening
+- Added a dedicated mobile pass for the full Campus OS surface, not just the original dashboard breakpoint.
+- Hardened the mobile topbar/search, hero actions and metrics, terrain visualization, deadlines, Copilot, signal/feed cards and workflow rows.
+- Reworked Network nodes/details and horizontal entity navigation for narrow screens.
+- Added mobile layouts for Settings, compliance/legal cards, Privacy/Terms documents and profile/announcement modals.
+- Reduced overflow risk with narrow-screen width constraints, wrapping and touch-friendly full-width controls.
+- Committed as `f1572646688f1500808d25df8c1acf131422d96c`.
+- Required next verification: run `npm test` and `npm run build`, then inspect the deployed site at phone widths around 320px, 375px and 430px in both themes.
