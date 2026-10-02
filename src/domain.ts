@@ -140,3 +140,18 @@ export function saveCampusState(state:CampusState){
 if(typeof window==="undefined")return;
 try{window.localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch{}
 }
+
+
+export type UserProfile={id:string;name:string;branch:string;year:number;interests:string[];clubs:string[]};
+export const demoProfile:UserProfile={id:"user-shiv",name:"Shiv",branch:"CSE",year:2,interests:["AI/ML","Hackathon","Development","Career"],clubs:["AI Club"]};
+export function relevanceForUser(post:Post,user:UserProfile=demoProfile){
+const hay=(post.title+" "+post.body+" "+post.tags.join(" ")+" "+post.club).toLowerCase();
+const matches=user.interests.filter(x=>hay.includes(x.toLowerCase()));
+const clubMatch=user.clubs.some(x=>post.club.toLowerCase().includes(x.toLowerCase()));
+const score=matches.length+(clubMatch?2:0)+(post.type==="OPPORTUNITY"&&user.year>=2?1:0);
+const reasons:string[]=[];
+if(matches.length)reasons.push("matches "+matches.slice(0,2).join(" and "));
+if(clubMatch)reasons.push("from a club you follow");
+if(post.type==="OPPORTUNITY"&&user.year>=2)reasons.push("career opportunity for your year");
+return {score,reasons};
+}
