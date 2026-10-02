@@ -50,10 +50,10 @@ export const posts:Post[]=[
 {id:3,type:"EVENT",title:"Design Club: Figma crash course this Saturday",body:"A practical two-hour session covering components, auto-layout and prototyping. Bring your laptop.",author:"Design Club",club:"Design Club",time:"1d",votes:64,comments:11,tags:["Design","Workshop"],linked:"Figma Workshop"},
 {id:4,type:"RESOURCE",title:"Seniors uploaded the complete CN lab viva notes",body:"Routing, transport layer, socket programming and common viva questions in one place.",author:"B-30 Community",club:"B-30",time:"1d",votes:52,comments:9,tags:["Academics","CN"],linked:"CN Viva Notes"}];
 export const initialTasks:Task[]=[
-{id:1,title:"Register for AI Hackathon",meta:"AI Club · due Oct 10",done:false,source:"AI Hackathon"},
+{id:1,title:"Register for AI Hackathon",meta:"AI Club · due Oct 10",done:false,source:"ai-hackathon"},
 {id:2,title:"Find 1–3 hackathon teammates",meta:"Derived from team size 2–4",done:false,source:"AI Hackathon"},
 {id:3,title:"Prepare hackathon idea submission",meta:"AI Club · due Oct 13",done:false,source:"AI Hackathon"},
-{id:4,title:"Apply for Microsoft Ambassador",meta:"Tech Society · due Oct 18",done:false,source:"Microsoft Ambassador"}];
+{id:4,title:"Apply for Microsoft Ambassador",meta:"Tech Society · due Oct 18",done:false,source:"ms-ambassador"}];
 
 export const initialState:CampusState={entities,relationships,posts,tasks:initialTasks};
 
@@ -70,6 +70,8 @@ toggleTask:(id:number)=>{state={...state,tasks:state.tasks.map(t=>t.id===id?{...
 nextId:()=>nextId++
 };
 }
+
+export function taskSourceName(state:CampusState,task:Task){return state.entities.find(e=>e.id===task.source)?.name||task.source}
 
 function slug(value:string){return value.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"")}
 function firstMatch(text:string,patterns:RegExp[]){for(const pattern of patterns){const match=text.match(pattern);if(match)return match}return undefined}
