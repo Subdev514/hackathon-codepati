@@ -300,3 +300,19 @@ return {answer:events.length?"Connected campus events: "+events.map(e=>e.name).j
 if(relevantPosts.length){const top=relevantPosts.slice(0,3);return {answer:"Based on your profile, the most relevant campus signals are: "+top.map(x=>x.post.title).join("; "),entities:top.map(x=>state.entities.find(e=>e.name===x.post.linked)).filter(Boolean) as Entity[],tasks:openTasks.slice(0,4),deadlines:[],reason:top.map(x=>x.relevance.reasons.join(", ")).filter(Boolean).join("; ")||"Matches your saved campus context."};}
 return {answer:"I could not find a connected campus fact for that question. Try asking about deadlines, tasks, events, or what is relevant to you.",entities:[],tasks:[],deadlines:[],reason:"Campus Copilot only answers from stored campus state."};
 }
+
+
+export function canAccessSociety(state:CampusState,societyId:string,userId:string):boolean{
+const workspace=state.workspaces.find(w=>w.societyId===societyId);
+if(!workspace?.private)return true;
+return state.memberships.some(m=>m.societyId===societyId&&m.userId===userId&&(m.role==="lead"||m.role==="admin"||m.role==="member"));
+}
+export function societyContribution(state:CampusState,societyId:string,eventId:string){
+const tasks=state.societyTasks.filter(t=>t.societyId===societyId&&t.eventId===eventId);
+const names=[...new Set(tasks.map(t=>t.assignee))];
+return names.map(name=>{const mine=tasks.filter(t=>t.assignee===name);const completed=mine.filter(t=>t.done).length;return {member:name,tasks:mine.length,completed,completion:mine.length?Math.round(completed/mine.length*100):0}}).sort((a,b)=>b.completion-a.completion);
+}
+export function feedbackSummary(state:CampusState,societyId?:string,eventId?:string){
+const rows=state.feedback.filter(f=>(!societyId||f.societyId===societyId)&&(!eventId||f.eventId===eventId));
+return (["event","venue","organization","promotion","content","volunteers","technical","budget","other"] as FeedbackCategory[]).map(category=>({category,count:rows.filter(r=>r.category===category).length,negative:rows.filter(r=>r.category===category&&r.sentiment==="negative").length})).filter(x=>x.count>0);
+}
