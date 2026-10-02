@@ -184,10 +184,14 @@ Status: COMPLETE
 - Verification: source-level UI/domain/test review completed.
 
 #### CP10E — Deadline intelligence
-Status: NOT STARTED
+Status: COMPLETE
 - Surface upcoming, due-soon and overdue deadlines.
 - Connect deadlines to their originating event/opportunity and generated task.
 - Add a compact timeline/attention view.
+- Added deadlineStatus() and campusDeadlines() domain services.
+- Home now surfaces connected deadlines as upcoming, due-soon, today or overdue and links each deadline to its source entity and open task when available.
+- Added deterministic deadline-status tests.
+- Verification: source-level domain/UI/test review completed.
 
 #### CP10F — Backend-ready multi-user boundary
 Status: NOT STARTED
@@ -404,6 +408,9 @@ Remaining work:
 
 ### 2026-10-02 — CP10D personal workspace complete
 - Completed CP10D. Personalization is now editable local state rather than a fixed demo-only profile.
+
+### 2026-10-02 — CP10E deadline intelligence complete
+- Completed CP10E. Deadlines are now an attention layer over the graph rather than passive strings.
 
 ### 2026-10-02 — Final CP9 audit
 - Re-read progress.md before final audit as required by the execution contract.
