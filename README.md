@@ -121,3 +121,15 @@ Each society profile contains:
 
 Private operational data such as internal tasks, budgets, promotion work and requirements remains in the Society Ops workspace rather than the public profile.
 
+## Knowledge layer, discovery and workflow intelligence
+
+Campus OS now extends the local graph into a knowledge/workflow layer:
+
+- **Knowledge** — natural-language discovery across authorized campus knowledge, with graph expansion and profile-aware ranking rather than only literal feed search.
+- **Notion integration** — the Vercel server boundary can bootstrap Campus OS Knowledge, Tasks and Opportunities databases and sync records without exposing a Notion token to the browser. Configure `NOTION_TOKEN` and `NOTION_PARENT_PAGE_ID` on the deployment to activate it; otherwise the UI stays explicitly disconnected.
+- **Personalized workflow** — relevant opportunities can be saved, deadline reminders created and suggested actions promoted into tasks/project actions.
+- **Dependencies** — explicit registration, volunteer and project-milestone relationships are represented in the graph and surfaced in Network.
+- **Roles** — Student and Club Coordinator contexts change the operational experience and Notion synchronization permission.
+- **Analytics** — pending registrations, upcoming deadlines, participation, workload and project progress are derived from the same domain state.
+
+The Notion integration uses the official Notion API from the server-side `api/notion.js` function. The deterministic discovery engine is intentionally graph-grounded for the current MVP and does not claim an external LLM connection.
