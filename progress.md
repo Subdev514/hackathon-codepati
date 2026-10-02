@@ -139,9 +139,53 @@ Acceptance:
 - README and progress reflect actual architecture
 - final demo path is documented
 
-### CP10 — Optional deployment/integration
+### CP10 — Post-MVP product expansion
+Status: IN PROGRESS
+Execution order is fixed and each sub-checkpoint must be completed, verified, recorded here, then reread before moving on.
+
+#### CP10A — AI-ready understanding boundary
 Status: NOT STARTED
-Only after CP0–CP9 are complete. Deployment, backend/API or external AI can be added if time permits and does not destabilize the MVP.
+- Define provider interface around ExtractedAnnouncement.
+- Add strict validation/normalization and deterministic fallback.
+- Keep secrets out of the browser; no client-side API key.
+
+#### CP10B — Interactive relationship graph
+Status: NOT STARTED
+- Make graph nodes real selectable campus entities.
+- Show connected relationships, source context and actions for the selected node.
+- Preserve the existing graph demo as the default view.
+
+#### CP10C — Broader campus information types
+Status: NOT STARTED
+- Support event, opportunity, resource, notice, competition, project and deadline-oriented announcements.
+- Preserve first-class entities/relationships for each type.
+- Add representative demo/test cases.
+
+#### CP10D — Personal campus workspace
+Status: NOT STARTED
+- Make the profile editable locally.
+- Store branch, year, interests, clubs and active projects.
+- Recompute relevance and workflow presentation from profile state.
+
+#### CP10E — Deadline intelligence
+Status: NOT STARTED
+- Surface upcoming, due-soon and overdue deadlines.
+- Connect deadlines to their originating event/opportunity and generated task.
+- Add a compact timeline/attention view.
+
+#### CP10F — Backend-ready multi-user boundary
+Status: NOT STARTED
+- Separate local domain contract from persistence implementation.
+- Define a backend synchronization seam without breaking offline-first behavior.
+- Keep authentication/campus isolation as an integration boundary rather than a rewrite.
+
+#### CP10G — Hackathon polish and deployment readiness
+Status: NOT STARTED
+- Add reset/demo controls and intentional loading/empty/error states.
+- Improve graph presentation and demo reliability.
+- Verify production build and document deployment path if tooling permits.
+
+Completion rule: do not mark CP10 complete until CP10A–CP10G are complete or a concrete external blocker is documented.
 
 ## 5. Current architecture
 
@@ -323,9 +367,14 @@ Final demo path:
 9. Open My Tasks and complete one generated task.
 10. Open Network to show the connected graph.
 
-Remaining optional work:
-- CP10: external AI extraction provider, backend sync/authentication, deployment and richer graph interactions. These are deliberately deferred because they are outside the stable hackathon MVP loop.
+Remaining work:
+- CP10A–CP10G are now the active post-MVP execution plan.
 
+
+### 2026-10-02 — CP10 autonomous expansion plan
+- Converted optional CP10 into explicit ordered sub-checkpoints CP10A–CP10G.
+- Locked execution order: AI-ready extraction boundary → interactive graph → broader information types → personal workspace → deadline intelligence → backend-ready boundary → polish/deployment readiness.
+- The same reread/update/continue loop applies after every sub-checkpoint.
 
 ### 2026-10-02 — Final CP9 audit
 - Re-read progress.md before final audit as required by the execution contract.
