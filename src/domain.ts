@@ -152,7 +152,8 @@ store.addRelationships(result.relationships.filter(r=>!store.getState().relation
 const mainName=result.event?.name||result.opportunity?.name||result.input.title;
 const post:Post={id:store.nextId(),type:result.input.type||"NOTICE",title:result.input.title,body:result.input.body,author:result.input.author,club:result.input.club,time:"now",votes:0,comments:0,tags:["Campus OS","Understood"],deadline:result.deadlines[0]?.date,linked:mainName,sourceText:result.input.body};
 store.addPost(post);
-const existingTasks=store.getState().tasks;\nstore.addTasks(result.tasks.filter(t=>!existingTasks.some(x=>x.title===t.title&&x.source===t.source)));
+const existingTasks=store.getState().tasks;
+store.addTasks(result.tasks.filter(t=>!existingTasks.some(x=>x.title===t.title&&x.source===t.source)));
 return post;
 }
 
