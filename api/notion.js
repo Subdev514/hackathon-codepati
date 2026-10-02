@@ -1,3 +1,4 @@
+import{EVENTS_SCHEMA,EVENT_ID_PROPERTY,eventProperties,planEventSync}from"./_notionEvents.js";
 const NOTION_VERSION="2026-03-11";
 const API="https://api.notion.com/v1";
 
@@ -21,6 +22,39 @@ async function createPage(databaseId,title,children){
   return notion("/pages","POST",{parent:{database_id:databaseId},properties:{Name:{title:[{type:"text",text:{content:textContent(title,200)}}]}},children:children.slice(0,50).map(content=>({object:"block",type:"paragraph",paragraph:{rich_text:[{type:"text",text:{content:textContent(content)}}]}}))});
 }
 
+async function createEventsDatabase(){
+  const database=await notion("/databases","POST",{parent:{type:"page_id",page_id:process.env.NOTION_PARENT_PAGE_ID},title:[{type:"text",text:{content:"Campus OS · Upcoming Events"}}],is_inline:true,initial_data_source:{properties:EVENTS_SCHEMA}});
+  return {dataSourceId:database.data_sources[0].id,url:database.url};
+}
+
+async function resolveEventsDataSource(requestedId){
+  const id=process.env.NOTION_EVENTS_DATA_SOURCE_ID||requestedId;
+  if(id){
+    try{const source=await notion("/data_sources/"+id);return {dataSourceId:source.id,url:source.url}}
+    catch(error){if(process.env.NOTION_EVENTS_DATA_SOURCE_ID)throw error}
+  }
+  return createEventsDatabase();
+}
+
+async function listEventRows(dataSourceId){
+  const rows=[];let cursor;
+  do{
+    const page=await notion("/data_sources/"+dataSourceId+"/query","POST",{page_size:100,start_cursor:cursor,filter:{property:EVENT_ID_PROPERTY,rich_text:{is_not_empty:true}}});
+    for(const row of page.results)rows.push({pageId:row.id,eventId:(row.properties[EVENT_ID_PROPERTY]?.rich_text||[]).map(t=>t.plain_text).join("")});
+    cursor=page.has_more?page.next_cursor:undefined;
+  }while(cursor);
+  return rows;
+}
+
+async function syncEvents(events,requestedId){
+  const source=await resolveEventsDataSource(requestedId);
+  const plan=planEventSync(events,await listEventRows(source.dataSourceId));
+  for(const event of plan.create)await notion("/pages","POST",{parent:{type:"data_source_id",data_source_id:source.dataSourceId},properties:eventProperties(event)});
+  for(const {pageId,event} of plan.update)await notion("/pages/"+pageId,"PATCH",{properties:eventProperties(event)});
+  for(const pageId of plan.trash)await notion("/pages/"+pageId,"PATCH",{in_trash:true});
+  return {...source,counts:{created:plan.create.length,updated:plan.update.length,removed:plan.trash.length}};
+}
+
 export default async function handler(req,res){
   res.setHeader("Access-Control-Allow-Origin","*");
   res.setHeader("Access-Control-Allow-Headers","Content-Type");
@@ -35,6 +69,12 @@ export default async function handler(req,res){
       const tasks=await createDatabase("Campus OS · Tasks");
       const opportunities=await createDatabase("Campus OS · Opportunities");
       res.status(200).json({ok:true,databases:{knowledge:knowledge.id,tasks:tasks.id,opportunities:opportunities.id}});
+      return;
+    }
+    if(body.action==="sync_events"){
+      if(!configured()){res.status(200).json({ok:false,configured:false});return}
+      const result=await syncEvents(Array.isArray(body.events)?body.events:[],body.dataSourceId);
+      res.status(200).json({ok:true,configured:true,...result});
       return;
     }
     if(body.action==="sync"){

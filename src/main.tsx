@@ -2,7 +2,7 @@ import React from "react";
 import{createRoot}from"react-dom/client";
 import"./styles.css";
 import{AnnouncementInput,ExtractedAnnouncement,Post,Task,createCampusStore,extractAnnouncement,commitExtraction,createCampusRepository,initialState,loadUserProfile,saveUserProfile,relevanceForUser,UserProfile,campusDeadlines,answerCampusQuery,demoProfile,discoverCampus,analyticsSnapshot,personalizedWorkflow,roleCan,roleLabel}from"./domain";
-import{bootstrapNotion,getNotionStatus,loadNotionDatabases,syncToNotion}from"./notion";
+import{bootstrapNotion,getNotionStatus,loadNotionDatabases,syncEventsToNotion,syncToNotion}from"./notion";
 import{EventsPage,SocietyPage,SocietyOpsPage,FeedbackPage}from"./society";
 
 const repository=createCampusRepository();
@@ -53,6 +53,8 @@ Settings:{title:"Settings — Campus OS",description:"Manage Campus OS appearanc
 React.useEffect(()=>{const id=requestAnimationFrame(()=>setLoading(false));return()=>cancelAnimationFrame(id)},[]);
 React.useEffect(()=>{document.title=pageMeta.title;document.querySelector('meta[name="description"]')?.setAttribute("content",pageMeta.description);document.querySelector('meta[property="og:title"]')?.setAttribute("content",pageMeta.title);document.querySelector('meta[property="og:description"]')?.setAttribute("content",pageMeta.description);document.querySelector('meta[name="twitter:title"]')?.setAttribute("content",pageMeta.title);document.querySelector('meta[name="twitter:description"]')?.setAttribute("content",pageMeta.description);document.querySelector('link[rel="canonical"]')?.setAttribute("href",window.location.origin+"/");document.querySelector('meta[name="robots"]')?.setAttribute("content","index,follow")},[pageMeta.title,pageMeta.description]);
 const state=store.getState();
+// Mirror every registered event into the Notion "Upcoming Events" table whenever the event list changes.
+React.useEffect(()=>{const id=window.setTimeout(()=>{syncEventsToNotion(state.events).catch(()=>{})},800);return()=>window.clearTimeout(id)},[state.events]);
 const filtered=state.posts.filter(p=>(p.title+" "+p.body+" "+p.tags.join(" ")).toLowerCase().includes(query.toLowerCase()));
 const sync=()=>{repository.save(store.getState());setTasks([...store.getState().tasks]);refresh(x=>x+1)};
 const toggle=(id:number)=>{store.toggleTask(id);sync()};
