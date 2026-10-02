@@ -1,5 +1,5 @@
 import{describe,expect,it}from"vitest";
-import{commitExtraction,createCampusStore,extractAnnouncement,initialState,normalizeExtraction,validateExtraction,deterministicExtractionProvider}from"./domain";
+import{commitExtraction,createCampusStore,extractAnnouncement,initialState,normalizeExtraction,validateExtraction,deterministicExtractionProvider,relevanceForUser}from"./domain";
 
 describe("announcement extraction",()=>{
 it("extracts the hackathon demo into connected facts and actions",()=>{
@@ -47,3 +47,13 @@ describe("campus information types",()=>{
   expect(competition.relationships.some(r=>r.relation==="has_deadline")).toBe(true);
  });
 });
+
+describe("personal workspace",()=>{
+ it("loads the demo profile safely and uses active projects for relevance",()=>{
+  const post={id:99,type:"PROJECT",title:"Campus OS planning",body:"Work on the Campus OS dashboard",author:"Team",club:"Tech Society",time:"now",votes:0,comments:0,tags:["Campus OS"],linked:"Campus OS"};
+  const profile={...({id:"u",name:"A",branch:"CSE",year:2,interests:[],clubs:[],activeProjects:["Campus OS"]})};
+  expect(profile.activeProjects).toContain("Campus OS");
+  expect(relevanceForUser(post,profile).reasons.join(" ")).toContain("active project");
+ });
+});
+
