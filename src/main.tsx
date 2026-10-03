@@ -1,9 +1,12 @@
 import React from "react";
 import{createRoot}from"react-dom/client";
 import"./styles.css";
-import{AnnouncementInput,ExtractedAnnouncement,Post,Task,createCampusStore,extractAnnouncement,commitExtraction,createCampusRepository,initialState,loadUserProfile,saveUserProfile,relevanceForUser,UserProfile,campusDeadlines,answerCampusQuery,demoProfile,discoverCampus,analyticsSnapshot,personalizedWorkflow,roleCan,roleLabel}from"./domain";
-import{bootstrapNotion,getNotionStatus,loadNotionDatabases,syncEventsToNotion,syncToNotion}from"./notion";
+import{AnnouncementInput,ExtractedAnnouncement,Post,Task,createCampusStore,extractAnnouncement,commitExtraction,createCampusRepository,initialState,loadUserProfile,saveUserProfile,relevanceForUser,UserProfile,campusDeadlines,answerCampusQuery,demoProfile,discoverCampus,analyticsSnapshot,personalizedWorkflow,roleCan,roleLabel,pollResults,detectConflicts}from"./domain";
+import type{NotionTable}from"./notion";
+import{EventFeed}from"./forYou";
+import{bootstrapNotion,getNotionStatus,loadNotionDatabases,readNotionCalendar,syncTableToNotion,syncToNotion}from"./notion";
 import{EventsPage,SocietyPage,SocietyOpsPage,FeedbackPage}from"./society";
+import type{NotionCalendarState}from"./society";
 
 const repository=createCampusRepository();
 const store=createCampusStore(repository.load());
@@ -44,7 +47,7 @@ Explore:{title:"Explore — Campus OS",description:"Explore campus events, oppor
 Network:{title:"Network — Campus OS",description:"Explore relationships between campus people, events, opportunities, resources, projects, deadlines and tasks."},
 Events:{title:"Events — Campus OS",description:"Structured campus events with society, dates, eligibility, venues, deadlines and progress."},
 Societies:{title:"Societies — Campus OS",description:"Discover campus societies, their people, history, upcoming events and past work."},
-"Society Ops":{title:"Society Operations — Campus OS",description:"Private society event operations, tasks, budgets, promotion and resources."},
+"Society Ops":{title:"Society Operations — Campus OS",description:"Private society event operations: tasks, guests, budgets, resources, polls and conflict detection."},
 Feedback:{title:"Feedback — Campus OS",description:"Categorical feedback and suggestions for campus events and societies."},
 Knowledge:{title:"Knowledge — Campus OS",description:"Search authorized campus knowledge, Notion-synced pages and connected relationships."},
 Analytics:{title:"Analytics — Campus OS",description:"Campus workload, deadlines, participation, registration and project-progress analytics."},
@@ -53,8 +56,23 @@ Settings:{title:"Settings — Campus OS",description:"Manage Campus OS appearanc
 React.useEffect(()=>{const id=requestAnimationFrame(()=>setLoading(false));return()=>cancelAnimationFrame(id)},[]);
 React.useEffect(()=>{document.title=pageMeta.title;document.querySelector('meta[name="description"]')?.setAttribute("content",pageMeta.description);document.querySelector('meta[property="og:title"]')?.setAttribute("content",pageMeta.title);document.querySelector('meta[property="og:description"]')?.setAttribute("content",pageMeta.description);document.querySelector('meta[name="twitter:title"]')?.setAttribute("content",pageMeta.title);document.querySelector('meta[name="twitter:description"]')?.setAttribute("content",pageMeta.description);document.querySelector('link[rel="canonical"]')?.setAttribute("href",window.location.origin+"/");document.querySelector('meta[name="robots"]')?.setAttribute("content","index,follow")},[pageMeta.title,pageMeta.description]);
 const state=store.getState();
-// Mirror every registered event into the Notion "Upcoming Events" table whenever the event list changes.
-React.useEffect(()=>{const id=window.setTimeout(()=>{syncEventsToNotion(state.events).catch(()=>{})},800);return()=>window.clearTimeout(id)},[state.events]);
+// Mirror registered events and submitted feedback into their Notion tables whenever they change.
+const mirrorToNotion=(table:NotionTable,records:unknown[])=>window.setTimeout(()=>{syncTableToNotion(table,records).then(r=>{if(r.configured===false)console.warn("Notion sync: NOTION_TOKEN is not set on the server.")}).catch(e=>console.warn("Notion "+table+" sync failed:",e instanceof Error?e.message:e))},800);
+// Media and logos (possibly uploaded photos) are not Notion columns, so they stay out of the request.
+React.useEffect(()=>{const id=mirrorToNotion("events",state.events.map(({media,societyLogo,...event})=>event));return()=>window.clearTimeout(id)},[state.events]);
+React.useEffect(()=>{const eventsById=new Map(state.events.map(e=>[e.id,e]));const id=mirrorToNotion("feedback",state.feedback.map(f=>{const event=f.eventId?eventsById.get(f.eventId):undefined;return {...f,eventName:event?.name,societyName:event?.societyName||state.societies.find(s=>s.id===f.societyId)?.name}}));return()=>window.clearTimeout(id)},[state.feedback,state.events]);
+// Society operations tables carry the event and society names so the Notion rows read on their own.
+const eventContext=(eventId?:string,societyId?:string)=>{const event=eventId?state.events.find(e=>e.id===eventId):undefined;return {eventName:event?.name,eventDate:event?.date,societyName:event?.societyName||state.societies.find(s=>s.id===societyId)?.name}};
+React.useEffect(()=>{const id=mirrorToNotion("resources",state.requirements.map(r=>({...r,...eventContext(r.eventId,r.societyId)})));return()=>window.clearTimeout(id)},[state.requirements,state.events]);
+React.useEffect(()=>{const id=mirrorToNotion("guests",state.guests.map(g=>({...g,...eventContext(g.eventId,g.societyId)})));return()=>window.clearTimeout(id)},[state.guests,state.events]);
+React.useEffect(()=>{const id=mirrorToNotion("budget",state.budgetItems.map(b=>({...b,...eventContext(b.eventId,b.societyId)})));return()=>window.clearTimeout(id)},[state.budgetItems,state.events]);
+React.useEffect(()=>{const id=mirrorToNotion("polls",state.polls.map(p=>{const{voters,options,leaders}=pollResults(state,p.id);return {...p,...eventContext(p.eventId,p.societyId),voters,results:options,leaders}}));return()=>window.clearTimeout(id)},[state.polls,state.pollVotes,state.events]);
+// The Notion events table doubles as a shared calendar: rows added there by hand are checked for clashes.
+const[notionCalendar,setNotionCalendar]=React.useState<NotionCalendarState>({status:"idle",events:[]});
+const loadNotionCalendar=()=>{setNotionCalendar(c=>({...c,status:"loading"}));readNotionCalendar().then(r=>setNotionCalendar({status:r.configured?"ready":"unconfigured",events:r.events,checkedAt:new Date().toISOString()})).catch(e=>setNotionCalendar(c=>({...c,status:"error",message:e instanceof Error?e.message:"Notion calendar unavailable"})))};
+React.useEffect(()=>{if(tab==="Society Ops"&&notionCalendar.status==="idle")loadNotionCalendar()},[tab]);
+const conflicts=React.useMemo(()=>detectConflicts(state,{external:notionCalendar.events}),[state,notionCalendar.events]);
+React.useEffect(()=>{const names=(ids:string[],lookup:{id:string;name:string}[])=>ids.map(id=>lookup.find(x=>x.id===id)?.name).filter(Boolean);const id=mirrorToNotion("conflicts",conflicts.map(c=>({...c,eventNames:names(c.eventIds,state.events),societyNames:names(c.societyIds,state.societies)})));return()=>window.clearTimeout(id)},[conflicts]);
 const filtered=state.posts.filter(p=>(p.title+" "+p.body+" "+p.tags.join(" ")).toLowerCase().includes(query.toLowerCase()));
 const sync=()=>{repository.save(store.getState());setTasks([...store.getState().tasks]);refresh(x=>x+1)};
 const toggle=(id:number)=>{store.toggleTask(id);sync()};
@@ -76,7 +94,7 @@ return <div className="app-shell">
 <main className="main-stage">
 <header className="topbar"><div className="crumb"><span>CAMPUS OS</span><b>/</b><strong>{tab}</strong></div><div className="mobile-navigation" aria-label="Mobile page navigation"><div className="mobile-navigation-heading"><span className="mobile-navigation-label">NAVIGATE</span><span className="mobile-navigation-hint">TAP TO OPEN</span></div><select aria-label="Navigate to Campus OS page" aria-describedby="mobile-navigation-hint" value={tab} onChange={e=>setTab(e.target.value)}>{navItems.map(([num,name])=><option key={name} value={name}>{num} · {name}</option>)}</select><span id="mobile-navigation-hint" className="mobile-navigation-help">12 pages · one tap away</span></div><div className="top-actions"><label className="command-search"><span>⌕</span><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search campus"/></label><button className="icon-button" aria-label="Open personalized signals" onClick={()=>setTab("For You")}>◌</button><button className="create-button" onClick={()=>setShowCreate(true)}><span>+</span> Create</button></div></header>
 {tab==="Home"&&<Home state={state} profile={profile} filtered={filtered} tasks={tasks} toggle={toggle} liked={liked} setLiked={setLiked} copilotQuery={copilotQuery} setCopilotQuery={setCopilotQuery} openCreate={()=>setShowCreate(true)} openTasks={()=>setTab("My Tasks")} openNetwork={id=>{setNetworkEntityId(id);setTab("Network")}}/>}
-{tab==="For You"&&<ForYou state={state} profile={profile} filtered={filtered} tasks={tasks} toggle={toggle} editProfile={()=>setShowProfile(true)} saveOpportunity={saveOpportunity} createTask={createPersonalTask}/>}
+{tab==="For You"&&<ForYou state={state} profile={profile} editProfile={()=>setShowProfile(true)} createTask={createPersonalTask} mutate={fn=>{fn(store);sync()}}/>}
 {tab==="Explore"&&<Explore filtered={filtered} liked={liked} setLiked={setLiked}/>}
 {tab==="Knowledge"&&<KnowledgePage state={state} profile={profile} query={knowledgeQuery} setQuery={setKnowledgeQuery} notionStatus={notionStatus} notionMessage={notionMessage} notionBusy={notionBusy} syncNotion={syncNotion} saveOpportunity={saveOpportunity} createTask={createPersonalTask}/>}
 {tab==="Analytics"&&<AnalyticsPage state={state} profile={profile}/>} 
@@ -84,7 +102,7 @@ return <div className="app-shell">
 {tab==="Network"&&<Relationship state={state} selectedId={networkEntityId}/>}
 {tab==="Societies"&&<SocietyPage state={state}/>}
 {tab==="Events"&&<EventsPage state={state} mutate={fn=>{fn(store);sync()}}/>}
-{tab==="Society Ops"&&<SocietyOpsPage state={state} profile={profile} mutate={fn=>{fn(store);sync()}}/>}
+{tab==="Society Ops"&&<SocietyOpsPage state={state} profile={profile} mutate={fn=>{fn(store);sync()}} conflicts={conflicts} calendar={notionCalendar} refreshCalendar={loadNotionCalendar}/>}
 {tab==="Feedback"&&<FeedbackPage state={state} profile={profile} mutate={fn=>{fn(store);sync()}}/>}
 {tab==="Settings"&&<SettingsPage view={settingsView} setView={setSettingsView} theme={theme} setTheme={setTheme} profile={profile} editProfile={()=>setShowProfile(true)}/>}
 </main>
@@ -354,9 +372,9 @@ const done=tasks.filter(t=>t.done).length;
 return <section className="workflow-panel"><div className="panel-kicker"><span>YOUR WORKFLOW</span><b>{done}/{tasks.length}</b></div><h2>Next actions</h2><div className="workflow-progress"><i style={{width:(tasks.length?done/tasks.length*100:0)+"%"}}/></div><p>Generated from the campus graph.</p>{tasks.slice(0,6).map(t=><label className={"action-row "+(t.done?"done":"")} key={t.id}><input type="checkbox" checked={t.done} onChange={()=>toggle(t.id)}/><span className="action-check"/><span className="action-copy"><b>{t.title}</b><small>{t.meta}</small></span><span className="action-arrow">↗</span></label>)}{openTasks&&<button className="outline-button" onClick={openTasks}>OPEN FULL WORKFLOW</button>}</section>
 }
 
-function ForYou({state,profile,filtered,tasks,toggle,editProfile,saveOpportunity,createTask}:{state:ReturnType<typeof store.getState>;profile:UserProfile;filtered:Post[];tasks:Task[];toggle:(id:number)=>void;editProfile:()=>void;saveOpportunity:(post:Post)=>void;createTask:(task:Task)=>void}){
-const ranked=[...filtered].sort((a,b)=>relevanceForUser(b,profile).score-relevanceForUser(a,profile).score);const generated=personalizedWorkflow(state,profile);const saved=new Set(state.savedOpportunities.map(x=>x.entityId));
-return <div className="page inner-page"><div className="page-intro"><div><span className="signal-line">PERSONALIZATION ENGINE · {roleLabel(profile.role).toUpperCase()}</span><h1>Signals tuned to <em>{profile.name}.</em></h1><p>Your role, interests, clubs and active projects shape discovery and workflow suggestions.</p></div><button className="outline-button" onClick={editProfile}>EDIT CONTEXT ↗</button></div><section className="workflow-insight-card"><div><span className="signal-line">PERSONALIZED WORKFLOW</span><h2>{generated.length} suggested actions</h2><p>Relevant opportunities can become saved records, deadline reminders or concrete tasks.</p></div><div className="suggested-action-list">{generated.slice(0,3).map(task=><div key={task.title}><b>{task.title}</b><button className="outline-button" onClick={()=>{createTask(task);window.dispatchEvent(new CustomEvent("campus:navigate",{detail:"My Tasks"}));}}>ADD TASK</button></div>)}{!generated.length&&<span>No new workflow suggestions. Your current tasks already cover the strongest relevant opportunities.</span>}</div></section><div className="content-grid"><section>{ranked.map((p,i)=>{const r=relevanceForUser(p,profile);const entity=state.entities.find(e=>e.name===p.linked);return <article className="relevance-card" key={p.id}><span>0{i+1}</span><div><small>{r.score>0?"RELEVANT SIGNAL":"GENERAL SIGNAL"}</small><h3>{p.title}</h3><p>{r.reasons.join(" · ")||"General campus information"}</p>{p.type==="OPPORTUNITY"&&entity&&<button className="outline-button relevance-save" disabled={saved.has(entity.id)} onClick={()=>{saveOpportunity(p);window.dispatchEvent(new CustomEvent("campus:navigate",{detail:"My Tasks"}));}}> {saved.has(entity.id)?"SAVED":"SAVE OPPORTUNITY"} </button>}</div><b>{r.score>0?"MATCH":"OPEN"}</b></article>})}</section><Workflow tasks={tasks} toggle={toggle}/></div></div>
+function ForYou({state,profile,editProfile,createTask,mutate}:{state:ReturnType<typeof store.getState>;profile:UserProfile;editProfile:()=>void;createTask:(task:Task)=>void;mutate:(fn:(s:typeof store)=>void)=>void}){
+const generated=personalizedWorkflow(state,profile);
+return <div className="page inner-page"><div className="page-intro"><div><span className="signal-line">PERSONALIZATION ENGINE · {roleLabel(profile.role).toUpperCase()}</span><h1>Events tuned to <em>{profile.name}.</em></h1><p>Upcoming events from campus societies, ranked by your interests, clubs and projects. Vote, discuss and register in one place.</p></div><button className="outline-button" onClick={editProfile}>EDIT CONTEXT ↗</button></div><section className="workflow-insight-card"><div><span className="signal-line">PERSONALIZED WORKFLOW</span><h2>{generated.length} suggested actions</h2><p>Relevant opportunities can become saved records, deadline reminders or concrete tasks.</p></div><div className="suggested-action-list">{generated.slice(0,3).map(task=><div key={task.title}><b>{task.title}</b><button className="outline-button" onClick={()=>{createTask(task);window.dispatchEvent(new CustomEvent("campus:navigate",{detail:"My Tasks"}));}}>ADD TASK</button></div>)}{!generated.length&&<span>No new workflow suggestions. Your current tasks already cover the strongest relevant opportunities.</span>}</div></section><EventFeed state={state} profile={profile} mutate={mutate}/></div>
 }
 
 function Explore({filtered,liked,setLiked}:{filtered:Post[];liked:number[];setLiked:React.Dispatch<React.SetStateAction<number[]>>}){return <div className="page inner-page"><div className="page-intro"><div><span className="signal-line">CAMPUS INDEX</span><h1>Explore the <em>signal.</em></h1><p>Events, opportunities, resources, notices and projects — all connected.</p></div></div><div className="explore-grid">{filtered.map((p,i)=><PostCard key={p.id} p={p} liked={liked.includes(p.id)} onLike={()=>setLiked(l=>l.includes(p.id)?l.filter(x=>x!==p.id):[...l,p.id])} index={i}/>)}</div></div>}

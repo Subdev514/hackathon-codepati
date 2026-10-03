@@ -127,7 +127,29 @@ Campus OS now extends the local graph into a knowledge/workflow layer:
 
 - **Knowledge** — natural-language discovery across authorized campus knowledge, with graph expansion and profile-aware ranking rather than only literal feed search.
 - **Notion integration** — the Vercel server boundary can bootstrap Campus OS Knowledge, Tasks and Opportunities databases and sync records without exposing a Notion token to the browser. Configure `NOTION_TOKEN` and `NOTION_PARENT_PAGE_ID` on the deployment to activate it; otherwise the UI stays explicitly disconnected.
-- **Notion upcoming events table** — every event registered on the Events page (status *upcoming* or *in progress*) is mirrored automatically into an inline Notion table, **Campus OS · Upcoming Events**, created under `NOTION_PARENT_PAGE_ID` on the first sync. Columns: Event, Society, Date, Nature / Highlight, Special Guests, Progress, Venue, Status. Creating or editing an event updates its row. Deleting it, or marking it completed or cancelled, moves the row to Notion trash. Rows added by hand in Notion are left untouched. To point every browser at one fixed table, set `NOTION_EVENTS_DATA_SOURCE_ID` to that table's data source ID.
+- **Notion mirrored tables** — only `NOTION_TOKEN` is required. Campus OS creates and maintains seven Notion pages, each holding one table:
+  - **Campus OS · Upcoming Events**: every event registered on the Events page with status *upcoming* or *in progress*. Columns: Event, Society, Date, Nature / Highlight, Special Guests, Progress, Venue, Status.
+  - **Campus OS · Feedback**: every feedback record submitted on the Feedback page. Columns: Feedback, Event, Society, Category, Sentiment, Priority, Submitted By, Submitted At.
+  - **Campus OS · Resource Tracker**: every resource tracked in Society Ops. Columns: Resource, Event, Society, Event Date, Category, Quantity, Owner, Status.
+  - **Campus OS · Guest Management**: every event guest. Columns: Guest, Designation, Event, Society, Event Date, Role, Status, Host, Arrival, Needs, Honorarium.
+  - **Campus OS · Budget Tracker**: every budget line item. Columns: Line Item, Event, Society, Type (expense/income), Category, Planned, Actual, Status, Owner.
+  - **Campus OS · Society Polls**: every society poll with live results. Columns: Question, Society, Event, Status, Results, Leading Option, Votes, Closes, Created By.
+  - **Campus OS · Conflicts**: the conflicts Campus OS currently detects. A row is trashed once its conflict is resolved. Columns: Conflict, Type, Severity, Details, Events, Societies, Source.
+
+  **Notion as a shared calendar:** rows added by hand to the Upcoming Events table (rows with no Campus OS ID) are read back and checked for venue and same-day clashes with Campus OS events. Society Ops → Conflicts shows them and can re-check on demand.
+
+  **Where the pages go:** under `NOTION_PARENT_PAGE_ID` if it is set and reachable. Otherwise at the workspace top level, which works for personal access tokens and public connections. Otherwise under any page shared with the integration. An *internal* integration cannot create workspace-level pages, so connect it to at least one page (••• → Connections).
+
+  **Each sync:** finds the existing page by title instead of creating duplicates. Adds missing columns, fixes wrong column types and renames the title column. Then creates, updates or trashes rows. Rows added by hand in Notion are left untouched.
+
+  **Fixed tables (optional):** set `NOTION_EVENTS_DATA_SOURCE_ID`, `NOTION_FEEDBACK_DATA_SOURCE_ID`, `NOTION_RESOURCES_DATA_SOURCE_ID`, `NOTION_GUESTS_DATA_SOURCE_ID`, `NOTION_BUDGET_DATA_SOURCE_ID`, `NOTION_POLLS_DATA_SOURCE_ID` or `NOTION_CONFLICTS_DATA_SOURCE_ID`.
+
+- **Society Ops** — each private society workspace has three views:
+  - **Event Ops**: tasks, guest management (role, status, host, arrival, needs, honorarium), a resource tracker with editable status, and a budget tracker with an approved cap and planned and actual line items.
+  - **Polls**: members vote (one ballot each, changeable), and society leads and admins publish, close and reopen polls.
+  - **Conflicts**: venue double-bookings (including the Notion calendar), same-day clashes, guests booked twice or unconfirmed within 14 days, members with tasks for different events due the same day, shared equipment clashes, resources unconfirmed within 7 days, and spending over the cap.
+
+  **Local development:** `npm run dev` serves `/api/notion` itself and reads these variables from `.env`.
 - **Personalized workflow** — relevant opportunities can be saved, deadline reminders created and suggested actions promoted into tasks/project actions.
 - **Dependencies** — explicit registration, volunteer and project-milestone relationships are represented in the graph and surfaced in Network.
 - **Roles** — Student and Club Coordinator contexts change the operational experience and Notion synchronization permission.
